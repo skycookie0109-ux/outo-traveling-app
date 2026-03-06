@@ -128,11 +128,10 @@ const UI = {
 
       if (Math.abs(currentX) >= THRESHOLD) {
         // ✅ 滑動距離足夠 → 觸發完成/取消
-        card.style.setProperty('--swipe-x', `${currentX}px`);
-        card.style.transform = '';
         card.classList.add('swipe-triggered');
 
-        card.addEventListener('animationend', () => {
+        card.addEventListener('transitionend', () => {
+          card.classList.remove('swipe-triggered');
           App.Actions.toggleComplete(dayId, idx);
           if (navigator.vibrate) navigator.vibrate(15);
         }, { once: true });
