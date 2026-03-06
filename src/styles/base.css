@@ -56,14 +56,14 @@ body {
   margin: 0;
   padding: 0;
   padding-top: calc(
-    var(--header-h-expanded) + var(--tabs-height) - var(--overlap) + 10px
+    var(--header-h-expanded) + var(--tabs-height) - var(--overlap) + 10px + env(safe-area-inset-top, 0px)
   );
   background-image: radial-gradient(
     rgba(0, 0, 0, 0.05) 1px,
     transparent 1px
   );
   background-size: 24px 24px;
-  padding-bottom: 120px;
+  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
   transition: padding-right 0.3s;
   overflow-x: hidden;
   overscroll-behavior-y: none;
