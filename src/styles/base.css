@@ -1,0 +1,75 @@
+/* =========================================
+   Base Styles - Variables, Reset & Foundation
+   ========================================= */
+
+:root {
+  --primary: #00acc1;
+  --primary-dark: #00838f;
+  --accent: #ff9800;
+  --bg-body: #f0f8ff;
+  --text-main: #37474f;
+  --text-sub: #78909c;
+  --grad-header: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  --grad-fab: linear-gradient(135deg, var(--accent) 0%, #f57c00 100%);
+  --grad-weather: linear-gradient(120deg, #e0f7fa 0%, #fff3e0 100%);
+  --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.08);
+  --header-h-expanded: 240px;
+  --header-h-collapsed: 80px;
+  --tabs-height: 70px;
+  --overlap: 35px;
+}
+
+iframe,
+#csb-view,
+.__csb-wa-button,
+[data-testid="code-sandbox-header"] {
+  display: none !important;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+img {
+  border: 0 !important;
+  outline: none !important;
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  height: 100%;
+  overflow-y: auto;
+  font-family: "Quicksand", "Noto Sans TC", sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+  padding-top: calc(
+    var(--header-h-expanded) + var(--tabs-height) - var(--overlap) + 10px
+  );
+  background-image: radial-gradient(
+    rgba(0, 0, 0, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  padding-bottom: 120px;
+  transition: padding-right 0.3s;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.no-scroll {
+  overflow: hidden !important;
+}
