@@ -2,6 +2,8 @@
  * Weather Module
  * Handles weather data fetching, geocoding, and weather display
  * Uses Open-Meteo API for weather forecasts
+ *
+ * [Ver2.4] 天氣資訊強化：穿搭建議、分級降雨、圖示升級
  */
 
 import EventBus from './eventbus.js';
@@ -10,6 +12,58 @@ import Templates from './templates.js';
 
 const Weather = {
   cache: {},
+
+  // ── [Ver2.4] 穿搭/攜帶建議 ──────────────────
+  getAdvice(min, max, pop) {
+    if (typeof min !== 'number' || typeof max !== 'number') {
+      return { text: '載入中...', icon: 'fa-spinner' };
+    }
+
+    const items = [];
+    const avg = (min + max) / 2;
+
+    // 溫度建議
+    if (max >= 33) {
+      items.push('短袖短褲、防曬乳、遮陽帽');
+    } else if (avg >= 28) {
+      items.push('輕薄透氣衣物、太陽眼鏡');
+    } else if (avg >= 23) {
+      items.push('薄長袖備用');
+    } else {
+      items.push('薄外套或風衣');
+    }
+
+    // 降雨建議
+    if (typeof pop === 'number') {
+      if (pop >= 80) {
+        items.push('雨具 + 防水袋');
+      } else if (pop >= 60) {
+        items.push('記得帶傘');
+      }
+    }
+
+    return {
+      text: items.join('、'),
+      icon: max >= 30 ? 'fa-sun' : avg >= 23 ? 'fa-shirt' : 'fa-vest-patches',
+    };
+  },
+
+  // ── [Ver2.4] 降雨等級分類 ──────────────────
+  getRainLevel(pop) {
+    if (typeof pop !== 'number') return 'unknown';
+    if (pop >= 60) return 'high';
+    if (pop >= 30) return 'mid';
+    return 'low';
+  },
+
+  // ── [Ver2.4] 天氣圖示映射（Font Awesome 取代 emoji）──
+  getWeatherIcon(code) {
+    if (code === 0) return { icon: 'fa-sun', cls: 'w-icon-sun', desc: '晴朗' };
+    if (code <= 3) return { icon: 'fa-cloud-sun', cls: 'w-icon-cloudy', desc: '多雲' };
+    if (code <= 45) return { icon: 'fa-cloud', cls: 'w-icon-overcast', desc: '陰天' };
+    if (code <= 67) return { icon: 'fa-cloud-rain', cls: 'w-icon-rain', desc: '有雨' };
+    return { icon: 'fa-cloud-bolt', cls: 'w-icon-storm', desc: '雷雨' };
+  },
 
   init() {
     EventBus.on("APP:DAY_CHANGED", (id) => this.updateDashboard(id));
@@ -129,22 +183,21 @@ const Weather = {
           const pop = data.daily.precipitation_probability_max[i];
           const code = data.daily.weathercode[i];
 
-          let icon = "☀️";
-          if (code > 0 && code <= 3) icon = "⛅";
-          else if (code > 3 && code <= 45) icon = "☁️";
-          else if (code > 45 && code <= 67) icon = "🌧️";
-          else if (code > 67) icon = "⛈️";
+          // [Ver2.4] 使用 getWeatherIcon 取代 emoji
+          const wIcon = this.getWeatherIcon(code);
+          const advice = this.getAdvice(min, max, pop);
+          const rainLevel = this.getRainLevel(pop);
 
           let statusLabel = "";
           if (useRef) {
             const daysToWait = diffDays - 13;
             if (daysToWait > 0 && daysToWait <= 14) {
-              statusLabel = `⏳ ${daysToWait}天後更新`;
+              statusLabel = `${daysToWait}天後更新`;
             } else {
-              statusLabel = "📊 歷史平均";
+              statusLabel = "歷史參考";
             }
           } else {
-            statusLabel = "✅ 旅程預報";
+            statusLabel = "即時預報";
           }
 
           return {
@@ -152,7 +205,11 @@ const Weather = {
             min,
             max,
             pop,
-            icon,
+            icon: wIcon.icon,
+            iconCls: wIcon.cls,
+            desc: wIcon.desc,
+            advice,
+            rainLevel,
             statusLabel,
             isRef: useRef,
           };
@@ -298,12 +355,13 @@ const Weather = {
           const dayStr = dayNames[d.getDay()];
           const min = Math.round(data.daily.temperature_2m_min[i]);
           const max = Math.round(data.daily.temperature_2m_max[i]);
+          const pop = data.daily.precipitation_probability_max[i];
           const code = data.daily.weathercode[i];
-          let icon = "☀️";
-          if (code > 0 && code <= 3) icon = "⛅";
-          else if (code > 3 && code <= 45) icon = "☁️";
-          else if (code > 45 && code <= 67) icon = "🌧️";
-          else if (code > 67) icon = "⛈️";
+
+          // [Ver2.4] 使用統一的圖示 + 建議系統
+          const wIcon = this.getWeatherIcon(code);
+          const advice = this.getAdvice(min, max, pop);
+          const rainLevel = this.getRainLevel(pop);
 
           return `
                 <div class="w-day-item" id="w-day-${i}">
@@ -315,13 +373,18 @@ const Weather = {
                             <div class="wd-sub-day">${dayStr}</div>
                         </div>
                         <div class="w-summary-col">
-                            <div class="ws-icon">${icon}</div>
-                            <div class="ws-range">${min}° <div class="ws-bar"></div> ${max}°</div>
+                            <div class="ws-icon-wrap ${wIcon.cls}"><i class="fa-solid ${wIcon.icon}"></i></div>
+                            <div class="ws-temp-range">
+                                <span class="ws-min">${min}°</span>
+                                <div class="ws-bar"></div>
+                                <span class="ws-max">${max}°</span>
+                            </div>
                         </div>
-                        <div class="w-pop-col">💧${
-                          data.daily.precipitation_probability_max[i]
-                        }%</div>
+                        <div class="w-pop-col rain-${rainLevel}"><i class="fa-solid fa-droplet"></i> ${pop}%</div>
                         <div class="w-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="w-day-advice">
+                        <i class="fa-solid ${advice.icon}"></i> ${advice.text}
                     </div>
                     <div class="w-detail-panel">
                         <div class="w-slider-wrap">
@@ -381,33 +444,21 @@ const Weather = {
     const temp = Math.round(data.hourly.temperature_2m[idx]);
     const pop = data.hourly.precipitation_probability[idx];
     const code = data.hourly.weathercode[idx];
-    let icon = "☀️",
-      desc = "晴朗";
 
-    if (code > 0 && code <= 3) {
-      icon = "⛅";
-      desc = "多雲";
-    } else if (code > 3 && code <= 45) {
-      icon = "☁️";
-      desc = "陰天";
-    } else if (code > 45 && code <= 67) {
-      icon = "🌧️";
-      desc = "有雨";
-    } else if (code > 67) {
-      icon = "⛈️";
-      desc = "雷雨";
-    }
+    // [Ver2.4] 統一使用 getWeatherIcon
+    const wIcon = this.getWeatherIcon(code);
+    const rainLevel = this.getRainLevel(pop);
 
     document.getElementById(
       `result-${dayIndex}`
     ).innerHTML = `<div class="wh-left">
-              <div class="wh-icon">${icon}</div>
+              <div class="wh-icon-wrap ${wIcon.cls}"><i class="fa-solid ${wIcon.icon}"></i></div>
               <div class="wh-temp-grp">
                   <div class="wh-temp">${temp}°</div>
-                  <div class="wh-desc">${desc}</div>
+                  <div class="wh-desc">${wIcon.desc}</div>
               </div>
            </div>
-           <div class="wh-pop">降雨 ${pop}%</div>`;
+           <div class="wh-pop rain-${rainLevel}"><i class="fa-solid fa-droplet"></i> ${pop}%</div>`;
   },
 };
 
