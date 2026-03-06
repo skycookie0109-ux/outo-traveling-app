@@ -1,0 +1,14 @@
+{
+  "name": "outo-traveling-app",
+  "version": "2.2.2",
+  "description": "Outo Travel App - 整合旅遊功能的行動網頁應用",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}
