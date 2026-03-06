@@ -20,15 +20,21 @@ const Templates = {
             <div class="time-col">${e.time}</div>
             <div class="timeline-center"><div class="timeline-line"></div><div class="timeline-dot ${isCompleted ? 'done' : ''}"></div></div>
             <div class="card-col">
-                <div class="mini-card ${isCompleted ? 'card-done' : ''}" onclick="App.Actions.openDetail(${dayId}, ${i})">
-                    <div class="mc-header">
-                        <div class="mc-info">
-                            <span class="mc-tag">${e.tag}</span>
-                            <h3 class="mc-title">${e.title}</h3>
-                            <div class="mc-sub">${e.subtitle}</div>
-                        </div>
-                        <div class="mc-check" onclick="event.stopPropagation(); App.Actions.toggleComplete(${dayId}, ${i})">
-                            <i class="fa-${isCompleted ? 'solid' : 'regular'} fa-circle-check"></i>
+                <div class="swipe-wrap" data-day="${dayId}" data-idx="${i}">
+                    <div class="swipe-action ${isCompleted ? 'is-undo' : ''}">
+                        <i class="fa-solid ${isCompleted ? 'fa-rotate-left' : 'fa-circle-check'}"></i>
+                        <span>${isCompleted ? '取消' : '完成'}</span>
+                    </div>
+                    <div class="mini-card ${isCompleted ? 'card-done' : ''}" onclick="App.Actions.openDetail(${dayId}, ${i})">
+                        <div class="mc-header">
+                            <div class="mc-info">
+                                <span class="mc-tag">${e.tag}</span>
+                                <h3 class="mc-title">${e.title}</h3>
+                                <div class="mc-sub">${e.subtitle}</div>
+                            </div>
+                            <div class="mc-check" onclick="event.stopPropagation(); App.Actions.toggleComplete(${dayId}, ${i})">
+                                <i class="fa-${isCompleted ? 'solid' : 'regular'} fa-circle-check"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
