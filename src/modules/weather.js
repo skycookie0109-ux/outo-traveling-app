@@ -130,7 +130,8 @@ const Weather = {
 
     if (isNaN(diffDays)) diffDays = 999;
 
-    const isReferenceMode = diffDays > 13 || diffDays < 0;
+    // 過去 92 天內 & 未來 13 天內都可以透過 API 查詢實際天氣
+    const isReferenceMode = diffDays > 13 || diffDays < -92;
     const targetDateStr = dayData.fullDate;
 
     const results = await Promise.all(
@@ -157,8 +158,8 @@ const Weather = {
             isRef: true,
           };
 
-        const apiRef = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
-        const apiForecast = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&start_date=${targetDateStr}&end_date=${targetDateStr}`;
+        const apiRef = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
+        const apiForecast = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&start_date=${targetDateStr}&end_date=${targetDateStr}`;
 
         try {
           let res, data;
@@ -181,7 +182,7 @@ const Weather = {
           const min = Math.round(data.daily.temperature_2m_min[i]);
           const max = Math.round(data.daily.temperature_2m_max[i]);
           const pop = data.daily.precipitation_probability_max[i];
-          const code = data.daily.weathercode[i];
+          const code = data.daily.weather_code[i];
 
           // [Ver2.4] 使用 getWeatherIcon 取代 emoji
           const wIcon = this.getWeatherIcon(code);
@@ -194,8 +195,10 @@ const Weather = {
             if (daysToWait > 0 && daysToWait <= 14) {
               statusLabel = `${daysToWait}天後更新`;
             } else {
-              statusLabel = "歷史參考";
+              statusLabel = "近期參考";
             }
+          } else if (diffDays < 0) {
+            statusLabel = "實際天氣";
           } else {
             statusLabel = "即時預報";
           }
@@ -269,21 +272,32 @@ const Weather = {
       (tripStartDate - today) / (1000 * 60 * 60 * 24)
     );
 
-    const isRefMode = diffDays > 13 || diffDays < 0 || isNaN(diffDays);
+    // 過去 92 天內 & 未來 13 天內都可查詢實際天氣
+    const isRefMode = diffDays > 13 || diffDays < -92 || isNaN(diffDays);
 
     const safeLimitDate = new Date();
     safeLimitDate.setDate(today.getDate() + 13);
 
+    // 過去日期也設上限：最多查到 92 天前
+    const safeHistoryDate = new Date();
+    safeHistoryDate.setDate(today.getDate() - 92);
+
     const tripEndDate = new Date(tripEndStr);
+    const tripStartDateObj = new Date(tripStartStr);
+
+    let effectiveStartDateStr = tripStartStr;
+    if (tripStartDateObj < safeHistoryDate) {
+      effectiveStartDateStr = safeHistoryDate.toISOString().split("T")[0];
+    }
 
     let effectiveEndDateStr = tripEndStr;
     if (tripEndDate > safeLimitDate) {
       effectiveEndDateStr = safeLimitDate.toISOString().split("T")[0];
     }
 
-    const apiForecast7Days = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&hourly=temperature_2m,precipitation_probability,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
+    const apiForecast7Days = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
 
-    const apiTripDates = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&hourly=temperature_2m,precipitation_probability,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&start_date=${tripStartStr}&end_date=${effectiveEndDateStr}`;
+    const apiTripDates = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&start_date=${effectiveStartDateStr}&end_date=${effectiveEndDateStr}`;
 
     let apiUrl = isRefMode ? apiForecast7Days : apiTripDates;
 
@@ -304,6 +318,7 @@ const Weather = {
 
       let statusBanner = "";
       if (finalMode) {
+        // 真正的參考模式（超過 API 查詢範圍）
         let daysToWait = diffDays - 13;
         if (daysToWait < 1) daysToWait = 1;
 
@@ -321,17 +336,29 @@ const Weather = {
                 </div>
               </div>`;
       } else {
-        const isPartial = effectiveEndDateStr !== tripEndStr;
-        const titleText = isPartial
-          ? "已更新為旅程真實預報 (部分)"
-          : "已更新為旅程真實預報";
-        const subText = isPartial
-          ? `顯示 ${tripStartStr} 至 ${effectiveEndDateStr} 的天氣 (後續日期尚未釋出)。`
-          : `顯示 ${tripStartStr} 至 ${tripEndStr} 的當地預測。`;
+        const isPast = diffDays < 0;
+        const isPartial = effectiveEndDateStr !== tripEndStr || effectiveStartDateStr !== tripStartStr;
+
+        let titleText, subText, bannerBg, bannerColor, bannerIcon;
+        if (isPast) {
+          titleText = "旅程期間的實際天氣紀錄";
+          subText = `顯示 ${effectiveStartDateStr} 至 ${effectiveEndDateStr} 的歷史天氣。`;
+          bannerBg = "#e0f2fe";
+          bannerColor = "#0369a1";
+          bannerIcon = "fa-cloud-sun";
+        } else {
+          titleText = isPartial ? "已更新為旅程真實預報 (部分)" : "已更新為旅程真實預報";
+          subText = isPartial
+            ? `顯示 ${effectiveStartDateStr} 至 ${effectiveEndDateStr} 的天氣 (後續日期尚未釋出)。`
+            : `顯示 ${tripStartStr} 至 ${tripEndStr} 的當地預測。`;
+          bannerBg = "#e8f5e9";
+          bannerColor = "#2e7d32";
+          bannerIcon = "fa-check-circle";
+        }
 
         statusBanner = `
-              <div style="background:#e8f5e9; color:#2e7d32; padding:12px; border-radius:12px; margin-bottom:15px; font-size:0.9rem; display:flex; align-items:center; gap:10px;">
-                <i class="fa-solid fa-check-circle" style="font-size:1.1rem;"></i>
+              <div style="background:${bannerBg}; color:${bannerColor}; padding:12px; border-radius:12px; margin-bottom:15px; font-size:0.9rem; display:flex; align-items:center; gap:10px;">
+                <i class="fa-solid ${bannerIcon}" style="font-size:1.1rem;"></i>
                 <div>
                   <div style="font-weight:bold;">${titleText}</div>
                   <div style="font-size:0.8rem; opacity:0.8;">${subText}</div>
@@ -356,7 +383,7 @@ const Weather = {
           const min = Math.round(data.daily.temperature_2m_min[i]);
           const max = Math.round(data.daily.temperature_2m_max[i]);
           const pop = data.daily.precipitation_probability_max[i];
-          const code = data.daily.weathercode[i];
+          const code = data.daily.weather_code[i];
 
           // [Ver2.4] 使用統一的圖示 + 建議系統
           const wIcon = this.getWeatherIcon(code);
@@ -443,7 +470,7 @@ const Weather = {
 
     const temp = Math.round(data.hourly.temperature_2m[idx]);
     const pop = data.hourly.precipitation_probability[idx];
-    const code = data.hourly.weathercode[idx];
+    const code = data.hourly.weather_code[idx];
 
     // [Ver2.4] 統一使用 getWeatherIcon
     const wIcon = this.getWeatherIcon(code);
