@@ -215,3 +215,69 @@
 .event-row.completed .mc-check i {
   animation: checkBounce 0.3s ease;
 }
+
+/* ── 左滑完成手勢 ──────────────────── */
+.swipe-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+/* 滑動露出的操作區域（右側） */
+.swipe-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 80px;
+  background: var(--success);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.swipe-action i {
+  font-size: 1.3rem;
+}
+
+/* 已完成時露出的是「取消」— 用橘色區分 */
+.swipe-action.is-undo {
+  background: var(--accent);
+}
+
+/* 滑動時顯示操作區 */
+.swipe-wrap.swiping .swipe-action {
+  opacity: 1;
+}
+
+/* 滑動中的卡片：取消原本的 active 縮放、取消 transition */
+.swipe-wrap.swiping .mini-card {
+  transition: none;
+}
+
+.swipe-wrap.swiping .mini-card:active {
+  transform: none;
+}
+
+/* 滑動回彈動畫 */
+.swipe-wrap .mini-card.snap-back {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 滑動觸發動畫 */
+@keyframes swipeDone {
+  0% { transform: translateX(var(--swipe-x)); }
+  50% { transform: translateX(-100%); }
+  100% { transform: translateX(0); }
+}
+
+.swipe-wrap .mini-card.swipe-triggered {
+  animation: swipeDone 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
