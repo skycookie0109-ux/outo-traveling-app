@@ -111,8 +111,8 @@ const UI = {
       // 只允許往左滑（dx < 0），加入阻尼效果讓越遠越有阻力
       const rawX = Math.min(0, dx);
       const ratio = Math.min(1, Math.abs(rawX) / MAX_SLIDE);
-      // 阻尼公式：實際移動 = 最大距離 × (1 - (1 - ratio)^2)
-      const dampened = -MAX_SLIDE * (1 - Math.pow(1 - ratio, 2));
+      // 阻尼公式：指數越高阻力越強（^3 比 ^2 更明顯）
+      const dampened = -MAX_SLIDE * (1 - Math.pow(1 - ratio, 3));
       currentX = dampened;
       activeCard.style.transform = `translateX(${currentX}px)`;
       e.preventDefault();
