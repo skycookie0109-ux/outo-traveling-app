@@ -8,6 +8,28 @@
  */
 
 const Settings = {
+  // ── [Ver2.2.2] 設定按鈕長按啟動（防誤觸）──
+  initSettingsButton() {
+    const btn = document.getElementById('settings-btn-header');
+    if (!btn) return;
+    let timer = null;
+    const start = () => {
+      timer = setTimeout(() => {
+        App.Actions.openSettings();
+        timer = null;
+      }, 600); // 需長按 0.6 秒
+    };
+    const cancel = () => { if (timer) { clearTimeout(timer); timer = null; } };
+    btn.addEventListener('touchstart', start, { passive: true });
+    btn.addEventListener('touchend', cancel);
+    btn.addEventListener('touchmove', cancel);
+    // 桌面端直接點擊即可
+    btn.addEventListener('click', (e) => {
+      if ('ontouchstart' in window) return; // 手機端由長按處理
+      App.Actions.openSettings();
+    });
+  },
+
   // ── [Ver2.2] 深色模式 ──────────────────
   initDarkMode() {
     const saved = localStorage.getItem('darkMode');
@@ -32,7 +54,7 @@ const Settings = {
 
     // 更新 theme-color meta tag
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = isDark ? '#1a1a2e' : '#00acc1';
+    if (meta) meta.content = isDark ? '#171c28' : '#00acc1';
   },
 
   _updateDarkModeUI(isDark) {
@@ -41,9 +63,6 @@ const Settings = {
     if (btn) btn.innerHTML = isDark
       ? '<i class="fa-solid fa-sun"></i>'
       : '<i class="fa-solid fa-moon"></i>';
-    // 更新設定面板 switch
-    const sw = document.getElementById('dm-switch-input');
-    if (sw) sw.checked = isDark;
   },
   // ── End Dark Mode ─────────────────────
   // 1. 清除記帳

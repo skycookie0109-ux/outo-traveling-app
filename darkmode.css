@@ -1,35 +1,37 @@
 /* =========================================
-   Dark Mode Theme — 「夜間旅行」風格
+   Dark Mode Theme — 「夜間旅行」風格 v2.2.2
    [Ver2.2] 完整深色模式
+   [Ver2.2.2] 柔和配色修正，降低對比度
 
    設計理念：
-   - 深藍夜空為底色（#0f1923），不是純黑
-   - 卡片用暖灰深色（#1a2332），有層次感
+   - 深灰藍為底色（#171c28），不是純黑
+   - 卡片用較亮灰藍（#212836），層次自然
+   - 按鈕文字用柔和淺灰（#c8d1dc），而非純白
    - 保留各功能的辨識色但降低飽和度
    - 所有 inline style 用 !important 覆蓋
 
-   色板：
-   - 背景層 1 (body): #0f1923
-   - 背景層 2 (card):  #1a2332
-   - 背景層 3 (input): #1f2d3d
-   - 邊框:             #2a3a4a
-   - 文字主色:          #dce4ec
-   - 文字副色:          #8899aa
+   色板（v2.2.2 柔和版）：
+   - 背景層 1 (body): #171c28
+   - 背景層 2 (card):  #212836
+   - 背景層 3 (input): #2a3242
+   - 邊框:             #343e50
+   - 文字主色:          #c8d1dc
+   - 文字副色:          #7d8a9a
    ========================================= */
 
 /* ══════════════════════════════════════════
    1. CSS 變數覆蓋
    ══════════════════════════════════════════ */
 html.dark {
-  --bg-body: #0f1923;
-  --text-main: #dce4ec;
-  --text-sub: #8899aa;
-  --primary: #4dd0e1;
-  --primary-dark: #26c6da;
-  --accent: #ffb74d;
-  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --grad-header: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.75) 100%);
-  --grad-weather: linear-gradient(120deg, #1a2332 0%, #1f1a2e 100%);
+  --bg-body: #171c28;
+  --text-main: #c8d1dc;
+  --text-sub: #7d8a9a;
+  --primary: #5bc4d0;
+  --primary-dark: #3bb5c4;
+  --accent: #e8a84c;
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --grad-header: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
+  --grad-weather: linear-gradient(120deg, #212836 0%, #261e32 100%);
   color-scheme: dark;
 }
 
@@ -37,32 +39,32 @@ html.dark {
    2. Body & 基底
    ══════════════════════════════════════════ */
 html.dark body {
-  background-color: #0f1923 !important;
+  background-color: #171c28 !important;
   background-image: none !important;
-  color: #dce4ec;
+  color: #c8d1dc;
 }
 
 html.dark #loading-screen {
-  background: #0f1923 !important;
+  background: #171c28 !important;
 }
 
 /* ══════════════════════════════════════════
    3. Header & Tabs
    ══════════════════════════════════════════ */
 html.dark header {
-  background-color: #0d1520;
+  background-color: #141824;
 }
 
 html.dark body.scrolled #sticky-tabs-bar {
-  background-color: #0f1923;
-  border-bottom-color: #2a3a4a;
+  background-color: #171c28;
+  border-bottom-color: #343e50;
 }
 
 html.dark .tab-btn {
-  background: #1a2332;
-  color: #8899aa;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  border: 1px solid #2a3a4a;
+  background: #212836;
+  color: #7d8a9a;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  border: 1px solid #343e50;
 }
 
 html.dark .tab-btn.active {
@@ -75,33 +77,33 @@ html.dark .tab-btn.active {
    4. Timeline
    ══════════════════════════════════════════ */
 html.dark .time-col { color: var(--primary); }
-html.dark .timeline-line { border-left-color: #2a3a4a; }
+html.dark .timeline-line { border-left-color: #343e50; }
 
 html.dark .timeline-dot {
-  background: #1a2332;
+  background: #212836;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(255,183,77,0.15);
+  box-shadow: 0 0 0 3px rgba(232,168,76,0.12);
 }
 
 html.dark .mini-card {
-  background: #1a2332 !important;
-  border: 1px solid #2a3a4a !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  background: #212836 !important;
+  border: 1px solid #343e50 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
 }
 
-html.dark .mc-title { color: #dce4ec !important; }
-html.dark .mc-sub { color: #8899aa !important; }
+html.dark .mc-title { color: #c8d1dc !important; }
+html.dark .mc-sub { color: #7d8a9a !important; }
 html.dark .mc-tag {
-  background: rgba(77,208,225,0.1) !important;
+  background: rgba(91,196,208,0.1) !important;
   color: var(--primary) !important;
 }
 
 html.dark .mc-check { color: #546e7a; }
-html.dark .mc-check:hover { color: #66bb6a; background: rgba(102,187,106,0.1); }
+html.dark .mc-check:hover { color: #66bb6a; background: rgba(102,187,106,0.08); }
 html.dark .event-row.completed .mc-check { color: #66bb6a; }
 
 html.dark .mini-card.card-done {
-  background: #141e2a !important;
+  background: #1a2030 !important;
   opacity: 0.55;
 }
 html.dark .mini-card.card-done .mc-title { color: #556677 !important; }
@@ -115,79 +117,92 @@ html.dark .timeline-dot.done {
 /* ══════════════════════════════════════════
    5. 天氣區域
    ══════════════════════════════════════════ */
-html.dark #weather-wrapper { background: transparent !important; }
-
-html.dark .w-card {
-  background: linear-gradient(120deg, #1a2a38 0%, #251a30 100%) !important;
-  border-color: #2a3a4a !important;
+html.dark #weather-wrapper {
+  background: var(--grad-weather) !important;
+  border-color: #343e50 !important;
 }
 
-html.dark .wc-temp { color: #dce4ec !important; }
-html.dark .wc-loc { color: #b0bec5 !important; }
-html.dark .wc-pop { color: #4fc3f7 !important; background: rgba(79,195,247,0.1) !important; }
+html.dark .w-card {
+  background: transparent !important;
+}
+
+/* 天氣狀態標籤 (歷史平均 等) — 修正 dark mode 下的 inline border */
+html.dark .w-card .wc-desc {
+  color: #c8d1dc !important;
+  border-color: #546e7a !important;
+  background: rgba(91,196,208,0.08) !important;
+}
+
+html.dark .wc-temp { color: #c8d1dc !important; }
+html.dark .wc-loc { color: #9aa8b5 !important; }
+html.dark .wc-pop { color: #64b5f6 !important; background: rgba(100,181,246,0.1) !important; }
+
+/* 天氣小圓點 */
+html.dark .w-dot { background: rgba(255,255,255,0.15); }
+html.dark .w-dot.active { background: var(--accent); }
 
 /* 天氣詳情 Modal */
 html.dark .w-day-item {
-  background: #1a2332 !important;
-  border-color: #2a3a4a !important;
+  background: #212836 !important;
+  border-color: #343e50 !important;
 }
-html.dark .wd-main-date { color: #dce4ec !important; }
-html.dark .wd-sub-day { color: #8899aa !important; }
-html.dark .ws-range { color: #b0bec5 !important; }
-html.dark .ws-bar { background: #2a3a4a !important; }
-html.dark .w-pop-col { color: #4fc3f7 !important; }
+html.dark .wd-main-date { color: #c8d1dc !important; }
+html.dark .wd-sub-day { color: #7d8a9a !important; }
+html.dark .ws-range { color: #9aa8b5 !important; }
+html.dark .ws-bar { background: #343e50 !important; }
+html.dark .w-pop-col { color: #64b5f6 !important; }
 html.dark .w-chevron { color: #546e7a !important; }
 html.dark .w-detail-panel {
-  background: #141e2a !important;
-  border-top-color: #2a3a4a !important;
+  background: #1c2230 !important;
+  border-top-color: #343e50 !important;
 }
-html.dark .w-range-input { background: #2a3a4a !important; }
+html.dark .w-range-input { background: #343e50 !important; }
 html.dark .w-slider-scale { color: #546e7a !important; }
 html.dark .w-hour-result {
-  background: #1a2332 !important;
-  border-color: #2a3a4a !important;
+  background: #212836 !important;
+  border-color: #343e50 !important;
 }
-html.dark .wh-temp { color: #dce4ec !important; }
-html.dark .wh-desc { color: #8899aa !important; }
-html.dark .wh-pop { background: rgba(79,195,247,0.1) !important; color: #4fc3f7 !important; }
-html.dark .w-header { background: #1a2332 !important; }
+html.dark .wh-temp { color: #c8d1dc !important; }
+html.dark .wh-desc { color: #7d8a9a !important; }
+html.dark .wh-pop { background: rgba(100,181,246,0.1) !important; color: #64b5f6 !important; }
+html.dark .w-header { background: #212836 !important; }
 
 /* ══════════════════════════════════════════
    6. Modals 共用
    ══════════════════════════════════════════ */
-html.dark .modal-overlay { background: rgba(0,0,0,0.7); }
+html.dark .modal-overlay { background: rgba(0,0,0,0.6); }
 
 html.dark .modal-card {
-  background: #1a2332 !important;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+  background: #212836 !important;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.45);
 }
 
 html.dark .modal-header {
-  background: #1a2332 !important;
-  color: #dce4ec !important;
-  border-bottom-color: #2a3a4a !important;
+  background: #212836 !important;
+  color: #c8d1dc !important;
+  border-bottom-color: #343e50 !important;
 }
 
 html.dark .modal-content-scroll {
-  background: #0f1923 !important;
+  background: #1a2030 !important;
 }
 
 html.dark .modal-close,
 html.dark .sheet-close,
 html.dark .rec-close-btn {
-  background: #1f2d3d !important;
-  color: #b0bec5 !important;
-  border: 1px solid #2a3a4a;
+  background: #2a3242 !important;
+  color: #9aa8b5 !important;
+  border: 1px solid #343e50;
 }
 
 /* Sheet Modal */
-html.dark .sheet-modal { background: #1a2332; }
-html.dark .sheet-body { background: #1a2332 !important; }
-html.dark .sheet-header-wrap { background: linear-gradient(135deg, #0d1520, #1a2332) !important; }
+html.dark .sheet-modal { background: #212836; }
+html.dark .sheet-body { background: #212836 !important; }
+html.dark .sheet-header-wrap { background: linear-gradient(135deg, #141824, #212836) !important; }
 html.dark .btn-sheet-main {
-  background: #1f2d3d !important;
-  color: #dce4ec !important;
-  border-color: #2a3a4a !important;
+  background: #2a3242 !important;
+  color: #c8d1dc !important;
+  border-color: #343e50 !important;
 }
 
 /* ══════════════════════════════════════════
@@ -196,9 +211,9 @@ html.dark .btn-sheet-main {
 html.dark input,
 html.dark select,
 html.dark textarea {
-  background: #1f2d3d !important;
-  color: #dce4ec !important;
-  border-color: #2a3a4a !important;
+  background: #2a3242 !important;
+  color: #c8d1dc !important;
+  border-color: #343e50 !important;
 }
 
 html.dark input::placeholder,
@@ -212,16 +227,16 @@ html.dark textarea:focus {
 }
 
 html.dark option {
-  background: #1a2332 !important;
-  color: #dce4ec !important;
+  background: #212836 !important;
+  color: #c8d1dc !important;
 }
 
 html.dark label {
-  color: #8899aa !important;
+  color: #7d8a9a !important;
 }
 
 html.dark hr {
-  border-color: #2a3a4a !important;
+  border-color: #343e50 !important;
 }
 
 /* ══════════════════════════════════════════
@@ -229,39 +244,39 @@ html.dark hr {
    ══════════════════════════════════════════ */
 /* 總花費區 — 保留漸層但用深色 */
 html.dark #financeModal .modal-content-scroll > div:first-child {
-  background: linear-gradient(135deg, #1a3a4a, #0d2a3a) !important;
+  background: linear-gradient(135deg, #1e3a4a, #152a3a) !important;
 }
 
 /* 表單區白底 → 深色 */
 html.dark #financeModal div[style*="background: white"],
 html.dark #financeModal div[style*="background:#fff"] {
-  background: #1a2332 !important;
-  border-color: #2a3a4a !important;
+  background: #212836 !important;
+  border-color: #343e50 !important;
 }
 
 html.dark .voice-btn {
-  background: #1f2d3d !important;
-  color: #dce4ec !important;
-  border-color: #2a3a4a !important;
+  background: #2a3242 !important;
+  color: #c8d1dc !important;
+  border-color: #343e50 !important;
 }
 
 html.dark .fin-time-select {
-  background: #1f2d3d !important;
-  color: #dce4ec !important;
+  background: #2a3242 !important;
+  color: #c8d1dc !important;
 }
 
 html.dark .fin-group {
-  background: #1a2332 !important;
-  border-color: #2a3a4a !important;
+  background: #212836 !important;
+  border-color: #343e50 !important;
 }
 
 html.dark .fin-group-header {
-  background: #1f2d3d !important;
-  color: #dce4ec !important;
+  background: #2a3242 !important;
+  color: #c8d1dc !important;
 }
 
 html.dark .fin-group-header:hover {
-  background: #243648 !important;
+  background: #323d50 !important;
 }
 
 html.dark #fin-input-helper {
@@ -278,31 +293,31 @@ html.dark #financeModal button[onclick="App.Finance.add()"] {
    9. 匯率 Modal
    ══════════════════════════════════════════ */
 html.dark .currency-box {
-  border-color: #2a3a4a !important;
+  border-color: #343e50 !important;
 }
 
 /* VND — 暗紅 */
 html.dark div.currency-box[style*="background: #ffebee"],
 html.dark div.currency-box[style*="background:#ffebee"] {
-  background: rgba(198,40,40,0.15) !important;
-  border-color: rgba(198,40,40,0.3) !important;
+  background: rgba(198,40,40,0.12) !important;
+  border-color: rgba(198,40,40,0.25) !important;
 }
-html.dark div.currency-box[style*="#ffebee"] label { color: #ef9a9a !important; }
-html.dark div.currency-box[style*="#ffebee"] input { color: #ef9a9a !important; }
+html.dark div.currency-box[style*="#ffebee"] label { color: #e57373 !important; }
+html.dark div.currency-box[style*="#ffebee"] input { color: #e57373 !important; }
 
 /* USD — 暗藍 */
 html.dark div.currency-box[style*="background: #e3f2fd"],
 html.dark div.currency-box[style*="background:#e3f2fd"] {
-  background: rgba(25,118,210,0.15) !important;
+  background: rgba(25,118,210,0.12) !important;
 }
-html.dark div.currency-box[style*="#e3f2fd"] label { color: #90caf9 !important; }
+html.dark div.currency-box[style*="#e3f2fd"] label { color: #82b1ff !important; }
 
 /* TWD — 暗橘 */
 html.dark div.currency-box[style*="background: #fff3e0"],
 html.dark div.currency-box[style*="background:#fff3e0"] {
-  background: rgba(239,108,0,0.12) !important;
+  background: rgba(239,108,0,0.10) !important;
 }
-html.dark div.currency-box[style*="#fff3e0"] label { color: #ffcc80 !important; }
+html.dark div.currency-box[style*="#fff3e0"] label { color: #ffb74d !important; }
 
 html.dark #rate-source { color: #546e7a !important; }
 
@@ -311,13 +326,13 @@ html.dark #rate-source { color: #546e7a !important; }
    ══════════════════════════════════════════ */
 html.dark #phraseModal .trans-container,
 html.dark div[style*="background: white"][style*="border-radius: 20px"] {
-  background: #1a2332 !important;
-  border-color: #2a3a4a !important;
+  background: #212836 !important;
+  border-color: #343e50 !important;
 }
 
 /* 翻譯結果區 */
 html.dark div[style*="background: #f0f8ff"] {
-  background: rgba(77,208,225,0.08) !important;
+  background: rgba(91,196,208,0.06) !important;
 }
 
 html.dark #transResult {
@@ -328,95 +343,119 @@ html.dark #btn-speak-result { color: var(--primary) !important; }
 
 /* Google 翻譯按鈕 */
 html.dark #phraseModal button[onclick="App.Language.openGoogle()"] {
-  background: #1f2d3d !important;
-  border-color: #2a3a4a !important;
-  color: #8899aa !important;
+  background: #2a3242 !important;
+  border-color: #343e50 !important;
+  color: #7d8a9a !important;
 }
 
 /* 翻譯按鈕 */
 html.dark #phraseModal button[onclick="App.Language.translate()"] {
   background: var(--primary) !important;
-  color: #0f1923 !important;
+  color: #171c28 !important;
 }
 
 /* 常用語卡片 */
 html.dark #phrase-grid-content > div {
-  background: #1a2332 !important;
-  border-color: #2a3a4a !important;
+  background: #212836 !important;
+  border-color: #343e50 !important;
 }
 
 /* Mic button */
 html.dark #btn-mic-trans {
-  color: #8899aa !important;
+  color: #7d8a9a !important;
 }
 
 /* ══════════════════════════════════════════
    11. 筆記 Modal
    ══════════════════════════════════════════ */
 html.dark #noteModal textarea {
-  background: #1f2d3d !important;
-  border-color: #2a3a4a !important;
-  color: #dce4ec !important;
+  background: #2a3242 !important;
+  border-color: #343e50 !important;
+  color: #c8d1dc !important;
 }
 
 html.dark #noteModal button[onclick="App.Note.save()"] {
   background: var(--primary) !important;
-  color: #0f1923 !important;
+  color: #171c28 !important;
 }
 
-/* Detail Sheet 筆記區 */
+/* Detail Sheet 筆記區 — 加強覆蓋確保所有裝置生效 */
 html.dark .sh-note-box {
-  background: #1f2d3d !important;
-  border-color: #2a3a4a !important;
+  background: #2a3242 !important;
+  border-color: #343e50 !important;
+  color: #c8d1dc !important;
+}
+/* 筆記標題 inline color 覆蓋（含空格/無空格兩種寫法）*/
+html.dark .sh-note-box div[style*="color:#f57c00"],
+html.dark .sh-note-box div[style*="color: #f57c00"] {
+  color: var(--accent) !important;
+}
+/* 筆記佔位文字 inline color:#666 覆蓋（含空格/無空格）*/
+html.dark .sh-note-box div[style*="color:#666"],
+html.dark .sh-note-box div[style*="color: #666"] {
+  color: #7d8a9a !important;
+}
+
+/* ★ Sheet body 裡所有 inline 深色文字 — 確保跨裝置一致 */
+html.dark .sheet-body {
+  background: #212836 !important;
+  color: #c8d1dc !important;
+}
+html.dark .sheet-body div[style*="color:#2e7d32"],
+html.dark .sheet-body div[style*="color: #2e7d32"] {
+  color: #81c784 !important;
+}
+html.dark .sheet-body div[style*="color:#666"],
+html.dark .sheet-body div[style*="color: #666"] {
+  color: #7d8a9a !important;
+}
+html.dark .sheet-body div[style*="color:#f57c00"],
+html.dark .sheet-body div[style*="color: #f57c00"] {
+  color: var(--accent) !important;
 }
 
 /* Detail Sheet 描述區 */
 html.dark .sheet-body div[style*="background:#e8f5e9"],
 html.dark .sheet-body div[style*="background: #e8f5e9"] {
-  background: rgba(46,125,50,0.15) !important;
+  background: rgba(46,125,50,0.12) !important;
   color: #81c784 !important;
 }
 
 html.dark .sh-tool-btn {
-  background: #1f2d3d !important;
-  color: #8899aa !important;
+  background: #2a3242 !important;
+  color: #7d8a9a !important;
 }
 
 /* ══════════════════════════════════════════
    12. 設定 Modal
    ══════════════════════════════════════════ */
-/* 深色模式開關區 */
-html.dark #settingsModal div[style*="background:#f5f5f5"] {
-  background: #1f2d3d !important;
-}
-
 html.dark #settingsModal span[style*="color:#37474f"] {
-  color: #dce4ec !important;
+  color: #c8d1dc !important;
 }
 
 /* 個別清除按鈕 — 保留辨識色但用深色版 */
 html.dark #settingsModal button[onclick="App.Settings.clearFinance()"] {
-  background: rgba(239,108,0,0.12) !important;
+  background: rgba(239,108,0,0.10) !important;
   color: #ffb74d !important;
-  border-color: rgba(239,108,0,0.25) !important;
+  border-color: rgba(239,108,0,0.20) !important;
 }
 
 html.dark #settingsModal button[onclick="App.Settings.clearNotes()"] {
-  background: rgba(25,118,210,0.12) !important;
+  background: rgba(25,118,210,0.10) !important;
   color: #64b5f6 !important;
-  border-color: rgba(25,118,210,0.25) !important;
+  border-color: rgba(25,118,210,0.20) !important;
 }
 
 html.dark #settingsModal button[onclick="App.Settings.clearCompletions()"] {
-  background: rgba(46,125,50,0.12) !important;
+  background: rgba(46,125,50,0.10) !important;
   color: #81c784 !important;
-  border-color: rgba(46,125,50,0.25) !important;
+  border-color: rgba(46,125,50,0.20) !important;
 }
 
 html.dark #settingsModal button[onclick="App.Settings.factoryReset()"] {
-  background: rgba(198,40,40,0.15) !important;
+  background: rgba(198,40,40,0.12) !important;
   color: #ef5350 !important;
-  border-color: rgba(198,40,40,0.25) !important;
+  border-color: rgba(198,40,40,0.20) !important;
 }
 
 /* 危險區域文字 */
@@ -428,153 +467,245 @@ html.dark #settingsModal div[style*="color: #e57373"] {
    13. 推薦攻略
    ══════════════════════════════════════════ */
 html.dark .rec-header-fixed {
-  background: #1a2332 !important;
-  border-bottom-color: #2a3a4a;
+  background: #212836 !important;
+  border-bottom-color: #343e50;
 }
 
-html.dark .rec-main-title { color: #dce4ec !important; }
+html.dark .rec-main-title { color: #c8d1dc !important; }
 
 html.dark .rec-tab-btn {
-  background: #1f2d3d !important;
-  color: #8899aa !important;
-  border-color: #2a3a4a !important;
+  background: #2a3242 !important;
+  color: #7d8a9a !important;
+  border-color: #343e50 !important;
 }
 
+/* 攻略分類 tab active 色（各分類保留辨識色但降低飽和度）*/
 html.dark .rec-tab-btn.active {
   background: var(--primary) !important;
-  color: #0f1923 !important;
+  color: #171c28 !important;
+}
+html.dark .rec-tab-btn.active.food {
+  background: var(--accent) !important;
+  color: #171c28 !important;
+  border-color: var(--accent) !important;
+}
+html.dark .rec-tab-btn.active.shopping {
+  background: rgba(25,118,210,0.25) !important;
+  color: #82b1ff !important;
+  border-color: rgba(25,118,210,0.35) !important;
+}
+html.dark .rec-tab-btn.active.massage {
+  background: rgba(142,36,170,0.20) !important;
+  color: #ce93d8 !important;
+  border-color: rgba(142,36,170,0.30) !important;
+}
+html.dark .rec-tab-btn.active.tourist_attraction {
+  background: rgba(46,125,50,0.20) !important;
+  color: #81c784 !important;
+  border-color: rgba(46,125,50,0.30) !important;
+}
+
+/* ★ 攻略滾動區背景 — 原來 #fafafa 未覆蓋 */
+html.dark .rec-body-scroll {
+  background: #171c28 !important;
 }
 
 html.dark .rec-card {
-  background: #1a2332 !important;
-  border-color: #2a3a4a !important;
+  background: #212836 !important;
+  border-color: #343e50 !important;
 }
 
-html.dark .rec-name-text { color: #dce4ec !important; }
+html.dark .rec-name-text { color: #e8ecf1 !important; font-weight: 800; }
 html.dark .rec-tag-pill {
-  background: #1f2d3d !important;
-  color: #8899aa !important;
+  background: #2a3242 !important;
+  color: #7d8a9a !important;
 }
 html.dark .rec-tag-pill.highlight {
-  background: rgba(255,183,77,0.12) !important;
+  background: rgba(232,168,76,0.10) !important;
   color: var(--accent) !important;
 }
 
 html.dark .rec-nav-circle {
-  background: rgba(77,208,225,0.12) !important;
+  background: rgba(91,196,208,0.10) !important;
   color: var(--primary) !important;
 }
 
+/* ★ 門票 CTA 按鈕 — 深色暗金風格 */
+html.dark .rec-ticket-cta {
+  background: linear-gradient(135deg, rgba(232,168,76,0.10) 0%, rgba(232,168,76,0.06) 100%) !important;
+  border-color: rgba(232,168,76,0.25) !important;
+}
+
+html.dark .rec-ticket-icon-col {
+  background: rgba(232,168,76,0.20) !important;
+  color: var(--accent) !important;
+}
+
+html.dark .rec-ticket-info {
+  border-right-color: rgba(232,168,76,0.20) !important;
+}
+
+html.dark .rec-ticket-title {
+  color: var(--accent) !important;
+}
+
+html.dark .rec-ticket-sub {
+  color: #b08a50 !important;
+}
+
+html.dark .rec-ticket-arrow {
+  color: var(--accent) !important;
+}
+
+/* 分店展開區 */
 html.dark .rec-branch-box {
-  background: #141e2a !important;
-  border-color: #2a3a4a !important;
+  background: #1c2230 !important;
+  border-color: #343e50 !important;
 }
 
 html.dark .rec-branch-item {
-  border-color: #2a3a4a !important;
+  border-color: #343e50 !important;
 }
 
-html.dark .rec-branch-item:hover { background: #1f2d3d !important; }
+html.dark .rec-branch-item:hover { background: #2a3242 !important; }
 html.dark .rec-branch-item.active {
-  background: rgba(77,208,225,0.08) !important;
+  background: rgba(91,196,208,0.06) !important;
   border-color: var(--primary) !important;
 }
 
 html.dark .rec-branch-radio { color: #546e7a !important; }
-html.dark .rec-branch-name { color: #dce4ec !important; }
+html.dark .rec-branch-name { color: #c8d1dc !important; }
 html.dark .rec-current-addr {
-  color: #8899aa !important;
-  background: #1f2d3d !important;
+  color: #7d8a9a !important;
+  background: #2a3242 !important;
 }
 
-/* Rec icon boxes */
+/* 分店 tag 標籤 */
+html.dark .rec-branch-tag.orange {
+  background: rgba(232,168,76,0.12) !important;
+  color: var(--accent) !important;
+}
+html.dark .rec-branch-tag.blue {
+  background: rgba(25,118,210,0.12) !important;
+  color: #82b1ff !important;
+}
+
+/* 展開/收合 footer */
+html.dark .rec-expand-footer {
+  color: #7d8a9a !important;
+  border-top-color: #343e50 !important;
+}
+
+/* 推薦 ribbon 保持紅色 — 不需要改 */
+
+/* Rec icon boxes — 各分類用低飽和度背景 */
 html.dark .rec-icon-box {
-  background: #1f2d3d !important;
+  background: #2a3242 !important;
+}
+html.dark div.rec-icon-box.food {
+  background: rgba(232,168,76,0.12) !important;
+  color: var(--accent) !important;
+}
+html.dark div.rec-icon-box.shopping {
+  background: rgba(25,118,210,0.12) !important;
+  color: #82b1ff !important;
+}
+html.dark div.rec-icon-box.massage {
+  background: rgba(142,36,170,0.12) !important;
+  color: #ce93d8 !important;
+}
+html.dark div.rec-icon-box.experience {
+  background: rgba(46,125,50,0.12) !important;
+  color: #81c784 !important;
+}
+html.dark div.rec-icon-box.tourist_attraction {
+  background: rgba(46,125,50,0.12) !important;
+  color: #81c784 !important;
 }
 
 /* ══════════════════════════════════════════
    14. 行前須知
    ══════════════════════════════════════════ */
 html.dark .info-card {
-  background: #1a2332 !important;
-  border-color: #2a3a4a !important;
+  background: #212836 !important;
+  border-color: #343e50 !important;
 }
 
 html.dark .info-icon-bubble {
-  background: rgba(77,208,225,0.12) !important;
+  background: rgba(91,196,208,0.10) !important;
 }
 
-html.dark .info-title { color: #dce4ec !important; }
-html.dark .info-desc { color: #8899aa !important; }
+html.dark .info-title { color: #c8d1dc !important; }
+html.dark .info-desc { color: #7d8a9a !important; }
 
 html.dark .info-highlight-card {
-  background: rgba(255,183,77,0.08) !important;
-  border-color: rgba(255,183,77,0.2) !important;
+  background: rgba(232,168,76,0.06) !important;
+  border-color: rgba(232,168,76,0.15) !important;
 }
 
 html.dark .info-highlight-header {
-  background: rgba(255,183,77,0.1) !important;
+  background: rgba(232,168,76,0.08) !important;
 }
 
-html.dark .checklist-text { color: #b0bec5 !important; }
+html.dark .checklist-text { color: #9aa8b5 !important; }
 
 /* ══════════════════════════════════════════
    15. 地圖
    ══════════════════════════════════════════ */
-html.dark #map-layer { background: #0f1923 !important; }
-html.dark #map { background: #1a2332 !important; }
+html.dark #map-layer { background: #171c28 !important; }
+html.dark #map { background: #212836 !important; }
 
 html.dark .map-close-btn {
-  background: #1a2332 !important;
-  color: #dce4ec !important;
-  border: 1px solid #2a3a4a;
+  background: #212836 !important;
+  color: #c8d1dc !important;
+  border: 1px solid #343e50;
 }
 
 html.dark .map-locate-btn {
-  background: #1a2332 !important;
-  color: #dce4ec !important;
+  background: #212836 !important;
+  color: #c8d1dc !important;
 }
 
 html.dark .map-locate-btn.active {
-  background: rgba(77,208,225,0.15) !important;
+  background: rgba(91,196,208,0.12) !important;
   color: var(--primary) !important;
 }
 
 html.dark #map-drawer {
-  background: #1a2332 !important;
-  color: #dce4ec !important;
-  box-shadow: 0 -5px 20px rgba(0,0,0,0.4) !important;
+  background: #212836 !important;
+  color: #c8d1dc !important;
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.3) !important;
 }
 
-html.dark .drawer-handle { background: #2a3a4a !important; }
+html.dark .drawer-handle { background: #343e50 !important; }
 
 html.dark .map-route-info-pill {
-  background: rgba(26,35,50,0.95) !important;
-  color: #dce4ec !important;
+  background: rgba(33,40,54,0.95) !important;
+  color: #c8d1dc !important;
 }
 
 html.dark .map-day-tabs {
-  background: #1a2332 !important;
-  border-bottom-color: #2a3a4a !important;
+  background: #212836 !important;
+  border-bottom-color: #343e50 !important;
 }
 
 html.dark .map-day-tab {
-  background: #1f2d3d !important;
-  color: #8899aa !important;
+  background: #2a3242 !important;
+  color: #7d8a9a !important;
 }
 
 html.dark .map-day-tab.active {
   background: var(--primary) !important;
-  color: #0f1923 !important;
+  color: #171c28 !important;
 }
 
-html.dark .drawer-header { color: #dce4ec !important; }
-html.dark .drawer-item { border-bottom-color: #2a3a4a !important; }
-html.dark .drawer-title { color: #dce4ec !important; }
-html.dark .drawer-time { color: #8899aa !important; }
+html.dark .drawer-header { color: #c8d1dc !important; }
+html.dark .drawer-item { border-bottom-color: #343e50 !important; }
+html.dark .drawer-title { color: #c8d1dc !important; }
+html.dark .drawer-time { color: #7d8a9a !important; }
 
 html.dark .drawer-nav {
-  background: rgba(77,208,225,0.1) !important;
+  background: rgba(91,196,208,0.08) !important;
   color: var(--primary) !important;
 }
 
@@ -582,81 +713,81 @@ html.dark .drawer-check { color: #546e7a !important; }
 html.dark .drawer-check.checked { color: var(--primary) !important; }
 
 html.dark .mode-btn {
-  background: #1f2d3d !important;
-  color: #8899aa !important;
-  border-color: #2a3a4a !important;
+  background: #2a3242 !important;
+  color: #7d8a9a !important;
+  border-color: #343e50 !important;
 }
 
 html.dark .mode-btn.active {
   background: var(--primary) !important;
-  color: #0f1923 !important;
+  color: #171c28 !important;
 }
 
-html.dark .mp-meta { color: #8899aa !important; }
-html.dark .mp-title { color: #dce4ec !important; }
-html.dark .mp-tag-pill { background: rgba(77,208,225,0.1) !important; color: var(--primary) !important; }
+html.dark .mp-meta { color: #7d8a9a !important; }
+html.dark .mp-title { color: #c8d1dc !important; }
+html.dark .mp-tag-pill { background: rgba(91,196,208,0.08) !important; color: var(--primary) !important; }
 html.dark .mp-time-info {
-  background: rgba(255,183,77,0.1) !important;
+  background: rgba(232,168,76,0.08) !important;
   color: var(--accent) !important;
 }
 
 html.dark .mp-gmap-btn {
-  background: #1f2d3d !important;
-  color: #8899aa !important;
+  background: #2a3242 !important;
+  color: #7d8a9a !important;
 }
 
 /* ══════════════════════════════════════════
    16. 門票
    ══════════════════════════════════════════ */
 html.dark .wallet-pass {
-  background: linear-gradient(180deg, #0d1520 0%, #1a2332 100%) !important;
+  background: linear-gradient(180deg, #141824 0%, #212836 100%) !important;
 }
 
-html.dark .pass-header { color: #dce4ec !important; }
+html.dark .pass-header { color: #c8d1dc !important; }
 
 html.dark .pass-body {
-  background: #1a2332 !important;
-  color: #b0bec5 !important;
+  background: #212836 !important;
+  color: #9aa8b5 !important;
 }
 
-html.dark .pass-dashed-line { border-top-color: #2a3a4a !important; }
-html.dark .pass-label { color: #8899aa !important; }
-html.dark .pass-value { color: #dce4ec !important; }
+html.dark .pass-dashed-line { border-top-color: #343e50 !important; }
+html.dark .pass-label { color: #7d8a9a !important; }
+html.dark .pass-value { color: #c8d1dc !important; }
 
 html.dark .pass-code-text {
-  background: #1f2d3d !important;
-  color: #8899aa !important;
+  background: #2a3242 !important;
+  color: #7d8a9a !important;
 }
 
 html.dark .pass-close-btn {
-  background: #1f2d3d !important;
-  color: #dce4ec !important;
+  background: #2a3242 !important;
+  color: #c8d1dc !important;
 }
 
 /* ══════════════════════════════════════════
    17. FAB
    ══════════════════════════════════════════ */
 html.dark .fab-label {
-  background: #1a2332 !important;
-  color: #dce4ec !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  border: 1px solid #2a3a4a;
+  background: #212836 !important;
+  color: #c8d1dc !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  border: 1px solid #343e50;
 }
 
 /* ══════════════════════════════════════════
    18. Toast
    ══════════════════════════════════════════ */
 html.dark .toast {
-  background: #dce4ec !important;
-  color: #0f1923 !important;
+  background: #c8d1dc !important;
+  color: #171c28 !important;
 }
 
 /* ══════════════════════════════════════════
    19. Scrollbar
    ══════════════════════════════════════════ */
 html.dark ::-webkit-scrollbar { width: 6px; }
-html.dark ::-webkit-scrollbar-track { background: #0f1923; }
-html.dark ::-webkit-scrollbar-thumb { background: #2a3a4a; border-radius: 3px; }
+html.dark ::-webkit-scrollbar-track { background: #171c28; }
+html.dark ::-webkit-scrollbar-thumb { background: #343e50; border-radius: 3px; }
 
 /* ══════════════════════════════════════════
    20. Dark Mode Toggle Button (header)
@@ -687,45 +818,7 @@ body.scrolled .darkmode-btn {
 }
 
 /* ══════════════════════════════════════════
-   21. Toggle Switch 樣式
-   ══════════════════════════════════════════ */
-.dm-switch {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 26px;
-}
-
-.dm-switch input { opacity: 0; width: 0; height: 0; }
-
-.dm-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: #ccc;
-  border-radius: 26px;
-  transition: 0.3s;
-}
-
-.dm-slider:before {
-  content: "";
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background: white;
-  border-radius: 50%;
-  transition: 0.3s;
-}
-
-.dm-switch input:checked + .dm-slider { background: #5c6bc0; }
-.dm-switch input:checked + .dm-slider:before { transform: translateX(22px); }
-
-html.dark .dm-slider { background: #2a3a4a; }
-
-/* ══════════════════════════════════════════
-   22. 通用 inline style 覆蓋
+   21. 通用 inline style 覆蓋
        處理 HTML 中所有 background: white 等
    ══════════════════════════════════════════ */
 
@@ -733,34 +826,69 @@ html.dark .dm-slider { background: #2a3a4a; }
 html.dark .modal-content-scroll div[style*="background: white"],
 html.dark .modal-content-scroll div[style*="background:#fff"],
 html.dark .modal-content-scroll div[style*="background: #fff"] {
-  background: #1a2332 !important;
-  border-color: #2a3a4a !important;
+  background: #212836 !important;
+  border-color: #343e50 !important;
 }
 
 /* 所有 modal 內的淺色背景容器 */
 html.dark .modal-content-scroll div[style*="background: #f"],
 html.dark .modal-content-scroll div[style*="background:#f"] {
-  background: #1f2d3d !important;
+  background: #2a3242 !important;
 }
 
-/* 按鈕通用深色化 */
+/* 按鈕通用深色化 — 柔和色 */
 html.dark .modal-content-scroll button[style] {
-  border-color: #2a3a4a !important;
+  border-color: #343e50 !important;
 }
 
 /* 分隔線 */
 html.dark .modal-content-scroll hr[style] {
-  border-top-color: #2a3a4a !important;
+  border-top-color: #343e50 !important;
 }
 
 /* 所有 #78909c 標籤文字 */
 html.dark .modal-content-scroll label[style*="color: #78909c"],
 html.dark .modal-content-scroll div[style*="color: #78909c"] {
-  color: #8899aa !important;
+  color: #7d8a9a !important;
 }
 
 /* 清除按鈕 style in settings */
 html.dark .modal-content-scroll button[style*="background: #eee"] {
-  background: #1f2d3d !important;
-  color: #8899aa !important;
+  background: #2a3242 !important;
+  color: #7d8a9a !important;
+}
+
+/* ══════════════════════════════════════════
+   22. inline style 按鈕顏色柔和化
+       避免深色背景上出現純白按鈕
+   ══════════════════════════════════════════ */
+/* 翻譯、記帳等 modal 中 color: white 的按鈕文字 → 柔化 */
+html.dark .modal-content-scroll button[style*="color: white"] {
+  color: #f0f0f0 !important;
+}
+
+/* 純白背景按鈕 → 深色 */
+html.dark .modal-content-scroll button[style*="background: white"] {
+  background: #2a3242 !important;
+  color: #7d8a9a !important;
+}
+
+/* select 中 color:#333 的 option */
+html.dark .modal-content-scroll option[style*="color: #333"],
+html.dark .modal-content-scroll option[style*="color:#333"] {
+  color: #c8d1dc !important;
+}
+
+/* ══════════════════════════════════════════
+   23. 設定按鈕防誤觸 (長按啟動)
+   ══════════════════════════════════════════ */
+.settings-btn {
+  font-size: 0.75rem;
+}
+
+.settings-btn::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
 }

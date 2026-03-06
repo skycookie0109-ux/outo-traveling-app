@@ -114,6 +114,9 @@ window.onload = async () => {
 
     // [Ver2.2] 初始化深色模式
     App.Settings.initDarkMode();
+
+    // [Ver2.2.2] 設定按鈕長按啟動
+    App.Settings.initSettingsButton();
   } catch (error) {
     console.error('App 啟動失敗:', error);
     document.getElementById('loading-screen')?.classList.add('hidden');
