@@ -258,9 +258,10 @@
   background: var(--accent);
 }
 
-/* 滑動時顯示操作區 */
+/* 滑動時顯示操作區（漸進淡入）*/
 .swipe-wrap.swiping .swipe-action {
   opacity: 1;
+  transition: opacity 0.15s ease-out;
 }
 
 /* 滑動中的卡片：取消原本的 active 縮放、取消 transition */
@@ -272,13 +273,13 @@
   transform: none;
 }
 
-/* 滑動回彈動畫 */
+/* 滑動回彈動畫（未達門檻，彈回原位）*/
 .swipe-wrap .mini-card.snap-back {
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* 滑動觸發：平滑回彈 */
+/* 滑動觸發：先平滑回到原位，再執行 toggleComplete */
 .swipe-wrap .mini-card.swipe-triggered {
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
   transform: translateX(0) !important;
 }
