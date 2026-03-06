@@ -1,29 +1,23 @@
 /* =========================================
-   Weather Styles - Weather Widget & Modal
-   [Ver2.4] 全面視覺升級：
-   - 儀表板卡片上下分層佈局
-   - Font Awesome 圖示取代 emoji
-   - 溫度冷暖漸層色條
-   - 降雨率三級配色
-   - 穿搭建議列
-   - Modal 左側色條 + 展開動畫
-   - 時間滑桿美化
+   Weather Styles — Widget & Modal
+   [Ver2.4] iOS 風格毛玻璃 + 精緻動畫
    ========================================= */
 
 /* ── 儀表板外框 ────────────────────────── */
 #weather-wrapper {
-  background: linear-gradient(135deg, #e0f7fa 0%, #fff8e1 50%, #fce4ec 100%);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px) saturate(1.8);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-16);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   position: relative;
-  padding-bottom: 15px;
-  animation: wFadeIn 0.6s ease;
+  padding-bottom: var(--space-16);
+  animation: wFadeIn 0.5s ease;
   overflow: hidden;
   min-height: 100px;
-  margin-top: 10px;
+  margin-top: var(--space-10);
 }
 
 @keyframes wFadeIn {
@@ -42,43 +36,43 @@
   display: none;
 }
 
-/* ── 儀表板卡片（上下分層）─────────────── */
+/* ── 儀表板卡片 ──────────────────────── */
 .w-card {
   flex: 0 0 100%;
   scroll-snap-align: center;
   display: flex;
   flex-direction: column;
-  padding: 14px 20px 8px;
+  padding: var(--space-16) var(--space-20) var(--space-8);
   box-sizing: border-box;
   width: 100%;
-  gap: 6px;
+  gap: var(--space-8);
 }
 
 /* 上排：圖示 + 地點 + 降雨 */
 .wc-row-top {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-10);
 }
 
 .wc-icon-wrap {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
   flex-shrink: 0;
-  transition: all 0.3s;
+  transition: all var(--transition-fast);
 }
 
-/* 天氣圖示色彩分類 */
-.w-icon-sun { background: #fff3e0; color: #ef6c00; }
-.w-icon-cloudy { background: #fff8e1; color: #f9a825; }
-.w-icon-overcast { background: #eceff1; color: #78909c; }
-.w-icon-rain { background: #e3f2fd; color: #1976d2; }
-.w-icon-storm { background: #ede7f6; color: #7b1fa2; }
+/* 天氣圖示色彩 */
+.w-icon-sun { background: #fff7ed; color: #ea580c; }
+.w-icon-cloudy { background: #fefce8; color: #ca8a04; }
+.w-icon-overcast { background: var(--bg-secondary); color: var(--text-sub); }
+.w-icon-rain { background: #eff6ff; color: #2563eb; }
+.w-icon-storm { background: #f5f3ff; color: #7c3aed; }
 
 .wc-loc-group {
   flex: 1;
@@ -86,92 +80,90 @@
 }
 
 .wc-loc {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--text-main);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: -0.2px;
 }
 
 .wc-status {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
-  padding: 1px 8px;
-  border-radius: 6px;
+  padding: 2px var(--space-8);
+  border-radius: var(--radius-full);
   display: inline-block;
-  margin-top: 2px;
-  letter-spacing: 0.5px;
+  margin-top: var(--space-2);
+  letter-spacing: 0.3px;
 }
 
 .wc-status.is-live {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #a5d6a7;
+  background: var(--success-bg);
+  color: var(--success);
 }
 
 .wc-status.is-ref {
-  background: #fff3e0;
-  color: #e65100;
-  border: 1px solid #ffcc80;
+  background: var(--warning-bg);
+  color: var(--accent-dark);
 }
 
 /* 降雨率 badge */
 .wc-pop-badge {
   font-size: 0.75rem;
   font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 10px;
+  padding: var(--space-4) var(--space-10);
+  border-radius: var(--radius-full);
   white-space: nowrap;
   flex-shrink: 0;
-  transition: all 0.3s;
+  transition: all var(--transition-fast);
 }
 
-/* 降雨三級配色（通用，儀表板 + Modal 共用）*/
-.rain-low { background: #e8f5e9; color: #388e3c; }
-.rain-mid { background: #fff3e0; color: #e65100; }
-.rain-high { background: #fce4ec; color: #c62828; }
-.rain-unknown { background: #eceff1; color: #78909c; }
+/* 降雨三級配色 */
+.rain-low { background: var(--success-bg); color: #059669; }
+.rain-mid { background: var(--warning-bg); color: #d97706; }
+.rain-high { background: var(--error-bg); color: #dc2626; }
+.rain-unknown { background: var(--bg-secondary); color: var(--text-sub); }
 
 /* 中排：溫度條 */
 .wc-row-mid {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 0;
+  gap: var(--space-6);
+  padding: var(--space-2) 0;
 }
 
 .wc-temp-min {
-  font-family: "Quicksand", sans-serif;
   font-weight: 800;
-  font-size: 1.05rem;
-  color: #0277bd;
+  font-size: 1.1rem;
+  color: #0369a1;
   min-width: 32px;
   text-align: right;
+  letter-spacing: -0.5px;
 }
 
 .wc-temp-max {
-  font-family: "Quicksand", sans-serif;
   font-weight: 800;
-  font-size: 1.05rem;
-  color: #e65100;
+  font-size: 1.1rem;
+  color: #c2410c;
   min-width: 32px;
+  letter-spacing: -0.5px;
 }
 
 .wc-temp-bar {
   flex: 1;
-  height: 5px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #42a5f5 0%, #ffee58 40%, #ff7043 100%);
-  opacity: 0.7;
-  position: relative;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, #38bdf8 0%, #fbbf24 45%, #f97316 100%);
+  opacity: 0.65;
 }
 
 .wc-desc-text {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-sub);
   font-weight: 600;
-  margin-left: 4px;
+  margin-left: var(--space-4);
   white-space: nowrap;
 }
 
@@ -179,12 +171,12 @@
 .wc-row-bot {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-6);
   font-size: 0.72rem;
-  color: #6d4c41;
-  background: rgba(255, 255, 255, 0.5);
-  padding: 4px 10px;
-  border-radius: 8px;
+  color: var(--text-sub);
+  background: var(--bg-secondary);
+  padding: var(--space-6) var(--space-10);
+  border-radius: var(--radius-sm);
   font-weight: 600;
   line-height: 1.3;
 }
@@ -195,7 +187,7 @@
   flex-shrink: 0;
 }
 
-/* ── 滑動圓點 ──────────────────────────── */
+/* ── 滑動圓點 ────────────────────────── */
 .w-dots {
   position: absolute;
   bottom: 5px;
@@ -203,22 +195,22 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  gap: 5px;
+  gap: var(--space-4);
   pointer-events: none;
 }
 
 .w-dot {
   width: 5px;
   height: 5px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.1);
-  transition: all 0.3s;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.08);
+  transition: all var(--transition-fast);
 }
 
 .w-dot.active {
   background: var(--accent);
-  width: 14px;
-  border-radius: 3px;
+  width: 16px;
+  border-radius: var(--radius-full);
 }
 
 /* =========================================
@@ -226,12 +218,12 @@
    ========================================= */
 
 .w-day-item {
-  background: white;
-  border-radius: 16px;
-  margin-bottom: 10px;
-  border: 1px solid #f0f0f0;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-10);
+  border: 1px solid var(--border-light);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all var(--transition-base);
   position: relative;
 }
 
@@ -242,51 +234,56 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
-  background: #e0e0e0;
-  border-radius: 4px 0 0 4px;
-  transition: all 0.3s;
+  width: 3px;
+  background: var(--bg-tertiary);
+  border-radius: 3px 0 0 3px;
+  transition: all var(--transition-base);
 }
 
 .w-day-item.open {
-  box-shadow: 0 8px 25px rgba(0, 172, 193, 0.12);
-  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
 }
 
 .w-day-item.open::before {
   background: var(--primary);
-  width: 5px;
+  width: 4px;
 }
 
 .w-header {
-  padding: 14px 16px 14px 20px;
+  padding: var(--space-12) var(--space-16) var(--space-12) var(--space-20);
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  background: #fff;
-  transition: background 0.3s;
+  background: var(--bg-elevated);
+  transition: background var(--transition-fast);
+}
+
+.w-header:active {
+  background: var(--bg-secondary);
 }
 
 .w-day-item.open .w-header {
-  background: #f8fffe;
+  background: var(--bg-elevated);
 }
 
 .w-date-col {
   display: flex;
   flex-direction: column;
-  width: 70px;
+  width: 65px;
 }
 
 .wd-main-date {
   font-weight: 800;
   color: var(--text-main);
-  font-size: 1rem;
+  font-size: 0.95rem;
+  letter-spacing: -0.3px;
 }
 
 .wd-sub-day {
-  font-size: 0.7rem;
-  color: #90a4ae;
+  font-size: 0.68rem;
+  color: var(--text-tertiary);
   font-weight: 600;
   margin-top: 1px;
 }
@@ -296,62 +293,55 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: var(--space-10);
 }
 
-/* Modal 內的天氣圖示容器 */
 .ws-icon-wrap {
   width: 32px;
   height: 32px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   flex-shrink: 0;
 }
 
-/* 溫度範圍（冷暖色 + 漸層條）*/
 .ws-temp-range {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-family: "Quicksand", sans-serif;
+  gap: var(--space-4);
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
-.ws-min {
-  color: #0277bd;
-}
-
-.ws-max {
-  color: #e65100;
-}
+.ws-min { color: #0369a1; }
+.ws-max { color: #c2410c; }
 
 .ws-bar {
-  width: 36px;
-  height: 4px;
-  background: linear-gradient(90deg, #42a5f5, #ffee58, #ff7043);
-  border-radius: 2px;
-  opacity: 0.6;
+  width: 32px;
+  height: 3px;
+  background: linear-gradient(90deg, #38bdf8, #fbbf24, #f97316);
+  border-radius: var(--radius-full);
+  opacity: 0.55;
 }
 
 .w-pop-col {
-  width: 58px;
+  width: 56px;
   text-align: right;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 8px;
+  padding: 3px var(--space-8);
+  border-radius: var(--radius-sm);
   white-space: nowrap;
 }
 
 .w-chevron {
-  font-size: 0.8rem;
-  color: #ccc;
-  margin-left: 6px;
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-left: var(--space-4);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              color var(--transition-fast);
 }
 
 .w-day-item.open .w-chevron {
@@ -359,14 +349,14 @@
   color: var(--primary);
 }
 
-/* ── 每日穿搭建議列 ─────────────────────── */
+/* ── 每日穿搭建議 ────────────────────── */
 .w-day-advice {
   display: none;
-  padding: 0 20px 10px;
-  font-size: 0.75rem;
-  color: #6d4c41;
+  padding: 0 var(--space-20) var(--space-10);
+  font-size: 0.73rem;
+  color: var(--text-sub);
   font-weight: 600;
-  gap: 6px;
+  gap: var(--space-6);
   align-items: center;
 }
 
@@ -380,27 +370,27 @@
   flex-shrink: 0;
 }
 
-/* ── 展開面板（動畫過渡）────────────────── */
+/* ── 展開面板 ────────────────────────── */
 .w-detail-panel {
   max-height: 0;
   overflow: hidden;
-  background: linear-gradient(180deg, #f8fffe, #fafafa);
-  border-top: 1px dashed transparent;
-  padding: 0 20px;
+  background: var(--bg-secondary);
+  border-top: 1px solid transparent;
+  padding: 0 var(--space-20);
   transition: max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
               padding 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-              border-color 0.3s;
+              border-color var(--transition-base);
 }
 
 .w-day-item.open .w-detail-panel {
   max-height: 300px;
-  padding: 18px 20px;
-  border-top-color: #e0e0e0;
+  padding: var(--space-16) var(--space-20);
+  border-top-color: var(--border-light);
 }
 
-/* ── 時間滑桿 ──────────────────────────── */
+/* ── 時間滑桿 ────────────────────────── */
 .w-slider-wrap {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-20);
   text-align: center;
   position: relative;
   padding-top: 32px;
@@ -413,12 +403,12 @@
   transform: translateX(-50%);
   display: inline-block;
   background: var(--primary);
-  color: white;
-  padding: 3px 10px;
-  border-radius: 10px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  box-shadow: 0 3px 8px rgba(0, 172, 193, 0.3);
+  color: var(--text-inverse);
+  padding: 3px var(--space-10);
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(8, 145, 178, 0.3);
   white-space: nowrap;
   pointer-events: none;
   transition: left 0.1s ease-out;
@@ -438,11 +428,11 @@
 .w-range-input {
   -webkit-appearance: none;
   width: 100%;
-  height: 6px;
-  background: linear-gradient(90deg, #1a237e 0%, #42a5f5 20%, #fff176 50%, #ff8a65 80%, #1a237e 100%);
-  border-radius: 4px;
+  height: 5px;
+  background: linear-gradient(90deg, #1e3a5f 0%, #38bdf8 20%, #fbbf24 50%, #f97316 80%, #1e3a5f 100%);
+  border-radius: var(--radius-full);
   outline: none;
-  opacity: 0.85;
+  opacity: 0.8;
   display: block;
 }
 
@@ -450,48 +440,49 @@
   -webkit-appearance: none;
   width: 22px;
   height: 22px;
-  background: white;
+  background: var(--bg-elevated);
   cursor: pointer;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  border: 3px solid var(--primary);
-  transition: transform 0.15s;
+  border-radius: var(--radius-full);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--primary);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .w-range-input::-webkit-slider-thumb:active {
-  transform: scale(1.15);
+  transform: scale(1.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 6px 16px rgba(8, 145, 178, 0.3);
 }
 
 .w-range-input::-moz-range-thumb {
   width: 22px;
   height: 22px;
-  background: white;
+  background: var(--bg-elevated);
   cursor: pointer;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  border: 3px solid var(--primary);
+  border-radius: var(--radius-full);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--primary);
 }
 
 .w-slider-scale {
   display: flex;
   justify-content: space-between;
-  padding: 0 4px;
-  margin-top: 6px;
-  color: #b0bec5;
-  font-size: 0.7rem;
+  padding: 0 var(--space-4);
+  margin-top: var(--space-6);
+  color: var(--text-tertiary);
+  font-size: 0.68rem;
   font-weight: 700;
 }
 
-/* ── 逐時結果卡片 ──────────────────────── */
+/* ── 逐時結果 ────────────────────────── */
 .w-hour-result {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: white;
-  padding: 14px 18px;
-  border-radius: 14px;
-  border: 1px solid #eee;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+  background: var(--bg-elevated);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-xs);
   animation: wSlideUp 0.25s ease;
 }
 
@@ -503,17 +494,17 @@
 .wh-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-12);
 }
 
 .wh-icon-wrap {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
 .wh-temp-grp {
@@ -522,25 +513,25 @@
 }
 
 .wh-temp {
-  font-size: 1.7rem;
+  font-size: 1.6rem;
   font-weight: 800;
   color: var(--text-main);
   line-height: 1;
-  font-family: "Quicksand", sans-serif;
+  letter-spacing: -0.5px;
 }
 
 .wh-desc {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--text-sub);
   font-weight: 500;
-  margin-top: 3px;
+  margin-top: var(--space-2);
 }
 
 .wh-pop {
   text-align: right;
-  padding: 5px 12px;
-  border-radius: 10px;
+  padding: var(--space-4) var(--space-12);
+  border-radius: var(--radius-full);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   white-space: nowrap;
 }

@@ -1,23 +1,25 @@
 /* =========================================
    Finance - Budget & Expense Tracking UI
+   [Ver2.4] Token 統一 + 新色系
    ========================================= */
 
+/* ── 語音輸入按鈕 ────────────────────── */
 .voice-btn {
   width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  background: #f8f9fa;
-  color: #555;
+  padding: var(--space-12);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  background: var(--bg-secondary);
+  color: var(--text-sub);
   font-weight: 700;
   font-size: 1rem;
-  margin-bottom: 15px;
+  margin-bottom: var(--space-16);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: var(--space-10);
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all var(--transition-base);
 }
 
 .voice-btn:active {
@@ -25,71 +27,78 @@
 }
 
 .voice-btn.listening {
-  background: #ff5252;
+  background: #ef4444;
   color: white;
-  border-color: #ff5252;
+  border-color: #ef4444;
   animation: pulse-red 1.5s infinite;
 }
 
 @keyframes pulse-red {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
   }
 }
 
+/* ── 時段選擇 ────────────────────────── */
 .fin-time-select {
   width: 100%;
-  padding: 14px;
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  padding: var(--space-12);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
   font-size: 1rem;
   outline: none;
-  background: white;
-  margin-bottom: 15px;
-  color: #37474f;
+  background: var(--bg-elevated);
+  margin-bottom: var(--space-16);
+  color: var(--text-main);
   font-weight: 600;
+  transition: border-color var(--transition-fast);
 }
 
-/* Finance List Grouping */
+.fin-time-select:focus {
+  border-color: var(--primary);
+}
+
+/* ── 費用分組 ────────────────────────── */
 .fin-group {
-  margin-bottom: 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
+  margin-bottom: var(--space-12);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background: white;
+  background: var(--bg-elevated);
 }
 
 .fin-group-header {
-  background: #f8f9fa;
-  padding: 12px 15px;
+  background: var(--bg-secondary);
+  padding: var(--space-12) var(--space-16);
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   font-weight: 700;
-  color: #37474f;
-  transition: background 0.2s;
+  color: var(--text-main);
+  transition: background var(--transition-fast);
+  font-size: 0.92rem;
 }
 
-.fin-group-header:hover {
-  background: #f1f3f4;
+.fin-group-header:active {
+  background: var(--bg-tertiary);
 }
 
 .fin-group-header .day-total {
   color: var(--primary);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
 .fin-group-header i.arrow {
-  margin-left: 10px;
-  transition: transform 0.3s;
-  color: #bbb;
+  margin-left: var(--space-10);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--text-tertiary);
 }
 
 .fin-group.open .fin-group-header i.arrow {
@@ -98,24 +107,29 @@
 
 .fin-group-body {
   display: none;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-light);
 }
 
 .fin-group.open .fin-group-body {
   display: block;
-  animation: slideDown 0.3s ease;
+  animation: finSlideDown 0.3s ease;
 }
 
-/* Voice Input Visuals */
+@keyframes finSlideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 語音錄音視覺效果 ────────────────── */
 .input-recording {
-  background-color: #ffebee !important;
-  border-color: #ff5252 !important;
-  box-shadow: 0 0 10px rgba(255, 82, 82, 0.3) !important;
+  background-color: #fef2f2 !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
   transition: all 0.3s ease;
 }
 
 .input-recording::placeholder {
-  color: #d32f2f !important;
+  color: #dc2626 !important;
   font-weight: 700 !important;
   letter-spacing: 1px;
 }
@@ -136,7 +150,7 @@
 }
 
 .mic-active-anim {
-  color: #ff1744 !important;
+  color: #ef4444 !important;
   animation: mic-breath 1.2s infinite ease-in-out;
-  text-shadow: 0 0 5px rgba(255, 23, 68, 0.4);
+  text-shadow: 0 0 5px rgba(239, 68, 68, 0.3);
 }

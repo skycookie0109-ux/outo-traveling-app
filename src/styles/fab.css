@@ -1,50 +1,62 @@
 /* =========================================
    FAB - Floating Action Button Menu
+   [Ver2.4] iOS 風格品牌色陰影 + Spring 展開
    ========================================= */
 
+/* ── FAB 容器 ────────────────────────── */
 #fab-container {
   position: fixed;
-  left: 25px;
+  left: var(--space-24);
   bottom: calc(35px + env(safe-area-inset-bottom));
   z-index: 9999;
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
 }
 
+/* ── 主按鈕 ──────────────────────────── */
 .fab-main-btn {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
   background: var(--grad-fab);
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.6rem;
-  box-shadow: var(--shadow-card);
+  font-size: 1.5rem;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35),
+              0 2px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   position: relative;
   z-index: 10001;
-  transition: transform 0.3s;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow var(--transition-fast);
 }
 
+.fab-main-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+/* ── 展開選單 ────────────────────────── */
 .fab-menu {
   position: absolute;
-  bottom: 75px;
-  left: 5px;
+  bottom: 70px;
+  left: 2px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: var(--space-12);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(20px) scale(0.8);
-  transition: all 0.3s;
+  transform: translateY(16px) scale(0.85);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
   z-index: 10000;
 }
 
 #fab-container.open .fab-main-btn {
   transform: rotate(45deg);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
 }
 
 #fab-container.open .fab-menu {
@@ -54,53 +66,81 @@
   pointer-events: auto;
 }
 
+/* ── 子項目 stagger 動畫 ─────────────── */
 .fab-item {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: var(--space-12);
   cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+#fab-container.open .fab-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#fab-container.open .fab-item:nth-child(1) { transition-delay: 0.03s; }
+#fab-container.open .fab-item:nth-child(2) { transition-delay: 0.06s; }
+#fab-container.open .fab-item:nth-child(3) { transition-delay: 0.09s; }
+#fab-container.open .fab-item:nth-child(4) { transition-delay: 0.12s; }
+#fab-container.open .fab-item:nth-child(5) { transition-delay: 0.15s; }
+
+.fab-item:active {
+  transform: scale(0.95);
+}
+
+/* ── Icon 圓球 ───────────────────────── */
 .fab-icon-bubble {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
-  font-size: 1.2rem;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  font-size: 1.1rem;
   flex-shrink: 0;
+  transition: transform var(--transition-fast);
 }
 
-.fab-label {
-  background: white;
-  color: #333;
-  padding: 8px 14px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  white-space: nowrap;
-}
-
+/* 每個功能的顏色（使用更柔和的色調）*/
 .bg-rec {
-  background: #ff5722;
+  background: #ef4444;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .bg-money {
-  background: #4caf50;
+  background: #22c55e;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }
 
 .bg-trans {
-  background: #2196f3;
+  background: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .bg-rate {
-  background: #9c27b0;
+  background: #a855f7;
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
 }
 
 .bg-map {
-  background: #ff9800;
+  background: #f59e0b;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* ── 文字標籤 ────────────────────────── */
+.fab-label {
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-lg);
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-lg);
+  white-space: nowrap;
+  border: 1px solid var(--border-light);
 }

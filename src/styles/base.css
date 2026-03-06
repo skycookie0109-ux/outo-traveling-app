@@ -1,28 +1,93 @@
 /* =========================================
-   Base Styles - Variables, Reset & Foundation
+   Base Styles — Variables, Reset & Foundation
+   [Ver2.4] iOS 風格設計系統
    ========================================= */
 
+/* ── 設計 Token ─────────────────────────── */
 :root {
-  --primary: #00acc1;
-  --primary-dark: #00838f;
-  --accent: #ff9800;
-  --bg-body: #f0f8ff;
-  --text-main: #37474f;
-  --text-sub: #78909c;
-  --grad-header: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
-  --grad-fab: linear-gradient(135deg, var(--accent) 0%, #f57c00 100%);
-  --grad-weather: linear-gradient(120deg, #e0f7fa 0%, #fff3e0 100%);
-  --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.08);
+  /* 品牌色彩 */
+  --primary: #0891b2;
+  --primary-light: #06b6d4;
+  --primary-dark: #0e7490;
+  --accent: #f59e0b;
+  --accent-light: #fbbf24;
+  --accent-dark: #d97706;
+
+  /* 背景 */
+  --bg-body: #f9fafb;
+  --bg-elevated: #ffffff;
+  --bg-secondary: #f3f4f6;
+  --bg-tertiary: #e5e7eb;
+
+  /* 文字 */
+  --text-main: #1f2937;
+  --text-sub: #6b7280;
+  --text-tertiary: #9ca3af;
+  --text-inverse: #ffffff;
+
+  /* 語意色彩 */
+  --success: #10b981;
+  --success-bg: #ecfdf5;
+  --warning: #f59e0b;
+  --warning-bg: #fffbeb;
+  --error: #ef4444;
+  --error-bg: #fef2f2;
+  --info: #3b82f6;
+  --info-bg: #eff6ff;
+
+  /* 邊框 */
+  --border-light: #e5e7eb;
+  --border-default: #d1d5db;
+
+  /* 陰影系統（iOS 風格：極淡且柔和）*/
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.12);
+  --shadow-card: var(--shadow-sm);
+
+  /* 圓角 */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 28px;
+  --radius-full: 9999px;
+
+  /* 間距（8px 基準網格）*/
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  /* 過渡動畫 */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* 漸層 */
+  --grad-header: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 100%);
+  --grad-fab: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  --grad-weather: linear-gradient(135deg, #e0f7fa 0%, #fff8e1 100%);
+
+  /* 佈局 */
   --header-h-expanded: 240px;
   --header-h-collapsed: 80px;
   --tabs-height: 70px;
   --overlap: 35px;
 }
 
+/* ── 隱藏 CodeSandbox 元素 ───────────────── */
 iframe,
 #csb-view,
 .__csb-wa-button,
@@ -30,6 +95,7 @@ iframe,
   display: none !important;
 }
 
+/* ── Reset ────────────────────────────── */
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -41,16 +107,18 @@ img {
   outline: none !important;
 }
 
+/* ── Foundation ───────────────────────── */
 html {
   height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
+  background: var(--bg-body);
 }
 
 body {
   height: 100%;
   overflow-y: auto;
-  font-family: "Quicksand", "Noto Sans TC", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Quicksand", "Noto Sans TC", "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg-body);
   color: var(--text-main);
   margin: 0;
@@ -58,18 +126,34 @@ body {
   padding-top: calc(
     var(--header-h-expanded) + var(--tabs-height) - var(--overlap) + 10px + env(safe-area-inset-top, 0px)
   );
-  background-image: radial-gradient(
-    rgba(0, 0, 0, 0.05) 1px,
-    transparent 1px
-  );
-  background-size: 24px 24px;
   padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
-  transition: padding-right 0.3s;
+  transition: padding-right var(--transition-base);
   overflow-x: hidden;
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
 }
 
 body.no-scroll {
   overflow: hidden !important;
+}
+
+/* ── 通用動畫 ────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
 }

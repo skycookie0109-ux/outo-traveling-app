@@ -1,39 +1,44 @@
 /* =========================================
-   Timeline Styles - Event & Activity Timeline
-   [Ver2] 新增行程完成標記視覺效果
+   Timeline Styles — Event & Activity Timeline
+   [Ver2.4] iOS 風格卡片 + 精緻動畫
    ========================================= */
 
 .timeline {
-  padding-top: 5px;
+  padding-top: var(--space-8);
 }
 
 .event-row {
   display: flex;
-  margin-bottom: 25px;
+  margin-bottom: var(--space-24);
   position: relative;
-  animation: slideUp 0.5s ease forwards;
+  animation: slideUp 0.45s ease forwards;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(12px);
 }
 
-@keyframes slideUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+.event-row:nth-child(1) { animation-delay: 0s; }
+.event-row:nth-child(2) { animation-delay: 0.05s; }
+.event-row:nth-child(3) { animation-delay: 0.1s; }
+.event-row:nth-child(4) { animation-delay: 0.15s; }
+.event-row:nth-child(5) { animation-delay: 0.2s; }
+.event-row:nth-child(6) { animation-delay: 0.25s; }
+.event-row:nth-child(7) { animation-delay: 0.3s; }
+.event-row:nth-child(8) { animation-delay: 0.35s; }
 
+/* ── 時間欄 ──────────────────────────── */
 .time-col {
-  width: 60px;
+  width: 58px;
   flex-shrink: 0;
   text-align: right;
-  padding-right: 12px;
+  padding-right: var(--space-12);
   padding-top: 20px;
   color: var(--primary);
   font-weight: 700;
-  font-family: "Quicksand", sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: -0.3px;
 }
 
+/* ── 時間軸中線 ──────────────────────── */
 .timeline-center {
   width: 24px;
   position: relative;
@@ -43,10 +48,11 @@
 
 .timeline-line {
   position: absolute;
-  top: 30px;
-  bottom: -35px;
-  width: 3px;
-  border-left: 2px dashed #b0bec5;
+  top: 32px;
+  bottom: -32px;
+  width: 2px;
+  border-left: none;
+  background: var(--border-light);
 }
 
 .event-row:last-child .timeline-line {
@@ -54,43 +60,55 @@
 }
 
 .timeline-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: white;
-  border: 3px solid var(--accent);
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  border: 2.5px solid var(--accent);
   margin-top: 24px;
   z-index: 2;
-  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.15);
-  transition: all 0.3s ease;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.12);
+  transition: all var(--transition-fast);
 }
 
+/* ── 卡片欄 ──────────────────────────── */
 .card-col {
   flex: 1;
-  padding-left: 12px;
+  padding-left: var(--space-12);
+  min-width: 0;
 }
 
 .mini-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 16px 18px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.02);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: var(--space-16) var(--space-16);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-4);
   cursor: pointer;
-  transition: transform 0.2s, opacity 0.4s ease, background 0.4s ease, border-color 0.4s ease;
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast),
+              background var(--transition-base),
+              border-color var(--transition-base);
 }
 
 .mini-card:active {
   transform: scale(0.97);
+  box-shadow: var(--shadow-xs);
 }
 
+/* ── 卡片內容 ────────────────────────── */
 .mc-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+}
+
+.mc-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .mc-tag {
@@ -98,27 +116,32 @@
   font-size: 0.65rem;
   font-weight: 700;
   color: var(--primary);
-  background: rgba(0, 0, 0, 0.05);
-  padding: 2px 8px;
-  border-radius: 10px;
-  margin-bottom: 4px;
+  background: rgba(8, 145, 178, 0.08);
+  padding: 3px var(--space-8);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-4);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 .mc-title {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-main);
-  transition: color 0.4s ease;
+  letter-spacing: -0.2px;
+  line-height: 1.3;
+  transition: color var(--transition-base);
 }
 
 .mc-sub {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-sub);
-  margin-top: 2px;
+  margin-top: var(--space-2);
+  line-height: 1.4;
 }
 
-/* ── [Ver2] 完成標記 checkbox ── */
+/* ── Checkbox ────────────────────────── */
 .mc-check {
   flex-shrink: 0;
   width: 32px;
@@ -126,74 +149,66 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
-  color: #cfd8dc;
+  font-size: 1.2rem;
+  color: var(--text-tertiary);
   cursor: pointer;
-  border-radius: 50%;
-  transition: all 0.25s ease;
-  margin-left: 8px;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  margin-left: var(--space-8);
   margin-top: -2px;
 }
 
 .mc-check:active {
-  transform: scale(0.85);
+  transform: scale(0.8);
 }
 
-/* ── [Ver2] 已完成狀態視覺 ── */
+.mc-check:hover {
+  color: var(--success);
+  background: rgba(16, 185, 129, 0.08);
+}
 
-/* 時間軸圓點：完成時變綠 */
+/* ── 完成狀態 ────────────────────────── */
 .timeline-dot.done {
-  background: #4caf50;
-  border-color: #4caf50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+  background: var(--success);
+  border-color: var(--success);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
 }
 
-/* 完成行的時間文字變淡 */
 .event-row.completed .time-col {
-  color: #b0bec5;
+  color: var(--text-tertiary);
 }
 
-/* 完成行的時間軸線變淡 */
 .event-row.completed .timeline-line {
-  border-left-color: #e0e0e0;
+  background: var(--bg-tertiary);
 }
 
-/* 卡片完成狀態 */
 .mini-card.card-done {
-  background: #f5f5f5;
-  opacity: 0.7;
-  border: 1px solid #e0e0e0;
+  background: var(--bg-secondary);
+  opacity: 0.6;
+  border-color: var(--bg-tertiary);
 }
 
 .mini-card.card-done .mc-title {
   text-decoration: line-through;
-  color: #9e9e9e;
+  color: var(--text-tertiary);
 }
 
 .mini-card.card-done .mc-sub {
-  color: #bdbdbd;
+  color: var(--text-tertiary);
 }
 
 .mini-card.card-done .mc-tag {
-  color: #9e9e9e;
+  color: var(--text-tertiary);
   background: rgba(0, 0, 0, 0.03);
 }
 
-/* checkbox 完成狀態：綠色 */
 .event-row.completed .mc-check {
-  color: #4caf50;
+  color: var(--success);
 }
 
-/* checkbox hover 效果 */
-.mc-check:hover {
-  color: #4caf50;
-  background: rgba(76, 175, 80, 0.08);
-}
-
-/* 完成時小動畫 */
 @keyframes checkBounce {
   0% { transform: scale(1); }
-  40% { transform: scale(1.3); }
+  40% { transform: scale(1.25); }
   100% { transform: scale(1); }
 }
 
