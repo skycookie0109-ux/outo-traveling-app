@@ -35,26 +35,19 @@ const Templates = {
             </div>
         </div>`,
 
-  // [Ver2.4] 重新設計的天氣儀表板卡片 — 上下分層佈局
+  // [Ver2.4] 天氣儀表板卡片 — 兩行極簡佈局
   weatherCard: (d, i) =>
     `<div class="w-card">
-        <div class="wc-row-top">
+        <div class="wc-row-main">
             <div class="wc-icon-wrap ${d.iconCls || ''}"><i class="fa-solid ${d.icon}"></i></div>
-            <div class="wc-loc-group">
-                <div class="wc-loc">${d.name}</div>
-                <div class="wc-status ${d.isRef ? 'is-ref' : 'is-live'}">${d.statusLabel}</div>
-            </div>
+            <div class="wc-loc">${d.name}</div>
+            <span class="wc-desc-tag">${d.desc || ''}</span>
+            <div class="wc-temp-range"><span class="wc-t-lo">${d.min}°</span><span class="wc-t-sep">/</span><span class="wc-t-hi">${d.max}°</span></div>
             <div class="wc-pop-badge rain-${d.rainLevel || 'low'}"><i class="fa-solid fa-droplet"></i> ${d.pop}%</div>
         </div>
-        <div class="wc-row-mid">
-            <span class="wc-temp-min">${d.min}°</span>
-            <div class="wc-temp-bar"></div>
-            <span class="wc-temp-max">${d.max}°</span>
-            <span class="wc-desc-text">${d.desc || ''}</span>
-        </div>
-        <div class="wc-row-bot">
-            <i class="fa-solid ${d.advice ? d.advice.icon : 'fa-shirt'}"></i>
-            <span>${d.advice ? d.advice.text : ''}</span>
+        <div class="wc-row-sub">
+            <div class="wc-status ${d.isRef ? 'is-ref' : 'is-live'}">${d.statusLabel}</div>
+            <div class="wc-advice"><i class="fa-solid ${d.advice ? d.advice.icon : 'fa-shirt'}"></i> ${d.advice ? d.advice.text : ''}</div>
         </div>
      </div>`,
 
