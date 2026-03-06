@@ -9,6 +9,7 @@
    5. 啟動應用程式
 
    [Ver2] 新增行程完成標記功能
+   [Ver2.2] 新增 PWA + 深色模式
    ========================================= */
 
 // ── 1. 引入樣式 ──────────────────────────
@@ -103,6 +104,16 @@ window.onload = async () => {
 
     // 載入資料（從 Google Sheets 拉取）
     App.Data.init();
+    // [Ver2.2] 註冊 Service Worker (PWA)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((reg) => console.log('[PWA] SW registered, scope:', reg.scope))
+        .catch((err) => console.warn('[PWA] SW registration failed:', err));
+    }
+
+    // [Ver2.2] 初始化深色模式
+    App.Settings.initDarkMode();
   } catch (error) {
     console.error('App 啟動失敗:', error);
     document.getElementById('loading-screen')?.classList.add('hidden');

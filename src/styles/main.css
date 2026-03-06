@@ -25,5 +25,8 @@
 /* Supplementary */
 @import './info.css';
 
+/* Dark Mode Theme */
+@import './darkmode.css';
+
 /* Responsive Overrides */
 @import './responsive.css';

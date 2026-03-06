@@ -4,9 +4,48 @@
  * Note: This module references App.Finance, App.Utils, and localStorage
  *
  * [Ver2] 新增 clearCompletions() 清除行程完成標記
+ * [Ver2.2] 新增深色模式 initDarkMode() / toggleDarkMode()
  */
 
 const Settings = {
+  // ── [Ver2.2] 深色模式 ──────────────────
+  initDarkMode() {
+    const saved = localStorage.getItem('darkMode');
+    // 優先使用者設定，其次偵測系統
+    if (saved === '1' || (saved === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+      this._updateDarkModeUI(true);
+    }
+    // 監聽系統變更（如果使用者沒手動設定過）
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (localStorage.getItem('darkMode') === null) {
+        document.documentElement.classList.toggle('dark', e.matches);
+        this._updateDarkModeUI(e.matches);
+      }
+    });
+  },
+
+  toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark ? '1' : '0');
+    this._updateDarkModeUI(isDark);
+
+    // 更新 theme-color meta tag
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = isDark ? '#1a1a2e' : '#00acc1';
+  },
+
+  _updateDarkModeUI(isDark) {
+    // 更新 header 按鈕圖示
+    const btn = document.getElementById('darkmode-toggle');
+    if (btn) btn.innerHTML = isDark
+      ? '<i class="fa-solid fa-sun"></i>'
+      : '<i class="fa-solid fa-moon"></i>';
+    // 更新設定面板 switch
+    const sw = document.getElementById('dm-switch-input');
+    if (sw) sw.checked = isDark;
+  },
+  // ── End Dark Mode ─────────────────────
   // 1. 清除記帳
   clearFinance() {
     if (confirm("確定要刪除所有的記帳紀錄嗎？(此動作無法復原)")) {
