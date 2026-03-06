@@ -3,20 +3,20 @@
    [Ver2.4] iOS 風格毛玻璃 + 精緻動畫
    ========================================= */
 
-/* ── 儀表板外框（compact）────────────── */
+/* ── 儀表板外框（compact 兩行版）────── */
 #weather-wrapper {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(16px) saturate(1.8);
   -webkit-backdrop-filter: blur(16px) saturate(1.8);
   border-radius: var(--radius-lg);
-  margin-bottom: var(--space-12);
+  margin-bottom: var(--space-10);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(255, 255, 255, 0.8);
   position: relative;
-  padding-bottom: var(--space-10);
+  padding-bottom: var(--space-8);
   animation: wFadeIn 0.5s ease;
   overflow: hidden;
-  margin-top: var(--space-8);
+  margin-top: var(--space-6);
 }
 
 @keyframes wFadeIn {
@@ -35,35 +35,34 @@
   display: none;
 }
 
-/* ── 儀表板卡片（compact）────────────── */
+/* ── 儀表板卡片（兩行極簡）──────────── */
 .w-card {
   flex: 0 0 100%;
   scroll-snap-align: center;
   display: flex;
   flex-direction: column;
-  padding: var(--space-8) var(--space-16) var(--space-4);
+  padding: var(--space-8) var(--space-12) var(--space-6);
   box-sizing: border-box;
   width: 100%;
   gap: var(--space-4);
 }
 
-/* 上排：圖示 + 地點 + 降雨 */
-.wc-row-top {
+/* ── 第一行：核心數據一覽 ──────────── */
+.wc-row-main {
   display: flex;
   align-items: center;
-  gap: var(--space-10);
+  gap: var(--space-6);
 }
 
 .wc-icon-wrap {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   flex-shrink: 0;
-  transition: all var(--transition-fast);
 }
 
 /* 天氣圖示色彩 */
@@ -73,19 +72,76 @@
 .w-icon-rain { background: #eff6ff; color: #2563eb; }
 .w-icon-storm { background: #f5f3ff; color: #7c3aed; }
 
-.wc-loc-group {
-  flex: 1;
-  min-width: 0;
-}
-
+/* 地名 */
 .wc-loc {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--text-main);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: -0.2px;
+  max-width: 80px;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+/* 天氣描述小標 */
+.wc-desc-tag {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 溫度區間 */
+.wc-temp-range {
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.wc-t-lo {
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: #0369a1;
+}
+
+.wc-t-sep {
+  font-size: 0.68rem;
+  color: var(--text-tertiary);
+  margin: 0 1px;
+}
+
+.wc-t-hi {
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: #c2410c;
+}
+
+/* 降雨率 badge */
+.wc-pop-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px var(--space-6);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 降雨三級配色 */
+.rain-low { background: var(--success-bg); color: #059669; }
+.rain-mid { background: var(--warning-bg); color: #d97706; }
+.rain-high { background: var(--error-bg); color: #dc2626; }
+.rain-unknown { background: var(--bg-secondary); color: var(--text-sub); }
+
+/* ── 第二行：狀態 + 穿搭建議 ─────── */
+.wc-row-sub {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
 }
 
 .wc-status {
@@ -93,9 +149,9 @@
   font-weight: 700;
   padding: 1px var(--space-6);
   border-radius: var(--radius-full);
-  display: inline-block;
-  margin-top: 1px;
-  letter-spacing: 0.3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.2px;
 }
 
 .wc-status.is-live {
@@ -108,82 +164,22 @@
   color: var(--accent-dark);
 }
 
-/* 降雨率 badge */
-.wc-pop-badge {
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 2px var(--space-8);
-  border-radius: var(--radius-full);
+.wc-advice {
+  font-size: 0.62rem;
+  color: var(--text-sub);
+  font-weight: 600;
   white-space: nowrap;
-  flex-shrink: 0;
-  transition: all var(--transition-fast);
-}
-
-/* 降雨三級配色 */
-.rain-low { background: var(--success-bg); color: #059669; }
-.rain-mid { background: var(--warning-bg); color: #d97706; }
-.rain-high { background: var(--error-bg); color: #dc2626; }
-.rain-unknown { background: var(--bg-secondary); color: var(--text-sub); }
-
-/* 中排：溫度條 */
-.wc-row-mid {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  padding: 0;
-}
-
-.wc-temp-min {
-  font-weight: 800;
-  font-size: 0.9rem;
-  color: #0369a1;
-  min-width: 28px;
-  text-align: right;
-  letter-spacing: -0.5px;
-}
-
-.wc-temp-max {
-  font-weight: 800;
-  font-size: 0.9rem;
-  color: #c2410c;
-  min-width: 28px;
-  letter-spacing: -0.5px;
-}
-
-.wc-temp-bar {
+  overflow: hidden;
+  text-overflow: ellipsis;
   flex: 1;
-  height: 3px;
-  border-radius: var(--radius-full);
-  background: linear-gradient(90deg, #38bdf8 0%, #fbbf24 45%, #f97316 100%);
-  opacity: 0.6;
-}
-
-.wc-desc-text {
-  font-size: 0.65rem;
-  color: var(--text-sub);
-  font-weight: 600;
-  margin-left: var(--space-4);
-  white-space: nowrap;
-}
-
-/* 下排：穿搭建議 */
-.wc-row-bot {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  font-size: 0.65rem;
-  color: var(--text-sub);
-  background: var(--bg-secondary);
-  padding: var(--space-4) var(--space-8);
-  border-radius: var(--radius-xs);
-  font-weight: 600;
+  min-width: 0;
   line-height: 1.2;
 }
 
-.wc-row-bot i {
+.wc-advice i {
   color: var(--accent);
-  font-size: 0.6rem;
-  flex-shrink: 0;
+  font-size: 0.58rem;
+  margin-right: 3px;
 }
 
 /* ── 滑動圓點 ────────────────────────── */
