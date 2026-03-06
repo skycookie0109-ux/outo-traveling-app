@@ -28,7 +28,7 @@ header {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 60px 25px 20px;
+  padding: calc(60px + env(safe-area-inset-top, 0px)) 25px 20px;
   border-bottom-left-radius: 40px;
   border-bottom-right-radius: 40px;
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -123,7 +123,7 @@ body.scrolled .subtitle {
 .settings-btn,
 .info-btn {
   position: absolute;
-  top: 20px;
+  top: calc(20px + env(safe-area-inset-top, 0px));
   width: 36px;
   height: 36px;
   background: rgba(255, 255, 255, 0.25);
