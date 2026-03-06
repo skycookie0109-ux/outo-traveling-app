@@ -3,7 +3,7 @@
    策略：Cache First + Network Fallback
    ========================================= */
 
-const CACHE_NAME = 'outo-v2.2.0';
+const CACHE_NAME = 'outo-v2.3.0';
 
 // 需要預快取的核心資源（Vite build 後的檔案由 install 時快取）
 const PRE_CACHE = [
