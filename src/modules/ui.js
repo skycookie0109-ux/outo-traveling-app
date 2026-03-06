@@ -108,8 +108,12 @@ const UI = {
 
       if (direction !== 'horizontal') return;
 
-      // 只允許往左滑（dx < 0）
-      currentX = Math.min(0, Math.max(-MAX_SLIDE, dx));
+      // 只允許往左滑（dx < 0），加入阻尼效果讓越遠越有阻力
+      const rawX = Math.min(0, dx);
+      const ratio = Math.min(1, Math.abs(rawX) / MAX_SLIDE);
+      // 阻尼公式：實際移動 = 最大距離 × (1 - (1 - ratio)^2)
+      const dampened = -MAX_SLIDE * (1 - Math.pow(1 - ratio, 2));
+      currentX = dampened;
       activeCard.style.transform = `translateX(${currentX}px)`;
       e.preventDefault();
     }, { passive: false });
@@ -128,17 +132,35 @@ const UI = {
 
       if (Math.abs(currentX) >= THRESHOLD) {
         // ✅ 滑動距離足夠 → 觸發完成/取消
+        // 先加上 swipe-triggered（含 transition），讓卡片動畫回到 translateX(0)
         card.classList.add('swipe-triggered');
 
         card.addEventListener('transitionend', () => {
+          // ★ 重要：清除 inline transform，否則移除 class 後卡片會跳回位移位置
+          card.style.transform = '';
           card.classList.remove('swipe-triggered');
+          wrap.classList.remove('swiping');
           App.Actions.toggleComplete(dayId, idx);
           if (navigator.vibrate) navigator.vibrate(15);
         }, { once: true });
+
+        // 安全網：若 transitionend 未觸發（偶發），500ms 後強制執行
+        setTimeout(() => {
+          if (card.classList.contains('swipe-triggered')) {
+            card.style.transform = '';
+            card.classList.remove('swipe-triggered');
+            wrap.classList.remove('swiping');
+            App.Actions.toggleComplete(dayId, idx);
+          }
+        }, 500);
       } else {
         // ↩ 未達門檻 → 彈回原位
-        card.style.transform = '';
         card.classList.add('snap-back');
+        card.style.transform = '';
+
+        card.addEventListener('transitionend', () => {
+          card.classList.remove('snap-back');
+        }, { once: true });
       }
 
       wrap.classList.remove('swiping');
