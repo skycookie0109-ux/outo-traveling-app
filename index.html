@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Outo Travel App</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#00acc1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+    <!-- Fonts & Icons -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:wght@700&family=Quicksand:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- App Entry (Vite 會自動注入 CSS 和 JS) -->
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <!-- =========================================
+         Loading Screen
+         ========================================= -->
+    <div id="loading-screen">
+      <div style="font-size: 2rem; color: var(--primary); margin-bottom: 20px">
+        <i class="fa-solid fa-plane-up fa-bounce"></i>
+      </div>
+      <div style="font-weight: bold; color: var(--text-sub)">
+        Loading Your Trip...
+      </div>
+    </div>
+
+    <!-- =========================================
+         Header + Tabs (Sticky Group)
+         ========================================= -->
+    <div id="app-sticky-group">
+      <header id="app-header">
+        <div id="header-bg"></div>
+        <button class="info-btn" onclick="App.Actions.openInfo()">
+          <i class="fa-solid fa-info"></i>
+        </button>
+        <button class="settings-btn" id="settings-btn-header">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+        <div class="header-content">
+          <h1 id="app-title">...</h1>
+          <div class="subtitle" id="app-subtitle">...</div>
+        </div>
+      </header>
+      <div id="sticky-tabs-bar">
+        <div class="tabs" id="tabs-container"></div>
+      </div>
+    </div>
+
+    <!-- =========================================
+         Main Content (Timeline)
+         ========================================= -->
+    <div class="container" id="list-view-container">
+      <div id="weather-wrapper">
+        <div id="weather-scroll-container"></div>
+        <div id="weather-dots" class="w-dots"></div>
+      </div>
+      <div id="timeline-content" class="timeline"></div>
+    </div>
+
+    <!-- =========================================
+         Map Layer
+         ========================================= -->
+    <div id="map-layer">
+      <div id="map-container">
+        <div class="map-close-btn" onclick="App.Actions.closeMap()">
+          <i class="fa-solid fa-arrow-left"></i>
+        </div>
+        <div id="map"></div>
+        <div
+          class="map-locate-btn"
+          id="btn-locate"
+          onclick="App.Location.toggle()"
+        >
+          <i class="fa-solid fa-crosshairs"></i>
+        </div>
+      </div>
+      <div id="map-drawer">
+        <div id="map-collapsed-header">
+          <div class="map-mode-row">
+            <button
+              class="mode-btn active"
+              id="btn-mode-driving"
+              onclick="App.Map.setMode('driving')"
+            >
+              <i class="fa-solid fa-car"></i> 駕車
+            </button>
+            <button
+              class="mode-btn"
+              id="btn-mode-walking"
+              onclick="App.Map.setMode('walking')"
+            >
+              <i class="fa-solid fa-person-walking"></i> 步行
+            </button>
+            <button class="mode-btn" onclick="App.Map.setMode('transit')">
+              <i class="fa-solid fa-bus"></i> 轉乘
+              <i
+                class="fa-solid fa-arrow-up-right-from-square"
+                style="font-size: 0.7em; margin-left: 2px"
+              ></i>
+            </button>
+          </div>
+          <div id="collapsed-route-info" class="map-route-info-pill"></div>
+        </div>
+        <div class="drawer-handle" onclick="App.Map.toggleDrawer()"></div>
+        <div id="map-day-tabs" class="map-day-tabs"></div>
+        <div class="drawer-header" onclick="App.Map.toggleDrawer()">
+          <span id="drawer-day-title">行程列表</span>
+          <span
+            class="drawer-toggle-btn"
+            onclick="event.stopPropagation(); App.Map.toggleAll()"
+            ><i class="fa-solid fa-check-double"></i> 全選/清除</span
+          >
+        </div>
+        <div class="drawer-list" id="drawer-list-content"></div>
+      </div>
+    </div>
+
+    <!-- =========================================
+         FAB (Floating Action Button)
+         ========================================= -->
+    <div id="fab-container">
+      <div class="fab-menu">
+        <div class="fab-item" onclick="App.Actions.openMap()">
+          <div class="fab-icon-bubble bg-map">
+            <i class="fa-regular fa-map"></i>
+          </div>
+          <span class="fab-label">地圖</span>
+        </div>
+        <div class="fab-item" onclick="App.Actions.openRec()">
+          <div class="fab-icon-bubble bg-rec">
+            <i class="fa-solid fa-bag-shopping"></i>
+          </div>
+          <span class="fab-label">攻略</span>
+        </div>
+        <div class="fab-item" onclick="App.Actions.openFinance()">
+          <div class="fab-icon-bubble bg-money">
+            <i class="fa-solid fa-sack-dollar"></i>
+          </div>
+          <span class="fab-label">記帳</span>
+        </div>
+        <div class="fab-item" onclick="App.Actions.openLanguage()">
+          <div class="fab-icon-bubble bg-trans">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <span class="fab-label">翻譯</span>
+        </div>
+        <div class="fab-item" onclick="App.Actions.openConverter()">
+          <div class="fab-icon-bubble bg-rate">
+            <i class="fa-solid fa-calculator"></i>
+          </div>
+          <span class="fab-label">匯率</span>
+        </div>
+      </div>
+      <div class="fab-main-btn" onclick="App.Utils.toggleFab(event)">
+        <i class="fa-solid fa-plus"></i>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+      <i class="fa-solid fa-check"></i> 操作成功
+    </div>
+
+    <!-- =========================================
+         Modals & Overlays
+         ========================================= -->
+
+    <!-- Detail Sheet -->
+    <div
+      class="sheet-overlay"
+      id="detailOverlay"
+      onclick="App.Utils.closeAll()"
+    >
+      <div
+        class="sheet-modal"
+        id="detailModal"
+        onclick="event.stopPropagation()"
+      ></div>
+    </div>
+
+    <!-- Recommendations Sheet -->
+    <div class="sheet-overlay" id="recOverlay" onclick="App.Utils.closeAll()">
+      <div
+        class="sheet-modal"
+        id="recModal"
+        onclick="event.stopPropagation()"
+        style="height: 75vh; display: flex; flex-direction: column"
+      >
+        <div class="rec-header-fixed">
+          <button class="rec-close-btn" onclick="App.Utils.closeAll()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div class="rec-title-row">
+            <h2 class="rec-main-title">必買必吃攻略</h2>
+          </div>
+          <div id="rec-tabs" class="rec-tabs"></div>
+        </div>
+        <div id="rec-body-scroll" class="rec-body-scroll">
+          <div id="rec-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Finance Modal -->
+    <div class="modal-overlay" id="financeModal">
+      <div class="modal-card">
+        <button class="modal-close" onclick="App.Utils.closeAll()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="modal-header">旅費記帳本</div>
+        <div class="modal-content-scroll">
+          <div
+            style="
+              background: linear-gradient(
+                135deg,
+                var(--primary),
+                var(--primary-dark)
+              );
+              color: white;
+              padding: 25px;
+              border-radius: 20px;
+              margin-bottom: 25px;
+              text-align: center;
+              box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <div style="opacity: 0.9; margin-bottom: 5px">目前總花費</div>
+            <div
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: baseline;
+                gap: 10px;
+              "
+            >
+              <div id="fin-total" style="font-size: 2.2rem; font-weight: 800">
+                0
+              </div>
+              <select
+                id="fin-total-switch"
+                onchange="App.Finance.switchTotalCurrency(this.value)"
+                style="
+                  background: rgba(255, 255, 255, 0.2);
+                  border: 1px solid rgba(255, 255, 255, 0.4);
+                  color: white;
+                  border-radius: 15px;
+                  padding: 4px 8px;
+                  outline: none;
+                  font-weight: bold;
+                "
+              >
+                <option value="TWD" style="color: #333">TWD (台幣)</option>
+                <option value="VND" style="color: #333">VND (越南盾)</option>
+                <option value="USD" style="color: #333">USD (美金)</option>
+              </select>
+            </div>
+          </div>
+
+          <button
+            class="voice-btn"
+            id="fin-voice-btn"
+            onclick="App.Finance.startVoiceInput()"
+          >
+            <i class="fa-solid fa-microphone"></i> 按下說話
+            (例：2月10號晚餐越南盾50萬元)
+          </button>
+
+          <div
+            style="
+              background: white;
+              padding: 20px;
+              border-radius: 16px;
+              border: 1px solid #eee;
+              margin-bottom: 20px;
+            "
+          >
+            <label
+              style="
+                display: block;
+                font-size: 0.85rem;
+                color: #78909c;
+                margin-bottom: 8px;
+                font-weight: 700;
+              "
+              >日期歸屬</label
+            >
+            <select id="fin-time-select" class="fin-time-select">
+              <option value="">-- 一般消費 (未指定日期) --</option>
+            </select>
+
+            <div style="margin-bottom: 15px">
+              <label
+                style="
+                  display: block;
+                  font-size: 0.85rem;
+                  color: #78909c;
+                  margin-bottom: 8px;
+                  font-weight: 700;
+                "
+                >項目名稱</label
+              >
+              <input
+                type="text"
+                id="fin-name"
+                style="
+                  width: 100%;
+                  padding: 14px;
+                  border: 1px solid #ddd;
+                  border-radius: 12px;
+                  font-size: 1rem;
+                  outline: none;
+                "
+                placeholder="例如：晚餐..."
+              />
+            </div>
+            <div style="display: flex; gap: 10px">
+              <div style="flex: 0 0 140px">
+                <label
+                  style="
+                    display: block;
+                    font-size: 0.85rem;
+                    color: #78909c;
+                    margin-bottom: 8px;
+                    font-weight: 700;
+                  "
+                  >幣別</label
+                >
+                <select
+                  id="fin-currency"
+                  style="
+                    width: 100%;
+                    padding: 14px;
+                    border: 1px solid #ddd;
+                    border-radius: 12px;
+                    font-size: 1rem;
+                    outline: none;
+                    background: white;
+                  "
+                  onchange="App.Finance.updateInputHelper()"
+                >
+                  <option value="VND" selected>VND (越南盾)</option>
+                  <option value="TWD">TWD (台幣)</option>
+                  <option value="USD">USD (美金)</option>
+                </select>
+              </div>
+              <div style="flex: 1">
+                <label
+                  style="
+                    display: block;
+                    font-size: 0.85rem;
+                    color: #78909c;
+                    margin-bottom: 8px;
+                    font-weight: 700;
+                  "
+                  >金額</label
+                >
+                <input
+                  type="number"
+                  id="fin-cost"
+                  style="
+                    width: 100%;
+                    padding: 14px;
+                    border: 1px solid #ddd;
+                    border-radius: 12px;
+                    font-size: 1rem;
+                    outline: none;
+                  "
+                  placeholder="0"
+                  oninput="App.Finance.updateInputHelper()"
+                />
+                <div
+                  id="fin-input-helper"
+                  style="
+                    font-size: 0.8rem;
+                    color: #ef6c00;
+                    font-weight: 700;
+                    margin-top: 5px;
+                    min-height: 1.2em;
+                    text-align: right;
+                  "
+                ></div>
+              </div>
+            </div>
+            <button
+              onclick="App.Finance.add()"
+              style="
+                width: 100%;
+                padding: 15px;
+                background: var(--accent);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                font-size: 1rem;
+                font-weight: 700;
+                margin-top: 15px;
+              "
+            >
+              新增紀錄
+            </button>
+          </div>
+          <div id="fin-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phrase / Language Modal -->
+    <div class="modal-overlay" id="phraseModal">
+      <div class="modal-card">
+        <button class="modal-close" onclick="App.Utils.closeAll()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="modal-header">語言助手</div>
+        <div class="modal-content-scroll">
+          <div
+            class="trans-container"
+            style="
+              background: white;
+              padding: 20px;
+              border-radius: 20px;
+              border: 1px solid #eee;
+              margin-bottom: 20px;
+            "
+          >
+            <div
+              style="
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              "
+            >
+              <label style="font-size: 0.9rem; font-weight: 700; color: #78909c"
+                >翻譯成：</label
+              >
+              <select
+                id="transTarget"
+                style="
+                  padding: 6px 12px;
+                  border-radius: 10px;
+                  border: 1px solid #ddd;
+                  background: #f9f9f9;
+                  font-weight: 700;
+                  color: #37474f;
+                  outline: none;
+                "
+              >
+                <option value="vi" selected>🇻🇳 越南語 (Tiếng Việt)</option>
+                <option value="en">🇺🇸 英文 (English)</option>
+                <option value="zh-TW">🇹🇼 繁體中文</option>
+              </select>
+            </div>
+
+            <div style="position: relative; margin-bottom: 15px">
+              <input
+                type="text"
+                id="transInput"
+                style="
+                  width: 100%;
+                  padding: 12px 45px 12px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 10px;
+                  font-size: 1rem;
+                  outline: none;
+                  transition: border 0.3s;
+                "
+                placeholder="輸入或語音 (自動偵測)..."
+                onfocus="this.style.borderColor='var(--primary)'"
+                onblur="this.style.borderColor='#ddd'"
+              />
+              <button
+                id="btn-mic-trans"
+                onclick="App.Language.toggleVoiceInput()"
+                style="
+                  position: absolute;
+                  right: 5px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  background: none;
+                  border: none;
+                  color: #78909c;
+                  font-size: 1.1rem;
+                  width: 36px;
+                  height: 36px;
+                  border-radius: 50%;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  transition: all 0.3s;
+                "
+              >
+                <i class="fa-solid fa-microphone"></i>
+              </button>
+            </div>
+
+            <div
+              style="
+                min-height: 80px;
+                background: #f0f8ff;
+                border-radius: 12px;
+                padding: 15px;
+                text-align: center;
+                margin-bottom: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <span
+                id="transResult"
+                style="
+                  font-weight: 700;
+                  color: #00838f;
+                  font-size: 1.1rem;
+                  line-height: 1.4;
+                "
+                >...</span
+              >
+              <button
+                id="btn-speak-result"
+                onclick="App.Actions.speakFromTrans()"
+                style="
+                  border: none;
+                  background: none;
+                  margin-top: 8px;
+                  color: var(--primary);
+                  cursor: pointer;
+                  display: none;
+                  font-size: 0.9rem;
+                "
+              >
+                <i class="fa-solid fa-volume-high"></i> 朗讀
+              </button>
+            </div>
+
+            <div style="display: flex; gap: 10px">
+              <button
+                onclick="App.Language.translate()"
+                style="
+                  flex: 1;
+                  padding: 12px;
+                  background: var(--primary);
+                  color: white;
+                  border: none;
+                  border-radius: 10px;
+                  font-weight: 700;
+                  box-shadow: 0 4px 10px rgba(0, 172, 193, 0.3);
+                "
+              >
+                <i class="fa-solid fa-language"></i> 翻譯
+              </button>
+              <button
+                onclick="App.Language.openGoogle()"
+                style="
+                  width: 50px;
+                  padding: 12px;
+                  background: white;
+                  border: 1px solid #ddd;
+                  border-radius: 10px;
+                  color: #555;
+                "
+              >
+                <i class="fa-brands fa-google"></i>
+              </button>
+            </div>
+          </div>
+          <div
+            id="phrase-grid-content"
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Note Modal -->
+    <div class="modal-overlay" id="noteModal">
+      <div class="modal-card">
+        <button class="modal-close" onclick="App.Utils.closeAll()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="modal-header">編輯筆記</div>
+        <div class="modal-content-scroll">
+          <textarea
+            id="noteInput"
+            style="
+              width: 100%;
+              height: 150px;
+              padding: 15px;
+              border: 1px solid #ddd;
+              border-radius: 12px;
+              outline: none;
+              resize: none;
+            "
+            placeholder="輸入心得..."
+          ></textarea>
+          <button
+            onclick="App.Note.save()"
+            style="
+              width: 100%;
+              margin-top: 15px;
+              padding: 14px;
+              background: var(--primary);
+              color: white;
+              border: none;
+              border-radius: 12px;
+            "
+          >
+            儲存筆記
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weather Modal -->
+    <div class="modal-overlay" id="weatherModal">
+      <div class="modal-card">
+        <button class="modal-close" onclick="App.Utils.closeAll()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="modal-header">旅程天氣預報</div>
+        <div class="modal-content-scroll">
+          <div id="weather-modal-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div class="modal-overlay" id="infoModal">
+      <div class="modal-card">
+        <button class="modal-close" onclick="App.Utils.closeAll()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="modal-header">行前須知</div>
+        <div class="modal-content-scroll">
+          <div id="info-list-container" class="info-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Currency Converter Modal -->
+    <div class="modal-overlay" id="converterModal">
+      <div class="modal-card">
+        <button class="modal-close" onclick="App.Utils.closeAll()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="modal-header">即時匯率</div>
+        <div class="modal-content-scroll">
+          <div style="text-align: right; margin-bottom: 10px">
+            <button
+              style="
+                background: #eee;
+                border: none;
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+              "
+              onclick="App.Currency.clear()"
+            >
+              清除
+            </button>
+          </div>
+          <div
+            class="currency-grid"
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px"
+          >
+            <div
+              class="currency-box"
+              style="
+                background: #ffebee;
+                padding: 15px;
+                border-radius: 16px;
+                border: 1px solid #ffcdd2;
+              "
+            >
+              <label style="color: #c62828">🇻🇳 VND (越南盾)</label>
+              <input
+                type="number"
+                id="inp-VND"
+                class="currency-input"
+                style="
+                  width: 100%;
+                  border: none;
+                  background: transparent;
+                  font-weight: 800;
+                  font-size: 1.3rem;
+                  color: #c62828;
+                "
+                placeholder="0"
+                oninput="App.Currency.calculate('VND')"
+              />
+            </div>
+            <div
+              class="currency-box"
+              style="background: #e3f2fd; padding: 15px; border-radius: 16px"
+            >
+              <label>🇺🇸 USD (美金)</label>
+              <input
+                type="number"
+                id="inp-USD"
+                class="currency-input"
+                style="
+                  width: 100%;
+                  border: none;
+                  background: transparent;
+                  font-weight: 700;
+                  font-size: 1.2rem;
+                "
+                placeholder="0"
+                oninput="App.Currency.calculate('USD')"
+              />
+            </div>
+            <div
+              class="currency-box"
+              style="
+                background: #fff3e0;
+                padding: 15px;
+                border-radius: 16px;
+                grid-column: span 2;
+              "
+            >
+              <label>🇹🇼 TWD (台幣)</label>
+              <input
+                type="number"
+                id="inp-TWD"
+                class="currency-input"
+                style="
+                  width: 100%;
+                  border: none;
+                  background: transparent;
+                  font-weight: 700;
+                  font-size: 1.2rem;
+                "
+                placeholder="0"
+                oninput="App.Currency.calculate('TWD')"
+              />
+            </div>
+          </div>
+          <div
+            id="rate-source"
+            style="
+              text-align: center;
+              color: #999;
+              margin-top: 20px;
+              font-size: 0.8rem;
+            "
+          >
+            *Loading...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal [Ver2] 新增「清除完成標記」按鈕 -->
+    <div class="modal-overlay" id="settingsModal">
+      <div class="modal-card">
+        <button class="modal-close" onclick="App.Utils.closeAll()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="modal-header">資料管理</div>
+        <div class="modal-content-scroll">
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 12px;
+              margin-bottom: 20px;
+            "
+          >
+              <div
+              style="
+                font-size: 0.9rem;
+                color: #78909c;
+                font-weight: 700;
+                margin-bottom: 5px;
+              "
+            >
+              個別清除
+            </div>
+            <button
+              onclick="App.Settings.clearFinance()"
+              style="
+                background: #fff3e0;
+                color: #ef6c00;
+                padding: 12px;
+                border: 1px solid #ffe0b2;
+                border-radius: 12px;
+                font-weight: 700;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span><i class="fa-solid fa-sack-dollar"></i> 清除記帳紀錄</span>
+              <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem"></i>
+            </button>
+            <button
+              onclick="App.Settings.clearNotes()"
+              style="
+                background: #e3f2fd;
+                color: #1976d2;
+                padding: 12px;
+                border: 1px solid #bbdefb;
+                border-radius: 12px;
+                font-weight: 700;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span><i class="fa-solid fa-pen-to-square"></i> 清除所有筆記</span>
+              <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem"></i>
+            </button>
+            <!-- [Ver2] 新增：清除完成標記 -->
+            <button
+              onclick="App.Settings.clearCompletions()"
+              style="
+                background: #e8f5e9;
+                color: #2e7d32;
+                padding: 12px;
+                border: 1px solid #c8e6c9;
+                border-radius: 12px;
+                font-weight: 700;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span><i class="fa-solid fa-circle-check"></i> 清除完成標記</span>
+              <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem"></i>
+            </button>
+          </div>
+          <hr style="border: 0; border-top: 1px dashed #eee; margin: 20px 0" />
+          <div style="text-align: center">
+            <div
+              style="
+                font-size: 0.85rem;
+                color: #e57373;
+                margin-bottom: 10px;
+                font-weight: 600;
+              "
+            >
+              <i class="fa-solid fa-triangle-exclamation"></i> 危險區域
+            </div>
+            <button
+              onclick="App.Settings.factoryReset()"
+              style="
+                background: #ffebee;
+                color: #c62828;
+                padding: 12px 20px;
+                border: 1px solid #ffcdd2;
+                border-radius: 12px;
+                font-weight: 700;
+                width: 100%;
+              "
+            >
+              重置所有資料 (Factory Reset)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ticket Overlay -->
+    <div class="sheet-overlay" id="ticketOverlay" onclick="App.Utils.closeTicket()">
+      <div id="ticketModal" onclick="event.stopPropagation()">
+        <div id="ticket-content-area"></div>
+      </div>
+    </div>
+  </body>
+</html>
