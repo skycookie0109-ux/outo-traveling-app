@@ -35,29 +35,27 @@ const Templates = {
             </div>
         </div>`,
 
+  // [Ver2.4] 重新設計的天氣儀表板卡片 — 上下分層佈局
   weatherCard: (d, i) =>
     `<div class="w-card">
-        <div class="wc-left">
-            <div class="wc-icon">${d.icon}</div>
-            <div style="display:flex; flex-direction:column; justify-content:center;">
-                <div class="wc-temp" style="font-size:1.2rem; white-space:nowrap;">${
-                  d.min
-                }°~${d.max}°</div>
-            </div>
-            <div style="margin-left:8px;">
+        <div class="wc-row-top">
+            <div class="wc-icon-wrap ${d.iconCls || ''}"><i class="fa-solid ${d.icon}"></i></div>
+            <div class="wc-loc-group">
                 <div class="wc-loc">${d.name}</div>
-                <div class="wc-desc" style="font-size:0.75rem; color:${
-                  d.isRef ? "#e65100" : "#4caf50"
-                }; border:1px solid ${
-      d.isRef ? "#ffcc80" : "#a5d6a7"
-    }; padding:1px 6px; border-radius:8px; display:inline-block; margin-top:2px;">
-                  ${d.statusLabel}
-                </div>
+                <div class="wc-status ${d.isRef ? 'is-ref' : 'is-live'}">${d.statusLabel}</div>
             </div>
+            <div class="wc-pop-badge rain-${d.rainLevel || 'low'}"><i class="fa-solid fa-droplet"></i> ${d.pop}%</div>
         </div>
-        <div class="wc-pop"><i class="fa-solid fa-umbrella"></i> ${
-          d.pop
-        }%</div>
+        <div class="wc-row-mid">
+            <span class="wc-temp-min">${d.min}°</span>
+            <div class="wc-temp-bar"></div>
+            <span class="wc-temp-max">${d.max}°</span>
+            <span class="wc-desc-text">${d.desc || ''}</span>
+        </div>
+        <div class="wc-row-bot">
+            <i class="fa-solid ${d.advice ? d.advice.icon : 'fa-shirt'}"></i>
+            <span>${d.advice ? d.advice.text : ''}</span>
+        </div>
      </div>`,
 
   weatherDot: (isActive) =>
@@ -98,7 +96,7 @@ const Templates = {
                     <div class="drawer-title">${i + 1}. ${e.title}</div>
                     <div class="drawer-time">${e.time} ${e.subtitle}</div>
                 </div>
-                <div class="drawer-nav" onclick="window.open('https://www.google.com/maps/search/?api=1&query=$${encodeURIComponent(
+                <div class="drawer-nav" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
                   e.pos || e.title
                 )}', '_blank')"><i class="fa-solid fa-location-arrow"></i></div>
             </div>
