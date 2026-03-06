@@ -43,6 +43,117 @@ const UI = {
       if (fab.classList.contains("open") && !fab.contains(e.target))
         fab.classList.remove("open");
     });
+
+    // [Ver2.5] 左滑完成手勢 — 事件委派
+    this.initSwipeGesture();
+  },
+
+  // ── [Ver2.5] 左滑完成手勢（事件委派在 #timeline-content）──
+  initSwipeGesture() {
+    const timeline = document.getElementById('timeline-content');
+    if (!timeline) return;
+
+    let startX = 0, startY = 0, currentX = 0;
+    let isTracking = false;
+    let direction = null;   // 'horizontal' | 'vertical' | null
+    let activeWrap = null;
+    let activeCard = null;
+
+    const THRESHOLD = 70;   // 觸發完成的最小滑動距離 (px)
+    const ANGLE_LIMIT = 25; // 角度限制 (deg)，低於此才算水平滑動
+    const MAX_SLIDE = 100;  // 最大滑動距離 (px)
+
+    function reset() {
+      startX = startY = currentX = 0;
+      isTracking = false;
+      direction = null;
+      activeWrap = null;
+      activeCard = null;
+    }
+
+    timeline.addEventListener('touchstart', (e) => {
+      const wrap = e.target.closest('.swipe-wrap');
+      if (!wrap) return;
+      const card = wrap.querySelector('.mini-card');
+      if (!card) return;
+
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      currentX = 0;
+      direction = null;
+      isTracking = true;
+      activeWrap = wrap;
+      activeCard = card;
+      activeCard.classList.remove('snap-back', 'swipe-triggered');
+    }, { passive: true });
+
+    timeline.addEventListener('touchmove', (e) => {
+      if (!isTracking || !activeCard) return;
+
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+
+      // 首次移動：判斷滑動方向
+      if (direction === null) {
+        if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+        const angle = Math.atan2(Math.abs(dy), Math.abs(dx)) * (180 / Math.PI);
+        if (angle > ANGLE_LIMIT) {
+          direction = 'vertical';
+          isTracking = false;
+          return;
+        }
+        direction = 'horizontal';
+        activeWrap.classList.add('swiping');
+      }
+
+      if (direction !== 'horizontal') return;
+
+      // 只允許往左滑（dx < 0）
+      currentX = Math.min(0, Math.max(-MAX_SLIDE, dx));
+      activeCard.style.transform = `translateX(${currentX}px)`;
+      e.preventDefault();
+    }, { passive: false });
+
+    timeline.addEventListener('touchend', () => {
+      if (direction !== 'horizontal' || !activeWrap || !activeCard) {
+        if (activeWrap) activeWrap.classList.remove('swiping');
+        reset();
+        return;
+      }
+
+      const dayId = parseInt(activeWrap.dataset.day, 10);
+      const idx = parseInt(activeWrap.dataset.idx, 10);
+      const card = activeCard;
+      const wrap = activeWrap;
+
+      if (Math.abs(currentX) >= THRESHOLD) {
+        // ✅ 滑動距離足夠 → 觸發完成/取消
+        card.style.setProperty('--swipe-x', `${currentX}px`);
+        card.style.transform = '';
+        card.classList.add('swipe-triggered');
+
+        card.addEventListener('animationend', () => {
+          App.Actions.toggleComplete(dayId, idx);
+          if (navigator.vibrate) navigator.vibrate(15);
+        }, { once: true });
+      } else {
+        // ↩ 未達門檻 → 彈回原位
+        card.style.transform = '';
+        card.classList.add('snap-back');
+      }
+
+      wrap.classList.remove('swiping');
+      reset();
+    });
+
+    timeline.addEventListener('touchcancel', () => {
+      if (activeCard) {
+        activeCard.style.transform = '';
+        activeCard.classList.remove('snap-back', 'swipe-triggered');
+      }
+      if (activeWrap) activeWrap.classList.remove('swiping');
+      reset();
+    });
   },
 
   onDataReady() {
