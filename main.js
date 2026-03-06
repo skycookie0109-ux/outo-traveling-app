@@ -9,7 +9,8 @@
    5. 啟動應用程式
 
    [Ver2] 新增行程完成標記功能
-   [Ver2.2] 新增 PWA + 深色模式
+   [Ver2.2] 新增 PWA
+   [Ver2.3] 移除深色模式
    ========================================= */
 
 // ── 1. 引入樣式 ──────────────────────────
@@ -111,9 +112,6 @@ window.onload = async () => {
         .then((reg) => console.log('[PWA] SW registered, scope:', reg.scope))
         .catch((err) => console.warn('[PWA] SW registration failed:', err));
     }
-
-    // [Ver2.2] 初始化深色模式
-    App.Settings.initDarkMode();
 
     // [Ver2.2.2] 設定按鈕長按啟動
     App.Settings.initSettingsButton();
