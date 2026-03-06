@@ -4,7 +4,7 @@
    確保每次部署後自動載入最新版本
    ========================================= */
 
-const CACHE_NAME = 'outo-v2.4';
+const CACHE_NAME = 'outo-v2.5';
 
 // 需要預快取的核心資源
 const PRE_CACHE = [
