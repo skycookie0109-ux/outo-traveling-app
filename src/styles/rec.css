@@ -1,34 +1,42 @@
 /* =========================================
    Recommendations - Activities & Places UI
+   [Ver2.4] iOS 風格精緻卡片 + Token 統一
    ========================================= */
 
+/* ── 標題列 ──────────────────────────── */
 .rec-title-row {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-20);
   position: relative;
   padding: 0 40px;
 }
 
-/* Attraction Ticket CTA Button */
+.rec-main-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+/* ── 門票 CTA ────────────────────────── */
 .rec-ticket-cta {
   display: flex;
   align-items: center;
-  background: linear-gradient(
-    135deg,
-    #fff8e1 0%,
-    #ffecb3 100%
-  );
-  border: 1px solid #ffe082;
-  border-radius: 12px;
-  margin-top: 10px;
-  margin-bottom: 5px;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-10);
+  margin-bottom: var(--space-6);
   padding: 0;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all var(--transition-fast);
   text-decoration: none;
 }
 
@@ -37,7 +45,7 @@
 }
 
 .rec-ticket-icon-col {
-  background: #ffca28;
+  background: #fbbf24;
   color: white;
   width: 44px;
   height: 44px;
@@ -50,127 +58,130 @@
 
 .rec-ticket-info {
   flex: 1;
-  padding: 8px 12px;
+  padding: var(--space-8) var(--space-12);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-right: 2px dashed #ffe082;
+  border-right: 2px dashed #fde68a;
 }
 
 .rec-ticket-title {
   font-size: 0.85rem;
   font-weight: 800;
-  color: #ef6c00;
+  color: #d97706;
   margin-bottom: 2px;
 }
 
 .rec-ticket-sub {
   font-size: 0.7rem;
-  color: #f57c00;
+  color: #f59e0b;
   font-weight: 600;
 }
 
 .rec-ticket-arrow {
-  padding: 0 12px;
-  color: #ffb300;
+  padding: 0 var(--space-12);
+  color: #f59e0b;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
 }
 
-.rec-main-title {
-  font-family: "Playfair Display", serif;
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: #37474f;
-  margin: 0;
-  text-align: center;
-}
-
+/* ── 分類 Tabs ───────────────────────── */
 .rec-tabs {
   display: flex;
-  gap: 10px;
-  padding-bottom: 10px;
+  gap: var(--space-8);
+  padding-bottom: var(--space-10);
   overflow-x: auto;
   scrollbar-width: none;
   justify-content: center;
 }
 
+.rec-tabs::-webkit-scrollbar {
+  display: none;
+}
+
 .rec-tab-btn {
-  background: #f9f9f9;
-  border: 1px solid #eee;
-  padding: 8px 16px;
-  border-radius: 25px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-full);
   font-weight: 700;
-  color: #90a4ae;
+  color: var(--text-tertiary);
   white-space: nowrap;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-6);
+}
+
+.rec-tab-btn:active {
+  transform: scale(0.95);
 }
 
 .rec-tab-btn.active.food {
   background: var(--accent);
-  color: white;
-  border-color: var(--accent);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: var(--text-inverse);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 .rec-tab-btn.active.shopping {
-  background: #e3f2fd;
-  color: #1976d2;
-  border-color: #bbdefb;
-  box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
 }
 
 .rec-tab-btn.active.massage {
-  background: #f3e5f5;
-  color: #8e24aa;
-  border-color: #e1bee7;
-  box-shadow: 0 4px 10px rgba(142, 36, 170, 0.2);
+  background: #f3e8ff;
+  color: #7c3aed;
+  border-color: #e9d5ff;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
 }
 
 .rec-tab-btn.active.tourist_attraction {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border-color: #c8e6c9;
-  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+  background: #dcfce7;
+  color: #16a34a;
+  border-color: #bbf7d0;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
 }
 
+/* ── 內容滾動區 ──────────────────────── */
 .rec-body-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 0 25px 25px 25px;
-  background: #fafafa;
+  padding: 0 var(--space-24) var(--space-24);
+  background: var(--bg-body);
   overscroll-behavior: contain;
 }
 
+/* ── 推薦卡片 ────────────────────────── */
 .rec-card {
   display: flex;
   flex-direction: column;
-  background: white;
-  border-radius: 16px;
-  padding: 15px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.03);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-xl);
+  padding: var(--space-16);
+  margin-bottom: var(--space-12);
+  box-shadow: var(--shadow-xs);
+  border: 1px solid var(--border-light);
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s;
+  transition: all var(--transition-fast);
 }
 
 .rec-card:active {
   transform: scale(0.99);
+  box-shadow: var(--shadow-sm);
 }
 
 .rec-upper {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding-right: 25px;
+  padding-right: var(--space-24);
 }
 
 .rec-main-content {
@@ -178,83 +189,89 @@
 }
 
 .rec-name-text {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  color: #37474f;
-  margin-bottom: 5px;
+  color: var(--text-main);
+  margin-bottom: var(--space-6);
   line-height: 1.3;
+  letter-spacing: -0.2px;
 }
 
+/* ── Tag 膠囊 ────────────────────────── */
 .rec-tag-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 5px;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
 }
 
 .rec-tag-pill {
-  font-size: 0.75rem;
-  padding: 3px 8px;
-  border-radius: 6px;
+  font-size: 0.72rem;
+  padding: 3px var(--space-8);
+  border-radius: var(--radius-sm);
   font-weight: 600;
-  background: #f5f5f5;
-  color: #616161;
+  background: var(--bg-secondary);
+  color: var(--text-sub);
   letter-spacing: 0.3px;
 }
 
 .rec-tag-pill.highlight {
-  background: #fff3e0;
-  color: #ef6c00;
+  background: #fff7ed;
+  color: #ea580c;
 }
 
+/* ── 導航圓鈕 ────────────────────────── */
 .rec-nav-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #e3f2fd;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background: #eff6ff;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1976d2;
-  font-size: 1.1rem;
+  color: #2563eb;
+  font-size: 1rem;
   flex-shrink: 0;
-  transition: all 0.2s;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  margin-left: 10px;
+  transition: all var(--transition-fast);
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  margin-left: var(--space-10);
 }
 
 .rec-nav-circle:active {
-  background: #1565c0;
+  background: #2563eb;
   color: white;
-  transform: scale(0.95);
+  transform: scale(0.92);
 }
 
+/* ── 熱門角標 ────────────────────────── */
 .rec-ribbon {
   position: absolute;
   top: 0;
   right: 0;
-  background: #ff5252;
+  background: #ef4444;
   color: white;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 800;
-  padding: 4px 8px;
-  border-bottom-left-radius: 8px;
-  box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: var(--space-4) var(--space-8);
+  border-bottom-left-radius: var(--radius-sm);
+  box-shadow: -2px 2px 6px rgba(239, 68, 68, 0.2);
   z-index: 2;
+  letter-spacing: 0.5px;
 }
 
+/* ── 展開腳區 ────────────────────────── */
 .rec-expand-footer {
-  margin-top: 8px;
-  padding-top: 10px;
-  border-top: 1px dashed #eee;
-  color: #78909c;
-  font-size: 0.85rem;
+  margin-top: var(--space-8);
+  padding-top: var(--space-10);
+  border-top: 1px solid var(--border-light);
+  color: var(--text-tertiary);
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: color 0.2s;
+  transition: color var(--transition-fast);
 }
 
 .rec-expand-footer:active {
@@ -262,152 +279,160 @@
 }
 
 .rec-expand-footer i {
-  margin-left: 5px;
-  transition: transform 0.3s;
+  margin-left: var(--space-6);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .rec-expand-footer i.rotate {
   transform: rotate(180deg);
 }
 
+/* ── 分店列表 ────────────────────────── */
 .rec-branch-box {
   display: none;
-  background: #f9fbff;
-  border: 1px solid #e3f2fd;
-  border-radius: 12px;
-  padding: 8px;
-  margin-top: 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  margin-top: var(--space-10);
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-6);
 }
 
 .rec-branch-box.open {
   display: flex;
-  animation: slideDown 0.3s ease;
+  animation: recSlideDown 0.3s ease;
+}
+
+@keyframes recSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .rec-branch-item {
   display: flex;
   align-items: center;
-  padding: 10px;
-  border-radius: 8px;
+  padding: var(--space-10);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all var(--transition-fast);
   border: 1px solid transparent;
 }
 
-.rec-branch-item:hover {
-  background: #ffffff;
-  border-color: #eee;
+.rec-branch-item:active {
+  background: var(--bg-elevated);
+  border-color: var(--border-light);
 }
 
 .rec-branch-item.active {
-  background: #e1f5fe;
-  border-color: #b3e5fc;
+  background: #e0f2fe;
+  border-color: #bae6fd;
 }
 
 .rec-branch-radio {
   width: 24px;
-  color: #cfd8dc;
+  color: var(--text-tertiary);
   font-size: 1rem;
   display: flex;
   justify-content: center;
   flex-shrink: 0;
-  transition: color 0.2s;
+  transition: color var(--transition-fast);
 }
 
 .rec-branch-item.active .rec-branch-radio {
-  color: #0288d1;
+  color: #0284c7;
 }
 
 .rec-branch-info {
-  margin-left: 8px;
+  margin-left: var(--space-8);
   flex: 1;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-6);
 }
 
 .rec-branch-name {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: #37474f;
+  color: var(--text-main);
 }
 
 .rec-branch-tag {
-  font-size: 0.65rem;
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 0.62rem;
+  padding: 2px var(--space-6);
+  border-radius: var(--radius-xs);
   font-weight: 700;
 }
 
 .rec-branch-tag.orange {
-  background: #fff3e0;
-  color: #ef6c00;
+  background: #fff7ed;
+  color: #ea580c;
 }
 
 .rec-branch-tag.blue {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: #eff6ff;
+  color: #2563eb;
 }
 
+/* ── 地址列 ──────────────────────────── */
 .rec-current-addr {
-  font-size: 0.85rem;
-  color: #555;
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: #fafafa;
-  border-radius: 8px;
+  font-size: 0.82rem;
+  color: var(--text-sub);
+  margin-top: var(--space-10);
+  padding: var(--space-8) var(--space-12);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: flex-start;
-  gap: 6px;
+  gap: var(--space-6);
   line-height: 1.4;
+  font-weight: 500;
 }
 
 .rec-current-addr i {
-  color: #00acc1;
+  color: var(--primary);
   margin-top: 2px;
 }
 
-/* Icon Box styles */
+/* ── 類別 Icon Box ───────────────────── */
 .rec-icon-box {
   width: 34px !important;
   height: 34px !important;
   min-width: 34px !important;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   font-size: 1.2rem !important;
   line-height: 1 !important;
   flex-shrink: 0 !important;
-  margin-right: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  background-color: #eee;
+  margin-right: var(--space-10);
+  box-shadow: none;
+  background-color: var(--bg-secondary);
 }
 
 div.rec-icon-box.food {
-  background-color: #fff3e0 !important;
-  color: #ef6c00 !important;
+  background-color: #fff7ed !important;
+  color: #ea580c !important;
 }
 
 div.rec-icon-box.shopping {
-  background-color: #e3f2fd !important;
-  color: #1976d2 !important;
+  background-color: #eff6ff !important;
+  color: #2563eb !important;
 }
 
 div.rec-icon-box.massage {
-  background-color: #f3e5f5 !important;
-  color: #8e24aa !important;
+  background-color: #faf5ff !important;
+  color: #7c3aed !important;
 }
 
 div.rec-icon-box.experience {
-  background-color: #e8f5e9 !important;
-  color: #2e7d32 !important;
+  background-color: #f0fdf4 !important;
+  color: #16a34a !important;
 }
 
 div.rec-icon-box.tourist_attraction {
-  background-color: #e8f5e9 !important;
-  color: #2e7d32 !important;
+  background-color: #f0fdf4 !important;
+  color: #16a34a !important;
 }

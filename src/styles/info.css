@@ -1,41 +1,45 @@
 /* =========================================
    Info Modal - Help & Information UI
+   [Ver2.4] Token 統一 + 更柔和配色
    ========================================= */
 
+/* ── 資訊列表 ────────────────────────── */
 .info-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  padding-bottom: 20px;
+  gap: var(--space-12);
+  padding-bottom: var(--space-20);
 }
 
+/* ── 資訊卡片 ────────────────────────── */
 .info-card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-xl);
+  padding: var(--space-20);
   display: flex;
   align-items: flex-start;
-  gap: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.02);
-  transition: transform 0.2s;
+  gap: var(--space-16);
+  box-shadow: var(--shadow-xs);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-fast);
 }
 
 .info-card:active {
   transform: scale(0.99);
+  box-shadow: var(--shadow-sm);
 }
 
 .info-icon-bubble {
   flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: #e0f7fa;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-lg);
+  background: rgba(8, 145, 178, 0.08);
   color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
 }
 
 .info-content-wrap {
@@ -43,51 +47,54 @@
 }
 
 .info-title {
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 700;
-  color: #37474f;
-  margin-bottom: 6px;
+  color: var(--text-main);
+  margin-bottom: var(--space-6);
   line-height: 1.3;
+  letter-spacing: -0.1px;
 }
 
 .info-desc {
-  font-size: 0.9rem;
-  color: #607d8b;
+  font-size: 0.88rem;
+  color: var(--text-sub);
   line-height: 1.6;
   white-space: pre-wrap;
 }
 
+/* ── 重要提醒（高亮卡片）─────────────── */
 .info-highlight-card {
-  background: #fff8e1;
-  border-radius: 16px;
+  background: #fffbeb;
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.1);
-  border: 1px solid #ffe0b2;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);
+  border: 1px solid #fde68a;
 }
 
 .info-highlight-header {
-  padding: 15px 20px;
-  background: rgba(255, 152, 0, 0.1);
+  padding: var(--space-16) var(--space-20);
+  background: rgba(245, 158, 11, 0.08);
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #e65100;
+  gap: var(--space-12);
+  color: #d97706;
   font-weight: 800;
-  font-size: 1rem;
-  border-bottom: 1px dashed rgba(255, 152, 0, 0.3);
+  font-size: 0.95rem;
+  border-bottom: 1px dashed rgba(245, 158, 11, 0.25);
 }
 
 .info-highlight-body {
-  padding: 15px 20px;
+  padding: var(--space-16) var(--space-20);
 }
 
+/* ── Checklist 項目 ──────────────────── */
 .checklist-item {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  gap: var(--space-12);
+  margin-bottom: var(--space-12);
+  padding-bottom: var(--space-12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .checklist-item:last-child {
@@ -98,21 +105,22 @@
 
 .checklist-icon {
   color: var(--accent);
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin-top: 3px;
-  background: white;
+  background: var(--bg-elevated);
   width: 20px;
   height: 20px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-xs);
+  flex-shrink: 0;
 }
 
 .checklist-text {
-  font-size: 0.95rem;
-  color: #5d4037;
+  font-size: 0.92rem;
+  color: var(--text-main);
   font-weight: 600;
   line-height: 1.5;
 }

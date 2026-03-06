@@ -3,21 +3,20 @@
    [Ver2.4] iOS 風格毛玻璃 + 精緻動畫
    ========================================= */
 
-/* ── 儀表板外框 ────────────────────────── */
+/* ── 儀表板外框（compact）────────────── */
 #weather-wrapper {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(16px) saturate(1.8);
   -webkit-backdrop-filter: blur(16px) saturate(1.8);
-  border-radius: var(--radius-xl);
-  margin-bottom: var(--space-16);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-12);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(255, 255, 255, 0.8);
   position: relative;
-  padding-bottom: var(--space-16);
+  padding-bottom: var(--space-10);
   animation: wFadeIn 0.5s ease;
   overflow: hidden;
-  min-height: 100px;
-  margin-top: var(--space-10);
+  margin-top: var(--space-8);
 }
 
 @keyframes wFadeIn {
@@ -36,16 +35,16 @@
   display: none;
 }
 
-/* ── 儀表板卡片 ──────────────────────── */
+/* ── 儀表板卡片（compact）────────────── */
 .w-card {
   flex: 0 0 100%;
   scroll-snap-align: center;
   display: flex;
   flex-direction: column;
-  padding: var(--space-16) var(--space-20) var(--space-8);
+  padding: var(--space-8) var(--space-16) var(--space-4);
   box-sizing: border-box;
   width: 100%;
-  gap: var(--space-8);
+  gap: var(--space-4);
 }
 
 /* 上排：圖示 + 地點 + 降雨 */
@@ -56,13 +55,13 @@
 }
 
 .wc-icon-wrap {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 0.85rem;
   flex-shrink: 0;
   transition: all var(--transition-fast);
 }
@@ -80,7 +79,7 @@
 }
 
 .wc-loc {
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--text-main);
   white-space: nowrap;
@@ -90,12 +89,12 @@
 }
 
 .wc-status {
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 700;
-  padding: 2px var(--space-8);
+  padding: 1px var(--space-6);
   border-radius: var(--radius-full);
   display: inline-block;
-  margin-top: var(--space-2);
+  margin-top: 1px;
   letter-spacing: 0.3px;
 }
 
@@ -111,9 +110,9 @@
 
 /* 降雨率 badge */
 .wc-pop-badge {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  padding: var(--space-4) var(--space-10);
+  padding: 2px var(--space-8);
   border-radius: var(--radius-full);
   white-space: nowrap;
   flex-shrink: 0;
@@ -130,37 +129,37 @@
 .wc-row-mid {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
-  padding: var(--space-2) 0;
+  gap: var(--space-4);
+  padding: 0;
 }
 
 .wc-temp-min {
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   color: #0369a1;
-  min-width: 32px;
+  min-width: 28px;
   text-align: right;
   letter-spacing: -0.5px;
 }
 
 .wc-temp-max {
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   color: #c2410c;
-  min-width: 32px;
+  min-width: 28px;
   letter-spacing: -0.5px;
 }
 
 .wc-temp-bar {
   flex: 1;
-  height: 4px;
+  height: 3px;
   border-radius: var(--radius-full);
   background: linear-gradient(90deg, #38bdf8 0%, #fbbf24 45%, #f97316 100%);
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
 .wc-desc-text {
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   color: var(--text-sub);
   font-weight: 600;
   margin-left: var(--space-4);
@@ -171,31 +170,31 @@
 .wc-row-bot {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
-  font-size: 0.72rem;
+  gap: var(--space-4);
+  font-size: 0.65rem;
   color: var(--text-sub);
   background: var(--bg-secondary);
-  padding: var(--space-6) var(--space-10);
-  border-radius: var(--radius-sm);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-xs);
   font-weight: 600;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .wc-row-bot i {
   color: var(--accent);
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   flex-shrink: 0;
 }
 
 /* ── 滑動圓點 ────────────────────────── */
 .w-dots {
   position: absolute;
-  bottom: 5px;
+  bottom: 2px;
   left: 0;
   width: 100%;
   display: flex;
   justify-content: center;
-  gap: var(--space-4);
+  gap: 3px;
   pointer-events: none;
 }
 
