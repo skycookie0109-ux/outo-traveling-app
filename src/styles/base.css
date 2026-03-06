@@ -9,12 +9,12 @@
   --primary: #0891b2;
   --primary-light: #06b6d4;
   --primary-dark: #0e7490;
-  --accent: #f59e0b;
-  --accent-light: #fbbf24;
-  --accent-dark: #d97706;
+  --accent: #ff9800;
+  --accent-light: #ffb74d;
+  --accent-dark: #f57c00;
 
   /* 背景 */
-  --bg-body: #f9fafb;
+  --bg-body: #f0f8ff;
   --bg-elevated: #ffffff;
   --bg-secondary: #f3f4f6;
   --bg-tertiary: #e5e7eb;
@@ -28,8 +28,8 @@
   /* 語意色彩 */
   --success: #10b981;
   --success-bg: #ecfdf5;
-  --warning: #f59e0b;
-  --warning-bg: #fffbeb;
+  --warning: #ff9800;
+  --warning-bg: #fff8e1;
   --error: #ef4444;
   --error-bg: #fef2f2;
   --info: #3b82f6;
@@ -120,6 +120,8 @@ body {
   overflow-y: auto;
   font-family: -apple-system, BlinkMacSystemFont, "Quicksand", "Noto Sans TC", "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg-body);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
   color: var(--text-main);
   margin: 0;
   padding: 0;

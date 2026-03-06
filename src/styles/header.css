@@ -250,15 +250,15 @@ body.scrolled .tab-btn {
 
 .tab-btn.active {
   background: var(--accent);
-  color: var(--text-inverse);
+  color: white;
   border-color: transparent;
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 body.scrolled .tab-btn.active {
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
 }
 
 .tab-btn .date {

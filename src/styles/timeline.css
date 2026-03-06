@@ -67,7 +67,7 @@
   border: 2.5px solid var(--accent);
   margin-top: 24px;
   z-index: 2;
-  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.12);
+  box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.12);
   transition: all var(--transition-fast);
 }
 
