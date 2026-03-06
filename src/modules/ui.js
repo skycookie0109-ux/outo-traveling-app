@@ -131,28 +131,27 @@ const UI = {
       const wrap = activeWrap;
 
       if (Math.abs(currentX) >= THRESHOLD) {
-        // ✅ 滑動距離足夠 → 觸發完成/取消
-        // 先加上 swipe-triggered（含 transition），讓卡片動畫回到 translateX(0)
+        // ✅ 滑動距離足夠 → 立即切換狀態 + 同時播放回彈動畫
+        App.Actions.toggleComplete(dayId, idx);
+        if (navigator.vibrate) navigator.vibrate(15);
+
+        // 動畫回彈到原位
         card.classList.add('swipe-triggered');
 
         card.addEventListener('transitionend', () => {
-          // ★ 重要：清除 inline transform，否則移除 class 後卡片會跳回位移位置
           card.style.transform = '';
           card.classList.remove('swipe-triggered');
           wrap.classList.remove('swiping');
-          App.Actions.toggleComplete(dayId, idx);
-          if (navigator.vibrate) navigator.vibrate(15);
         }, { once: true });
 
-        // 安全網：若 transitionend 未觸發（偶發），500ms 後強制執行
+        // 安全網：若 transitionend 未觸發（偶發），400ms 後強制清理
         setTimeout(() => {
           if (card.classList.contains('swipe-triggered')) {
             card.style.transform = '';
             card.classList.remove('swipe-triggered');
             wrap.classList.remove('swiping');
-            App.Actions.toggleComplete(dayId, idx);
           }
-        }, 500);
+        }, 400);
       } else {
         // ↩ 未達門檻 → 彈回原位
         card.classList.add('snap-back');
