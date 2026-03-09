@@ -1,10 +1,10 @@
 /* =========================================
    Service Worker — Outo Traveling App PWA
-   [v2.5] Network First 策略 + 快取版本更新
+   [v2.6] Network First 策略 + 快取版本更新
    確保每次部署後自動載入最新版本
    ========================================= */
 
-const CACHE_NAME = 'outo-v2.5';
+const CACHE_NAME = 'outo-v2.6';
 
 // 需要預快取的核心資源
 const PRE_CACHE = [

@@ -1,6 +1,6 @@
 {
     "name": "outo-traveling-app",
-    "version": "2.5.0",
+    "version": "2.6.0",
     "description": "Outo Travel App - 整合旅遊功能的行動網頁應用",
     "type": "module",
     "scripts": {
