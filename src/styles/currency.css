@@ -1,0 +1,330 @@
+/* =========================================
+   Currency Converter — 即時匯率模組樣式
+   [v2.9] 方案D：漸層基準區 + 下拉切換 + 緊湊結果清單
+   ========================================= */
+
+/* ── 基準幣別卡片（漸層） ──────────────── */
+.currency-base-card {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: var(--radius-lg);
+  padding: var(--space-16);
+  color: var(--text-inverse);
+  margin-bottom: var(--space-6);
+  box-shadow: 0 4px 16px rgba(8, 145, 178, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.currency-base-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-12);
+}
+
+.currency-base-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+}
+
+.currency-base-flag {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.currency-base-code {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.currency-base-name {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* 切換按鈕 */
+.currency-switch-btn {
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.22);
+  color: var(--text-inverse);
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  font-family: inherit;
+}
+
+.currency-switch-btn:active {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* 基準輸入框 */
+.currency-base-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: none;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.95);
+  text-align: right;
+  outline: none;
+  font-family: inherit;
+  -moz-appearance: textfield;
+}
+
+.currency-base-input::-webkit-outer-spin-button,
+.currency-base-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 快速金額按鈕列 */
+.currency-quick-row {
+  display: flex;
+  gap: var(--space-6);
+  margin-top: var(--space-10);
+  flex-wrap: wrap;
+}
+
+.currency-quick-btn {
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-inverse);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.currency-quick-btn:active,
+.currency-quick-btn.active {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--primary-dark);
+  border-color: transparent;
+}
+
+/* 更新時間 */
+.currency-update-time {
+  font-size: 9px;
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--space-8);
+}
+
+.currency-update-time::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #76ff03;
+  flex-shrink: 0;
+}
+
+/* ── 結果清單 ─────────────────────────── */
+.currency-result-header {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  margin: var(--space-10) 0 var(--space-8);
+  padding-left: 2px;
+}
+
+.currency-result-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.currency-result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  padding: var(--space-12) 14px;
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--transition-fast);
+}
+
+.currency-result-item:active {
+  transform: scale(0.985);
+}
+
+.currency-result-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+}
+
+.currency-result-flag {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.currency-result-code {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.currency-result-name {
+  font-size: 9.5px;
+  color: var(--text-tertiary);
+}
+
+.currency-result-right {
+  text-align: right;
+}
+
+.currency-result-amount {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.currency-result-rate {
+  font-size: 9.5px;
+  color: var(--text-tertiary);
+  margin-top: 1px;
+}
+
+/* ── 幣別選擇器（下拉面板） ────────────── */
+.currency-picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+
+.currency-picker-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.currency-picker-sheet {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--space-20) var(--space-16) var(--space-32);
+  width: 100%;
+  max-width: 420px;
+  max-height: 60vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform var(--transition-base);
+}
+
+.currency-picker-overlay.show .currency-picker-sheet {
+  transform: translateY(0);
+}
+
+.currency-picker-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  margin: 0 auto var(--space-16);
+}
+
+.currency-picker-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: var(--space-12);
+  color: var(--text-main);
+}
+
+.currency-picker-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-8);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.currency-picker-item:active {
+  background: var(--bg-secondary);
+}
+
+.currency-picker-item.current {
+  background: rgba(8, 145, 178, 0.08);
+}
+
+.currency-picker-item .flag {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.currency-picker-item .code {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.currency-picker-item .name {
+  font-size: 11px;
+  color: var(--text-sub);
+}
+
+.currency-picker-item .check {
+  margin-left: auto;
+  color: var(--primary);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ── 清除按鈕 ─────────────────────────── */
+.currency-clear-btn {
+  background: var(--bg-secondary);
+  border: none;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  color: var(--text-sub);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  transition: background var(--transition-fast);
+}
+
+.currency-clear-btn:active {
+  background: var(--bg-tertiary);
+}
+
+/* ── 進場動畫 ─────────────────────────── */
+.currency-result-item {
+  animation: slideUp 0.3s ease both;
+}
+
+.currency-result-item:nth-child(1) { animation-delay: 0.03s; }
+.currency-result-item:nth-child(2) { animation-delay: 0.06s; }
+.currency-result-item:nth-child(3) { animation-delay: 0.09s; }
+.currency-result-item:nth-child(4) { animation-delay: 0.12s; }
+.currency-result-item:nth-child(5) { animation-delay: 0.15s; }
+.currency-result-item:nth-child(6) { animation-delay: 0.18s; }
+.currency-result-item:nth-child(7) { animation-delay: 0.21s; }
+.currency-result-item:nth-child(8) { animation-delay: 0.24s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .currency-result-item {
+    animation: none;
+  }
+}

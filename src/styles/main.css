@@ -19,6 +19,7 @@
 @import './rec.css';
 
 /* Feature Modules */
+@import './currency.css';
 @import './finance.css';
 @import './ticket.css';
 
