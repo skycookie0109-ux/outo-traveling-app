@@ -2,7 +2,7 @@
  * Actions Module
  * Handles main application actions and navigation between different features
  *
- * [Ver2] 新增 toggleComplete() 行程完成標記功能
+ * [v2.0] 新增 toggleComplete() 行程完成標記功能
  */
 
 import Store from './store.js';
@@ -61,7 +61,7 @@ const Actions = {
     App.Utils.speak(txt, targetLang);
   },
 
-  // ── [Ver2.2.2] 行程完成標記 — DOM 直接操作（不重新渲染）──
+  // ── [v2.2.2] 行程完成標記 — DOM 直接操作（不重新渲染）──
   toggleComplete(dayId, idx) {
     const key = `done_${dayId}_${idx}`;
     const current = localStorage.getItem(key);

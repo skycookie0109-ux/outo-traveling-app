@@ -2,7 +2,7 @@
  * UI Module
  * Handles main UI initialization, tab rendering, timeline rendering, and detail view
  *
- * [Ver2] renderTimeline 現在會讀取 localStorage 的完成狀態傳入 template
+ * [v2.0] renderTimeline 現在會讀取 localStorage 的完成狀態傳入 template
  */
 
 import EventBus from './eventbus.js';
@@ -44,11 +44,11 @@ const UI = {
         fab.classList.remove("open");
     });
 
-    // [Ver2.5] 左滑完成手勢 — 事件委派
+    // [v2.5] 左滑完成手勢 — 事件委派
     this.initSwipeGesture();
   },
 
-  // ── [Ver2.5] 左滑完成手勢（事件委派在 #timeline-content）──
+  // ── [v2.5] 左滑完成手勢（事件委派在 #timeline-content）──
   initSwipeGesture() {
     const timeline = document.getElementById('timeline-content');
     if (!timeline) return;
@@ -194,7 +194,7 @@ const UI = {
       .join("");
   },
 
-  // [Ver2] 加入完成狀態判斷
+  // [v2.0] 加入完成狀態判斷
   renderTimeline() {
     const day = Store.itinerary.find((d) => d.id === Store.activeDayId);
     if (!day) return;

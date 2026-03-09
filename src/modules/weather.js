@@ -3,7 +3,7 @@
  * Handles weather data fetching, geocoding, and weather display
  * Uses Open-Meteo API for weather forecasts
  *
- * [Ver2.4] 天氣資訊強化：穿搭建議、分級降雨、圖示升級
+ * [v2.4] 天氣資訊強化：穿搭建議、分級降雨、圖示升級
  */
 
 import EventBus from './eventbus.js';
@@ -13,7 +13,7 @@ import Templates from './templates.js';
 const Weather = {
   cache: {},
 
-  // ── [Ver2.4] 穿搭/攜帶建議 ──────────────────
+  // ── [v2.4] 穿搭/攜帶建議 ──────────────────
   getAdvice(min, max, pop) {
     if (typeof min !== 'number' || typeof max !== 'number') {
       return { text: '載入中...', icon: 'fa-spinner' };
@@ -48,7 +48,7 @@ const Weather = {
     };
   },
 
-  // ── [Ver2.4] 降雨等級分類 ──────────────────
+  // ── [v2.4] 降雨等級分類 ──────────────────
   getRainLevel(pop) {
     if (typeof pop !== 'number') return 'unknown';
     if (pop >= 60) return 'high';
@@ -56,7 +56,7 @@ const Weather = {
     return 'low';
   },
 
-  // ── [Ver2.4] 天氣圖示映射（Font Awesome 取代 emoji）──
+  // ── [v2.4] 天氣圖示映射（Font Awesome 取代 emoji）──
   getWeatherIcon(code) {
     if (code === 0) return { icon: 'fa-sun', cls: 'w-icon-sun', desc: '晴朗' };
     if (code <= 3) return { icon: 'fa-cloud-sun', cls: 'w-icon-cloudy', desc: '多雲' };
@@ -184,7 +184,7 @@ const Weather = {
           const pop = data.daily.precipitation_probability_max[i];
           const code = data.daily.weather_code[i];
 
-          // [Ver2.4] 使用 getWeatherIcon 取代 emoji
+          // [v2.4] 使用 getWeatherIcon 取代 emoji
           const wIcon = this.getWeatherIcon(code);
           const advice = this.getAdvice(min, max, pop);
           const rainLevel = this.getRainLevel(pop);
@@ -385,7 +385,7 @@ const Weather = {
           const pop = data.daily.precipitation_probability_max[i];
           const code = data.daily.weather_code[i];
 
-          // [Ver2.4] 使用統一的圖示 + 建議系統
+          // [v2.4] 使用統一的圖示 + 建議系統
           const wIcon = this.getWeatherIcon(code);
           const advice = this.getAdvice(min, max, pop);
           const rainLevel = this.getRainLevel(pop);
@@ -472,7 +472,7 @@ const Weather = {
     const pop = data.hourly.precipitation_probability[idx];
     const code = data.hourly.weather_code[idx];
 
-    // [Ver2.4] 統一使用 getWeatherIcon
+    // [v2.4] 統一使用 getWeatherIcon
     const wIcon = this.getWeatherIcon(code);
     const rainLevel = this.getRainLevel(pop);
 

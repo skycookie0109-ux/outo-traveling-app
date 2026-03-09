@@ -1,5 +1,5 @@
 /* =========================================
-   main.js — App 入口點 (Ver2)
+   main.js — App 入口點 (v2.5)
 
    這個檔案負責：
    1. 引入所有樣式
@@ -8,9 +8,11 @@
    4. 載入外部依賴 (PapaParse, Google Maps)
    5. 啟動應用程式
 
-   [Ver2] 新增行程完成標記功能
-   [Ver2.2] 新增 PWA
-   [Ver2.3] 移除深色模式
+   [v2.0] 新增行程完成標記功能
+   [v2.2] 新增 PWA
+   [v2.3] 移除深色模式
+      [v2.4] iOS 17/18 風格 UI/UX 全面翻新
+         [v2.5] 左滑完成手勢 + 勾選修復 + 動畫優化
    ========================================= */
 
 // ── 1. 引入樣式 ──────────────────────────
@@ -105,7 +107,7 @@ window.onload = async () => {
 
     // 載入資料（從 Google Sheets 拉取）
     App.Data.init();
-    // [Ver2.2] 註冊 Service Worker (PWA)
+    // [v2.2] 註冊 Service Worker (PWA)
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
@@ -113,7 +115,7 @@ window.onload = async () => {
         .catch((err) => console.warn('[PWA] SW registration failed:', err));
     }
 
-    // [Ver2.2.2] 設定按鈕長按啟動
+    // [v2.2.2] 設定按鈕長按啟動
     App.Settings.initSettingsButton();
   } catch (error) {
     console.error('App 啟動失敗:', error);

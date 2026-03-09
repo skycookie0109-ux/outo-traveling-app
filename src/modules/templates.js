@@ -4,7 +4,7 @@
  * NOTE: These templates reference App.Actions, App.Map, App.Utils, etc.
  *       which are set up in the global App object in main.js
  *
- * [Ver2] 新增行程完成標記 checkbox 功能
+ * [v2.0] 新增行程完成標記 checkbox 功能
  */
 
 const Templates = {
@@ -41,7 +41,7 @@ const Templates = {
             </div>
         </div>`,
 
-  // [Ver2.4] 天氣儀表板卡片 — 兩行極簡佈局
+  // [v2.4] 天氣儀表板卡片 — 兩行極簡佈局
   weatherCard: (d, i) =>
     `<div class="w-card">
         <div class="wc-row-main">

@@ -3,12 +3,12 @@
  * Handles clearing finance records, notes, and factory reset
  * Note: This module references App.Finance, App.Utils, and localStorage
  *
- * [Ver2] 新增 clearCompletions() 清除行程完成標記
- * [Ver2.3] 移除深色模式
+ * [v2.0] 新增 clearCompletions() 清除行程完成標記
+ * [v2.3] 移除深色模式
  */
 
 const Settings = {
-  // ── [Ver2.2.2] 設定按鈕長按啟動（防誤觸）──
+  // ── [v2.2.2] 設定按鈕長按啟動（防誤觸）──
   initSettingsButton() {
     const btn = document.getElementById('settings-btn-header');
     if (!btn) return;
@@ -54,7 +54,7 @@ const Settings = {
     }
   },
 
-  // [Ver2] 3. 清除行程完成標記
+  // [v2.0] 3. 清除行程完成標記
   clearCompletions() {
     if (confirm("確定要清除所有行程完成標記嗎？")) {
       Object.keys(localStorage).forEach((key) => {
