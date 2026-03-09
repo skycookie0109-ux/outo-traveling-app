@@ -113,6 +113,14 @@
   border-color: transparent;
 }
 
+/* 基準卡片底部列（時間 + 清除） */
+.currency-base-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-8);
+}
+
 /* 更新時間 */
 .currency-update-time {
   font-size: 9px;
@@ -120,7 +128,6 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-top: var(--space-8);
 }
 
 .currency-update-time::before {
@@ -201,15 +208,16 @@
   margin-top: 1px;
 }
 
-/* ── 幣別選擇器（下拉面板） ────────────── */
+/* ── 幣別選擇器（Modal 內部底部彈出） ──── */
 .currency-picker-overlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 9999;
+  z-index: 10;
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  border-radius: inherit;
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--transition-fast);
@@ -225,8 +233,7 @@
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   padding: var(--space-20) var(--space-16) var(--space-32);
   width: 100%;
-  max-width: 420px;
-  max-height: 60vh;
+  max-height: 60%;
   overflow-y: auto;
   transform: translateY(100%);
   transition: transform var(--transition-base);
@@ -291,22 +298,23 @@
   font-weight: 700;
 }
 
-/* ── 清除按鈕 ─────────────────────────── */
+/* ── 清除按鈕（漸層卡片內） ────────────── */
 .currency-clear-btn {
-  background: var(--bg-secondary);
-  border: none;
-  padding: 5px 14px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 3px 12px;
   border-radius: var(--radius-full);
-  font-size: 12px;
-  color: var(--text-sub);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
   font-family: inherit;
   font-weight: 500;
   transition: background var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .currency-clear-btn:active {
-  background: var(--bg-tertiary);
+  background: rgba(255, 255, 255, 0.35);
 }
 
 /* ── 進場動畫 ─────────────────────────── */
