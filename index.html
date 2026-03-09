@@ -640,114 +640,19 @@
       </div>
     </div>
 
-    <!-- Currency Converter Modal -->
+    <!-- [v2.9] Currency Converter Modal — 方案D 漸層基準區 + 下拉切換 -->
     <div class="modal-overlay" id="converterModal">
       <div class="modal-card">
         <button class="modal-close" onclick="App.Utils.closeAll()">
           <i class="fa-solid fa-xmark"></i>
         </button>
-        <div class="modal-header">即時匯率</div>
+        <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between;">
+          <span>即時匯率</span>
+          <button class="currency-clear-btn" onclick="App.Currency.clear()">清除</button>
+        </div>
         <div class="modal-content-scroll">
-          <div style="text-align: right; margin-bottom: 10px">
-            <button
-              style="
-                background: #eee;
-                border: none;
-                padding: 5px 12px;
-                border-radius: 20px;
-                font-size: 0.8rem;
-              "
-              onclick="App.Currency.clear()"
-            >
-              清除
-            </button>
-          </div>
-          <div
-            class="currency-grid"
-            style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px"
-          >
-            <div
-              class="currency-box"
-              style="
-                background: #ffebee;
-                padding: 15px;
-                border-radius: 16px;
-                border: 1px solid #ffcdd2;
-              "
-            >
-              <label style="color: #c62828">🇻🇳 VND (越南盾)</label>
-              <input
-                type="number"
-                id="inp-VND"
-                class="currency-input"
-                style="
-                  width: 100%;
-                  border: none;
-                  background: transparent;
-                  font-weight: 800;
-                  font-size: 1.3rem;
-                  color: #c62828;
-                "
-                placeholder="0"
-                oninput="App.Currency.calculate('VND')"
-              />
-            </div>
-            <div
-              class="currency-box"
-              style="background: #e3f2fd; padding: 15px; border-radius: 16px"
-            >
-              <label>🇺🇸 USD (美金)</label>
-              <input
-                type="number"
-                id="inp-USD"
-                class="currency-input"
-                style="
-                  width: 100%;
-                  border: none;
-                  background: transparent;
-                  font-weight: 700;
-                  font-size: 1.2rem;
-                "
-                placeholder="0"
-                oninput="App.Currency.calculate('USD')"
-              />
-            </div>
-            <div
-              class="currency-box"
-              style="
-                background: #fff3e0;
-                padding: 15px;
-                border-radius: 16px;
-                grid-column: span 2;
-              "
-            >
-              <label>🇹🇼 TWD (台幣)</label>
-              <input
-                type="number"
-                id="inp-TWD"
-                class="currency-input"
-                style="
-                  width: 100%;
-                  border: none;
-                  background: transparent;
-                  font-weight: 700;
-                  font-size: 1.2rem;
-                "
-                placeholder="0"
-                oninput="App.Currency.calculate('TWD')"
-              />
-            </div>
-          </div>
-          <div
-            id="rate-source"
-            style="
-              text-align: center;
-              color: #999;
-              margin-top: 20px;
-              font-size: 0.8rem;
-            "
-          >
-            *Loading...
+          <div id="currency-container">
+            <!-- JS 動態渲染 -->
           </div>
         </div>
       </div>
