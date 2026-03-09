@@ -1,30 +1,81 @@
 /**
  * Language Module
  * Handles language translation with voice input and Google Translate API integration
+ *
+ * [v2.7] 常用詞分類標籤 + 翻譯結果卡片美化 + 複製功能
  */
 
 import Store from './store.js';
 import { GOOGLE_API_KEY } from './config.js';
 
+// — [v2.7] 常用詞分類（依 icon 自動歸類）————————
+const PHRASE_CATEGORIES = [
+  { key: 'all',      label: '全部' },
+  { key: 'greet',    label: '招呼',   icons: ['👋','🙏','😊','🤝','👍'] },
+  { key: 'food',     label: '餐飲',   icons: ['🍜','🍲','🥖','☕','🍺','🧊','🥤','🍽','🍛','🥢','🍴'] },
+  { key: 'transport', label: '交通',  icons: ['🚕','✈️','🚌','🛵','🚂','🗺','📍'] },
+  { key: 'shop',     label: '購物',   icons: ['💰','🛒','🏪','💳','🧾'] },
+  { key: 'emergency', label: '緊急',  icons: ['🆘','🏥','👮','📞','⚠️','❓'] },
+];
+
 const Language = {
   recognitionInstance: null,
   voiceSafetyTimer: null,
+  activeTab: 'all',  // [v2.7]
 
   open() {
     App.Utils.openModal("phraseModal");
-    document.getElementById("phrase-grid-content").innerHTML = Store.phrases
-      .map(
-        (p) =>
-          `<div class="phrase-card" style="background:white; padding:15px; border-radius:16px; text-align:center; border:1px solid #eee; cursor:pointer; transition:transform 0.2s;" onclick="App.Utils.speak('${p.target}', 'vi-VN')">
-                <div style="font-size:2rem; margin-bottom:5px;">${p.icon}</div>
-                <div>
-                    <div style="font-weight:700; color:#37474f;">${p.zh}</div>
-                    <div style="color:var(--primary); font-weight:700; font-size:1.1rem; margin:2px 0;">${p.target}</div>
-                    <small style="color:#999;">${p.pron}</small>
-                </div>
-            </div>`
-      )
-      .join("");
+    this.renderTabs();
+    this.renderPhrases();
+  },
+
+  // — [v2.7] 渲染分類標籤列 ———————————
+  renderTabs() {
+    const bar = document.getElementById("phrase-tab-bar");
+    if (!bar) return;
+
+    bar.innerHTML = PHRASE_CATEGORIES.map(cat =>
+      `<button class="phrase-tab${cat.key === this.activeTab ? ' active' : ''}"
+              onclick="App.Language.switchTab('${cat.key}')">${cat.label}</button>`
+    ).join('');
+  },
+
+  switchTab(key) {
+    this.activeTab = key;
+    this.renderTabs();
+    this.renderPhrases();
+  },
+
+  // — [v2.7] 按分類篩選後渲染常用詞卡片 —
+  renderPhrases() {
+    const grid = document.getElementById("phrase-grid-content");
+    if (!grid) return;
+
+    let phrases = Store.phrases;
+
+    if (this.activeTab !== 'all') {
+      const cat = PHRASE_CATEGORIES.find(c => c.key === this.activeTab);
+      if (cat && cat.icons) {
+        phrases = phrases.filter(p => cat.icons.includes(p.icon));
+      }
+    }
+
+    if (phrases.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-tertiary);">
+        此分類暫無常用詞</div>`;
+      return;
+    }
+
+    grid.innerHTML = phrases.map(p =>
+      `<div class="phrase-card" onclick="App.Utils.speak('${p.target.replace(/'/g, "\\'")}', 'vi-VN')">
+        <div class="phrase-card-icon">${p.icon}</div>
+        <div>
+          <div class="phrase-card-zh">${p.zh}</div>
+          <div class="phrase-card-target">${p.target}</div>
+          <small class="phrase-card-pron">${p.pron}</small>
+        </div>
+      </div>`
+    ).join('');
   },
 
   stopVoiceInput() {
@@ -130,6 +181,7 @@ const Language = {
     const targetEl = document.getElementById("transTarget");
     const resultEl = document.getElementById("transResult");
     const speakBtn = document.getElementById("btn-speak-result");
+    const copyBtn = document.getElementById("btn-copy-result");
 
     const text = inputEl.value.trim();
     const targetLang = targetEl.value;
@@ -138,7 +190,8 @@ const Language = {
 
     resultEl.innerHTML =
       '<i class="fa-solid fa-spinner fa-spin"></i> 翻譯中...';
-    speakBtn.style.display = "none";
+    if (speakBtn) speakBtn.classList.remove("visible");
+    if (copyBtn) copyBtn.classList.remove("visible");
 
     const url = `https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}`;
 
@@ -162,11 +215,30 @@ const Language = {
         const translatedText = data.data.translations[0].translatedText;
         resultEl.innerText = translatedText;
         resultEl.dataset.lang = targetLang;
-        speakBtn.style.display = "inline-block";
+        if (speakBtn) speakBtn.classList.add("visible");
+        if (copyBtn) copyBtn.classList.add("visible");
       }
     } catch (error) {
       console.error(error);
       resultEl.innerText = "網路錯誤";
+    }
+  },
+
+  // — [v2.7] 複製翻譯結果 ——————————————
+  copyResult() {
+    const resultEl = document.getElementById("transResult");
+    const text = resultEl?.innerText;
+    if (!text || text === '...') return;
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        const copyBtn = document.getElementById("btn-copy-result");
+        if (copyBtn) {
+          const orig = copyBtn.innerHTML;
+          copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> 已複製';
+          setTimeout(() => { copyBtn.innerHTML = orig; }, 1500);
+        }
+      });
     }
   },
 
