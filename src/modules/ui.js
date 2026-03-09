@@ -185,7 +185,7 @@ const UI = {
     }
     this.renderTabs();
     this.renderTimeline();
-    App.Currency.fetchRates();
+    App.Currency.init();
   },
 
   renderTabs() {
