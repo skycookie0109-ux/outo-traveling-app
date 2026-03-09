@@ -3,7 +3,7 @@
  * Handles weather data fetching, geocoding, and weather display
  * Uses Open-Meteo API for weather forecasts
  *
- * [v2.4] 天氣資訊強化：穿搭建議、分級降雨、圖示升級
+ * [v2.6] å¤©æ°£è³è¨å¼·åï¼ç©¿æ­å»ºè­°ãåç´éé¨ãåç¤ºåç´
  */
 
 import EventBus from './eventbus.js';
@@ -13,42 +13,42 @@ import Templates from './templates.js';
 const Weather = {
   cache: {},
 
-  // ── [v2.4] 穿搭/攜帶建議 ──────────────────
+  // ââ [v2.6] ç©¿æ­/æå¸¶å»ºè­° ââââââââââââââââââ
   getAdvice(min, max, pop) {
     if (typeof min !== 'number' || typeof max !== 'number') {
-      return { text: '載入中...', icon: 'fa-spinner' };
+      return { text: 'è¼å¥ä¸­...', icon: 'fa-spinner' };
     }
 
     const items = [];
     const avg = (min + max) / 2;
 
-    // 溫度建議
+    // æº«åº¦å»ºè­°
     if (max >= 33) {
-      items.push('短袖短褲、防曬乳、遮陽帽');
+      items.push('ç­è¢ç­è¤²ãé²æ¬ä¹³ãé®é½å¸½');
     } else if (avg >= 28) {
-      items.push('輕薄透氣衣物、太陽眼鏡');
+      items.push('è¼èéæ°£è¡£ç©ãå¤ªé½ç¼é¡');
     } else if (avg >= 23) {
-      items.push('薄長袖備用');
+      items.push('èé·è¢åç¨');
     } else {
-      items.push('薄外套或風衣');
+      items.push('èå¤å¥æé¢¨æ¯');
     }
 
-    // 降雨建議
+    // éé¨å»ºè­°
     if (typeof pop === 'number') {
       if (pop >= 80) {
-        items.push('雨具 + 防水袋');
+        items.push('é¨å· + é²æ°´è¢');
       } else if (pop >= 60) {
-        items.push('記得帶傘');
+        items.push('è¨å¾å¸¶å');
       }
     }
 
     return {
-      text: items.join('、'),
+      text: items.join('ã'),
       icon: max >= 30 ? 'fa-sun' : avg >= 23 ? 'fa-shirt' : 'fa-vest-patches',
     };
   },
 
-  // ── [v2.4] 降雨等級分類 ──────────────────
+  // ââ [v2.6] éé¨ç­ç´åé¡ ââââââââââââââââââ
   getRainLevel(pop) {
     if (typeof pop !== 'number') return 'unknown';
     if (pop >= 60) return 'high';
@@ -56,13 +56,13 @@ const Weather = {
     return 'low';
   },
 
-  // ── [v2.4] 天氣圖示映射（Font Awesome 取代 emoji）──
+  // ââ [v2.6] å¤©æ°£åç¤ºæ å°ï¼Font Awesome åä»£ emojiï¼ââ
   getWeatherIcon(code) {
-    if (code === 0) return { icon: 'fa-sun', cls: 'w-icon-sun', desc: '晴朗' };
-    if (code <= 3) return { icon: 'fa-cloud-sun', cls: 'w-icon-cloudy', desc: '多雲' };
-    if (code <= 45) return { icon: 'fa-cloud', cls: 'w-icon-overcast', desc: '陰天' };
-    if (code <= 67) return { icon: 'fa-cloud-rain', cls: 'w-icon-rain', desc: '有雨' };
-    return { icon: 'fa-cloud-bolt', cls: 'w-icon-storm', desc: '雷雨' };
+    if (code === 0) return { icon: 'fa-sun', cls: 'w-icon-sun', desc: 'æ´æ' };
+    if (code <= 3) return { icon: 'fa-cloud-sun', cls: 'w-icon-cloudy', desc: 'å¤é²' };
+    if (code <= 45) return { icon: 'fa-cloud', cls: 'w-icon-overcast', desc: 'é°å¤©' };
+    if (code <= 67) return { icon: 'fa-cloud-rain', cls: 'w-icon-rain', desc: 'æé¨' };
+    return { icon: 'fa-cloud-bolt', cls: 'w-icon-storm', desc: 'é·é¨' };
   },
 
   init() {
@@ -112,7 +112,7 @@ const Weather = {
 
     if (!targets || targets.length === 0) {
       container.innerHTML =
-        "<div style='padding:20px; color:#666;'>無天氣資訊</div>";
+        "<div style='padding:20px; color:#666;'>ç¡å¤©æ°£è³è¨</div>";
       dots.innerHTML = "";
       return;
     }
@@ -130,7 +130,7 @@ const Weather = {
 
     if (isNaN(diffDays)) diffDays = 999;
 
-    // 過去 92 天內 & 未來 13 天內都可以透過 API 查詢實際天氣
+    // éå» 92 å¤©å§ & æªä¾ 13 å¤©å§é½å¯ä»¥éé API æ¥è©¢å¯¦éå¤©æ°£
     const isReferenceMode = diffDays > 13 || diffDays < -92;
     const targetDateStr = dayData.fullDate;
 
@@ -149,12 +149,12 @@ const Weather = {
 
         if (!coords)
           return {
-            name: e.wLoc || e.pos || "未知地點",
+            name: e.wLoc || e.pos || "æªç¥å°é»",
             min: "-",
             max: "-",
             pop: "--",
             icon: "?",
-            statusLabel: "無法定位",
+            statusLabel: "ç¡æ³å®ä½",
             isRef: true,
           };
 
@@ -184,7 +184,7 @@ const Weather = {
           const pop = data.daily.precipitation_probability_max[i];
           const code = data.daily.weather_code[i];
 
-          // [v2.4] 使用 getWeatherIcon 取代 emoji
+          // [v2.6] ä½¿ç¨ getWeatherIcon åä»£ emoji
           const wIcon = this.getWeatherIcon(code);
           const advice = this.getAdvice(min, max, pop);
           const rainLevel = this.getRainLevel(pop);
@@ -193,14 +193,14 @@ const Weather = {
           if (useRef) {
             const daysToWait = diffDays - 13;
             if (daysToWait > 0 && daysToWait <= 14) {
-              statusLabel = `${daysToWait}天後更新`;
+              statusLabel = `${daysToWait}å¤©å¾æ´æ°`;
             } else {
-              statusLabel = "近期參考";
+              statusLabel = "è¿æåè";
             }
           } else if (diffDays < 0) {
-            statusLabel = "實際天氣";
+            statusLabel = "å¯¦éå¤©æ°£";
           } else {
-            statusLabel = "即時預報";
+            statusLabel = "å³æé å ±";
           }
 
           return {
@@ -224,7 +224,7 @@ const Weather = {
             max: "-",
             pop: "--",
             icon: "?",
-            statusLabel: "暫無資料",
+            statusLabel: "æ«ç¡è³æ",
             isRef: true,
           };
         }
@@ -258,7 +258,7 @@ const Weather = {
     }
 
     if (!coords) {
-      contentEl.innerText = "無法定位";
+      contentEl.innerText = "ç¡æ³å®ä½";
       return;
     }
 
@@ -272,13 +272,13 @@ const Weather = {
       (tripStartDate - today) / (1000 * 60 * 60 * 24)
     );
 
-    // 過去 92 天內 & 未來 13 天內都可查詢實際天氣
+    // éå» 92 å¤©å§ & æªä¾ 13 å¤©å§é½å¯æ¥è©¢å¯¦éå¤©æ°£
     const isRefMode = diffDays > 13 || diffDays < -92 || isNaN(diffDays);
 
     const safeLimitDate = new Date();
     safeLimitDate.setDate(today.getDate() + 13);
 
-    // 過去日期也設上限：最多查到 92 天前
+    // éå»æ¥æä¹è¨­ä¸éï¼æå¤æ¥å° 92 å¤©å
     const safeHistoryDate = new Date();
     safeHistoryDate.setDate(today.getDate() - 92);
 
@@ -306,7 +306,7 @@ const Weather = {
       let finalMode = isRefMode;
 
       if (!res.ok) {
-        console.warn("彈窗特定日期查詢失敗，改抓未來預報");
+        console.warn("å½çªç¹å®æ¥ææ¥è©¢å¤±æï¼æ¹ææªä¾é å ±");
         res = await fetch(apiForecast7Days);
         finalMode = true;
       }
@@ -318,7 +318,7 @@ const Weather = {
 
       let statusBanner = "";
       if (finalMode) {
-        // 真正的參考模式（超過 API 查詢範圍）
+        // çæ­£çåèæ¨¡å¼ï¼è¶é API æ¥è©¢ç¯åï¼
         let daysToWait = diffDays - 13;
         if (daysToWait < 1) daysToWait = 1;
 
@@ -326,11 +326,11 @@ const Weather = {
               <div style="background:#fff3e0; color:#e65100; padding:12px; border-radius:12px; margin-bottom:15px; font-size:0.9rem; display:flex; align-items:start; gap:10px;">
                 <i class="fa-solid fa-clock-rotate-left" style="margin-top:3px;"></i>
                 <div>
-                  <div style="font-weight:bold; margin-bottom:2px;">目前顯示近幾天的氣候</div>
+                  <div style="font-weight:bold; margin-bottom:2px;">ç®åé¡¯ç¤ºè¿å¹¾å¤©çæ°£å</div>
                   <div style="font-size:0.8rem; opacity:0.9; line-height:1.4;">
-                    距離出發還有 ${diffDays} 天，暫無即時預報。<br>
+                    è·é¢åºç¼éæ ${diffDays} å¤©ï¼æ«ç¡å³æé å ±ã<br>
                     <span style="color:#bf360c; font-weight:700; background:rgba(255,255,255,0.5); padding:2px 6px; border-radius:4px; display:inline-block; margin-top:4px;">
-                      (預計 ${daysToWait} 天後可取得精準天氣)
+                      (é è¨ ${daysToWait} å¤©å¾å¯åå¾ç²¾æºå¤©æ°£)
                     </span>
                   </div>
                 </div>
@@ -341,16 +341,16 @@ const Weather = {
 
         let titleText, subText, bannerBg, bannerColor, bannerIcon;
         if (isPast) {
-          titleText = "旅程期間的實際天氣紀錄";
-          subText = `顯示 ${effectiveStartDateStr} 至 ${effectiveEndDateStr} 的歷史天氣。`;
+          titleText = "æç¨æéçå¯¦éå¤©æ°£ç´é";
+          subText = `é¡¯ç¤º ${effectiveStartDateStr} è³ ${effectiveEndDateStr} çæ­·å²å¤©æ°£ã`;
           bannerBg = "#e0f2fe";
           bannerColor = "#0369a1";
           bannerIcon = "fa-cloud-sun";
         } else {
-          titleText = isPartial ? "已更新為旅程真實預報 (部分)" : "已更新為旅程真實預報";
+          titleText = isPartial ? "å·²æ´æ°çºæç¨çå¯¦é å ± (é¨å)" : "å·²æ´æ°çºæç¨çå¯¦é å ±";
           subText = isPartial
-            ? `顯示 ${effectiveStartDateStr} 至 ${effectiveEndDateStr} 的天氣 (後續日期尚未釋出)。`
-            : `顯示 ${tripStartStr} 至 ${tripEndStr} 的當地預測。`;
+            ? `é¡¯ç¤º ${effectiveStartDateStr} è³ ${effectiveEndDateStr} çå¤©æ°£ (å¾çºæ¥æå°æªéåº)ã`
+            : `é¡¯ç¤º ${tripStartStr} è³ ${tripEndStr} çç¶å°é æ¸¬ã`;
           bannerBg = "#e8f5e9";
           bannerColor = "#2e7d32";
           bannerIcon = "fa-check-circle";
@@ -367,13 +367,13 @@ const Weather = {
       }
 
       const dayNames = [
-        "週日",
-        "週一",
-        "週二",
-        "週三",
-        "週四",
-        "週五",
-        "週六",
+        "é±æ¥",
+        "é±ä¸",
+        "é±äº",
+        "é±ä¸",
+        "é±å",
+        "é±äº",
+        "é±å­",
       ];
 
       const listHtml = data.daily.time
@@ -385,7 +385,7 @@ const Weather = {
           const pop = data.daily.precipitation_probability_max[i];
           const code = data.daily.weather_code[i];
 
-          // [v2.4] 使用統一的圖示 + 建議系統
+          // [v2.6] ä½¿ç¨çµ±ä¸çåç¤º + å»ºè­°ç³»çµ±
           const wIcon = this.getWeatherIcon(code);
           const advice = this.getAdvice(min, max, pop);
           const rainLevel = this.getRainLevel(pop);
@@ -402,9 +402,9 @@ const Weather = {
                         <div class="w-summary-col">
                             <div class="ws-icon-wrap ${wIcon.cls}"><i class="fa-solid ${wIcon.icon}"></i></div>
                             <div class="ws-temp-range">
-                                <span class="ws-min">${min}°</span>
+                                <span class="ws-min">${min}Â°</span>
                                 <div class="ws-bar"></div>
-                                <span class="ws-max">${max}°</span>
+                                <span class="ws-max">${max}Â°</span>
                             </div>
                         </div>
                         <div class="w-pop-col rain-${rainLevel}"><i class="fa-solid fa-droplet"></i> ${pop}%</div>
@@ -420,6 +420,7 @@ const Weather = {
                             <div class="w-slider-scale"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
                         </div>
                         <div class="w-hour-result" id="result-${i}"></div>
+                        <div class="w-trend-chart" id="trend-${i}"></div>
                     </div>
                 </div>`;
         })
@@ -428,7 +429,7 @@ const Weather = {
       contentEl.innerHTML = statusBanner + listHtml;
     } catch (e) {
       console.error(e);
-      contentEl.innerText = "無法取得天氣資訊";
+      contentEl.innerText = "ç¡æ³åå¾å¤©æ°£è³è¨";
     }
   },
 
@@ -464,7 +465,7 @@ const Weather = {
       !data.hourly.temperature_2m ||
       !data.hourly.temperature_2m[idx]
     ) {
-      document.getElementById(`result-${dayIndex}`).innerHTML = "無資料";
+      document.getElementById(`result-${dayIndex}`).innerHTML = "ç¡è³æ";
       return;
     }
 
@@ -472,20 +473,64 @@ const Weather = {
     const pop = data.hourly.precipitation_probability[idx];
     const code = data.hourly.weather_code[idx];
 
-    // [v2.4] 統一使用 getWeatherIcon
+    // [v2.6] çµ±ä¸ä½¿ç¨ getWeatherIcon
     const wIcon = this.getWeatherIcon(code);
     const rainLevel = this.getRainLevel(pop);
 
-    document.getElementById(
-      `result-${dayIndex}`
-    ).innerHTML = `<div class="wh-left">
-              <div class="wh-icon-wrap ${wIcon.cls}"><i class="fa-solid ${wIcon.icon}"></i></div>
-              <div class="wh-temp-grp">
-                  <div class="wh-temp">${temp}°</div>
-                  <div class="wh-desc">${wIcon.desc}</div>
-              </div>
-           </div>
-           <div class="wh-pop rain-${rainLevel}"><i class="fa-solid fa-droplet"></i> ${pop}%</div>`;
+    // [v2.6 Step 3] å¡çå¼éæçµæ
+    document.getElementById(`result-${dayIndex}`).innerHTML =
+      `<div class="wh-result-card">
+        <div class="wh-main-section">
+          <div class="wh-icon-wrap ${wIcon.cls}"><i class="fa-solid ${wIcon.icon}"></i></div>
+          <div class="wh-temp">${temp}Â°</div>
+          <div class="wh-desc">${wIcon.desc}</div>
+        </div>
+        <div class="wh-divider"></div>
+        <div class="wh-details-grid">
+          <div class="wh-detail-item rain-${rainLevel}">
+            <span class="wh-detail-label">éé¨</span>
+            <span class="wh-detail-value"><i class="fa-solid fa-droplet"></i> ${pop}%</span>
+          </div>
+        </div>
+      </div>`;
+
+    // [v2.6 Step 3] ç¢ç 24 å°ææº«åº¦è¶¨å¢è¿·ä½ å
+    this.renderTrendChart(dayIndex);
+  },
+
+  // [v2.6 Step 3] CSS-only 24 å°ææº«åº¦è¶¨å¢è¿·ä½ å
+  renderTrendChart(dayIndex) {
+    const chartEl = document.getElementById(`trend-${dayIndex}`);
+    if (!chartEl || !this.cache || !this.cache.hourly) return;
+
+    const baseIdx = dayIndex * 24;
+    const temps = [];
+    for (let h = 0; h < 24; h++) {
+      const t = this.cache.hourly.temperature_2m[baseIdx + h];
+      if (t != null) temps.push(Math.round(t));
+      else temps.push(null);
+    }
+
+    const valid = temps.filter((t) => t !== null);
+    if (valid.length === 0) { chartEl.innerHTML = ""; return; }
+
+    const tMin = Math.min(...valid);
+    const tMax = Math.max(...valid);
+    const range = tMax - tMin || 1;
+
+    const bars = temps
+      .map((t, h) => {
+        if (t === null) return `<div class="tc-bar-wrap"><div class="tc-bar" style="height:2px"></div></div>`;
+        const pct = ((t - tMin) / range) * 100;
+        const height = Math.max(8, pct * 0.6 + 8); // 8px min, ~68px max
+        return `<div class="tc-bar-wrap${h === parseInt(document.getElementById(`slider-${dayIndex}`)?.value) ? ' tc-active' : ''}"><div class="tc-bar" style="height:${height}px"></div></div>`;
+      })
+      .join("");
+
+    chartEl.innerHTML =
+      `<div class="tc-labels"><span>${tMin}Â°</span><span>${tMax}Â°</span></div>
+       <div class="tc-bars">${bars}</div>
+       <div class="tc-hours"><span>0</span><span>6</span><span>12</span><span>18</span><span>23</span></div>`;
   },
 };
 
