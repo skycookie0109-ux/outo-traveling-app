@@ -1,9 +1,9 @@
 /* =========================================
-   Weather Styles â Widget & Modal
-   [v2.4] iOS é¢¨æ ¼æ¯ç»ç + ç²¾ç·»åç«
+   Weather Styles — Widget & Modal
+   [v2.4] iOS 風格毛玻璃 + 精緻動畫
    ========================================= */
 
-/* ââ åè¡¨æ¿å¤æ¡ï¼compact å©è¡çï¼ââââââ */
+/* ── 儀表板外框（compact 兩行版）────── */
 #weather-wrapper {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(16px) saturate(1.8);
@@ -35,7 +35,7 @@
   display: none;
 }
 
-/* ââ åè¡¨æ¿å¡çï¼å©è¡æ¥µç°¡ï¼ââââââââââââ */
+/* ── 儀表板卡片（兩行極簡）──────────── */
 .w-card {
   flex: 0 0 100%;
   scroll-snap-align: center;
@@ -47,11 +47,28 @@
   gap: var(--space-6);
 }
 
-/* ââ ç¬¬ä¸è¡ï¼æ ¸å¿æ¸æä¸è¦½ ââââââââââââ */
+/* ── [v2.9] 第一行：左側地名 + 右側溫度/降雨雙層 ── */
 .wc-row-main {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.wc-left {
+  display: flex;
+  align-items: center;
   gap: var(--space-6);
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.wc-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
 }
 
 .wc-icon-wrap {
@@ -65,14 +82,14 @@
   flex-shrink: 0;
 }
 
-/* å¤©æ°£åç¤ºè²å½© */
+/* 天氣圖示色彩 */
 .w-icon-sun { background: #fff7ed; color: #ea580c; }
 .w-icon-cloudy { background: #fefce8; color: #ca8a04; }
 .w-icon-overcast { background: var(--bg-secondary); color: var(--text-sub); }
 .w-icon-rain { background: #eff6ff; color: #2563eb; }
 .w-icon-storm { background: #f5f3ff; color: #7c3aed; }
 
-/* å°å */
+/* 地名 */
 .wc-loc {
   font-size: 0.95rem;
   font-weight: 700;
@@ -85,7 +102,7 @@
   min-width: 0;
 }
 
-/* å¤©æ°£æè¿°å°æ¨ */
+/* 天氣描述小標 */
 .wc-desc-tag {
   font-size: 0.78rem;
   font-weight: 600;
@@ -94,13 +111,12 @@
   flex-shrink: 0;
 }
 
-/* æº«åº¦åé + æ¼¸å±¤æ¢ [v2.6 Step 2] */
+/* 溫度區間 + 漸層條 [v2.6 Step 2] */
 .wc-temp-range {
   display: flex;
   align-items: center;
   gap: 3px;
   flex-shrink: 0;
-  margin-left: auto;
 }
 
 .wc-t-lo {
@@ -124,7 +140,7 @@
   color: #c2410c;
 }
 
-/* éé¨é²åº¦æ¢ [v2.6 Step 2] */
+/* 降雨進度條 [v2.6 Step 2] */
 .wc-rain {
   display: flex;
   align-items: center;
@@ -154,19 +170,19 @@
   transition: width 0.4s ease;
 }
 
-/* éé¨é²åº¦æ¢å¡«åè²ç¹¼æ¿ rain-level */
+/* 降雨進度條填充色繼承 rain-level */
 .rain-low .wc-rain-fill { background: #059669; }
 .rain-mid .wc-rain-fill { background: #d97706; }
 .rain-high .wc-rain-fill { background: #dc2626; }
 .rain-unknown .wc-rain-fill { background: var(--text-sub); }
 
-/* éé¨ä¸ç´éè² */
+/* 降雨三級配色 */
 .rain-low { background: var(--success-bg); color: #059669; }
 .rain-mid { background: var(--warning-bg); color: #d97706; }
 .rain-high { background: var(--error-bg); color: #dc2626; }
 .rain-unknown { background: var(--bg-secondary); color: var(--text-sub); }
 
-/* ââ ç¬¬äºè¡ï¼çæ + ç©¿æ­å»ºè­° âââââââ */
+/* ── 第二行：狀態 + 穿搭建議 ─────── */
 .wc-row-sub {
   display: flex;
   align-items: center;
@@ -211,7 +227,7 @@
   margin-right: 4px;
 }
 
-/* ââ æ»ååé» ââââââââââââââââââââââââââ */
+/* ── 滑動圓點 ────────────────────────── */
 .w-dots {
   position: absolute;
   bottom: 2px;
@@ -238,7 +254,7 @@
 }
 
 /* =========================================
-   å¤©æ°£ Modal â æ¯æ¥åè¡¨
+   天氣 Modal — 每日列表
    ========================================= */
 
 .w-day-item {
@@ -251,7 +267,7 @@
   position: relative;
 }
 
-/* å·¦å´è²æ¢ */
+/* 左側色條 */
 .w-day-item::before {
   content: "";
   position: absolute;
@@ -373,7 +389,7 @@
   color: var(--primary);
 }
 
-/* ââ æ¯æ¥ç©¿æ­å»ºè­° ââââââââââââââââââââââ */
+/* ── 每日穿搭建議 ────────────────────── */
 .w-day-advice {
   display: none;
   padding: 0 var(--space-20) var(--space-10);
@@ -394,7 +410,7 @@
   flex-shrink: 0;
 }
 
-/* ââ å±éé¢æ¿ ââââââââââââââââââââââââââ */
+/* ── 展開面板 ────────────────────────── */
 .w-detail-panel {
   max-height: 0;
   overflow: hidden;
@@ -412,7 +428,7 @@
   border-top-color: var(--border-light);
 }
 
-/* ââ æéæ»æ¡¿ ââââââââââââââââââââââââââ */
+/* ── 時間滑桿 ────────────────────────── */
 .w-slider-wrap {
   margin-bottom: var(--space-20);
   text-align: center;
@@ -449,7 +465,7 @@
   border-color: var(--primary) transparent transparent transparent;
 }
 
-/* [v2.6 Step 3] æ»æ¡¿ç¾å */
+/* [v2.6 Step 3] 滑桿美化 */
 .w-range-input {
   -webkit-appearance: none;
   width: 100%;
@@ -516,7 +532,7 @@
   margin-bottom: 1px;
 }
 
-/* ââ éæçµæï¼v2.6 Step 3 å¡çå¼ï¼ââââ */
+/* ── 逐時結果（v2.6 Step 3 卡片式）──── */
 .w-hour-result {
   animation: wSlideUp 0.25s ease;
 }
@@ -598,7 +614,7 @@
   margin-right: 2px;
 }
 
-/* ââ 24H æº«åº¦è¶¨å¢è¿·ä½ åï¼v2.6 Step 3ï¼ââ */
+/* ── 24H 溫度趨勢迷你圖（v2.6 Step 3）── */
 .w-trend-chart {
   margin-top: var(--space-10);
 }
@@ -652,10 +668,10 @@
 }
 
 /* =========================================
-   Step 4ï¼å¤©æ°£åç¤ºåç« + å¾®äºå
+   Step 4：天氣圖示動畫 + 微互動
    ========================================= */
 
-/* ââ å¤©æ°£åç¤º CSS åç« âââââââââââââââ */
+/* ── 天氣圖示 CSS 動畫 ─────────────── */
 @keyframes wIconPulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }
@@ -683,7 +699,7 @@
 .w-icon-rain i { animation: wIconDrip 1.5s ease-in-out infinite; }
 .w-icon-storm i { animation: wIconFlash 2s ease-in-out infinite; }
 
-/* ç¡éç¤ï¼å°éä½¿ç¨èåç«åå¥½ */
+/* 無障礙：尊重使用者動畫偏好 */
 @media (prefers-reduced-motion: reduce) {
   .w-icon-sun i,
   .w-icon-cloudy i,
@@ -695,7 +711,7 @@
   .w-card { animation: none; }
 }
 
-/* ââ å¡çäºå âââââââââââââââââââââââââ */
+/* ── 卡片互動 ───────────────────────── */
 .w-card {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -712,7 +728,7 @@
   }
 }
 
-/* ââ å¡çé²å ´åç« ââââââââââââââââââââââ */
+/* ── 卡片進場動畫 ────────────────────── */
 @keyframes wCardSlideIn {
   from { opacity: 0; transform: translateX(16px); }
   to { opacity: 1; transform: translateX(0); }
