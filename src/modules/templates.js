@@ -42,12 +42,12 @@ const Templates = {
         </div>`,
 
   // [v2.9] 天氣卡片 — 純顯示 + Grid 兩欄兩列（左：資訊，右上：溫度，右下：降雨）
+  // 圖示併入描述標籤 [☁ 多雲]，溫度加大加粗，左右視覺平衡
   weatherCard: (d, i) =>
     `<div class="w-card">
         <div class="wc-row-main">
-            <div class="wc-icon-wrap ${d.iconCls || ''}"><i class="fa-solid ${d.icon}"></i></div>
             <div class="wc-loc">${d.name}</div>
-            <span class="wc-desc-tag">${d.desc || ''}</span>
+            <span class="wc-desc-tag ${d.iconCls || ''}"><i class="fa-solid ${d.icon}"></i> ${d.desc || ''}</span>
         </div>
         <div class="wc-temp-range"><span class="wc-t-lo">${d.min}°</span><div class="wc-temp-bar"></div><span class="wc-t-hi">${d.max}°</span></div>
         <div class="wc-row-sub">
