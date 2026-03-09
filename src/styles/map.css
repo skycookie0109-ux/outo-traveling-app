@@ -487,17 +487,28 @@ button.gm-ui-hover-effect {
   display: none;
 }
 
-/* ── [v2.8] 毛玻璃 Popup 卡片 ────────── */
+/* ── [v2.8.1] 毛玻璃 Popup 卡片 ─ 方案C 加強對比 ── */
 .map-popup-card {
   width: 240px;
   font-family: -apple-system, BlinkMacSystemFont, "Quicksand", sans-serif;
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(14px) saturate(1.5);
   -webkit-backdrop-filter: blur(14px) saturate(1.5);
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
-              0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.10),
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.06);
   overflow: hidden;
+}
+
+/* 頂部主題漸層色條 */
+.map-popup-card::before {
+  content: '';
+  display: block;
+  height: 3.5px;
+  background: linear-gradient(90deg, #00bcd4, #26c6da, #4dd0e1);
+  border-radius: 16px 16px 0 0;
 }
 
 .mp-body {
