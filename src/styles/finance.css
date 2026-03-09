@@ -1,6 +1,6 @@
 /* =========================================
    Finance - Budget & Expense Tracking UI
-   [v2.4] Token 統一 + 新色系
+   [v2.7] 分類標籤 + 刪除確認 + 結構化列表
    ========================================= */
 
 /* ── 語音輸入按鈕 ────────────────────── */
@@ -153,4 +153,275 @@
   color: #ef4444 !important;
   animation: mic-breath 1.2s infinite ease-in-out;
   text-shadow: 0 0 5px rgba(239, 68, 68, 0.3);
+}
+
+/* ── [v2.7] 分類選擇器 ───────────────── */
+#fin-category-picker {
+  display: flex;
+  gap: var(--space-8, 8px);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-16);
+}
+
+.fin-cat-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: var(--radius-full, 999px);
+  border: 1px solid var(--border-light);
+  background: var(--bg-elevated, #fff);
+  color: var(--text-sub);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s ease);
+  white-space: nowrap;
+}
+
+.fin-cat-btn i {
+  font-size: 0.78rem;
+}
+
+.fin-cat-btn:active {
+  transform: scale(0.95);
+}
+
+.fin-cat-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 172, 193, 0.25);
+}
+
+/* ── [v2.7] 費用列表項目 ─────────────── */
+.fin-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10, 10px);
+  padding: var(--space-12) var(--space-16);
+  border-bottom: 1px solid var(--border-light);
+  transition: background var(--transition-fast, 0.15s ease),
+              opacity 0.3s ease,
+              transform 0.3s ease;
+}
+
+.fin-item:last-child {
+  border-bottom: none;
+}
+
+.fin-item-cat {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: var(--text-sub);
+}
+
+.fin-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.fin-item-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fin-item-amount {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.fin-item-num {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.fin-item-curr {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+}
+
+.fin-item-approx {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ── [v2.7] 刪除按鈕 + 確認狀態 ───── */
+.fin-del-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast, 0.15s ease);
+}
+
+.fin-del-btn:active {
+  transform: scale(0.9);
+}
+
+.fin-confirm-delete {
+  background: #fef2f2 !important;
+  border-color: #fca5a5 !important;
+}
+
+.fin-confirm-delete .fin-del-btn {
+  background: #ef4444;
+  color: white;
+  animation: pulse-red 1.2s infinite;
+}
+
+/* 刪除滑出動畫 */
+.fin-item-removing {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* ── [v2.7] 語言助手 - 分類標籤列 ──── */
+#phrase-tab-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--space-12);
+  margin-bottom: var(--space-12);
+  scrollbar-width: none;
+}
+
+#phrase-tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.phrase-tab {
+  padding: 6px 14px;
+  border-radius: var(--radius-full, 999px);
+  border: 1px solid var(--border-light);
+  background: var(--bg-elevated, #fff);
+  color: var(--text-sub);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all var(--transition-fast, 0.15s ease);
+}
+
+.phrase-tab:active {
+  transform: scale(0.95);
+}
+
+.phrase-tab.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* ── [v2.7] 翻譯結果卡片 ────────────── */
+.trans-result-card {
+  background: linear-gradient(135deg, #e0f7fa, #f0f8ff);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-16) var(--space-20, 20px);
+  margin-bottom: 15px;
+  text-align: center;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(0, 172, 193, 0.12);
+}
+
+.trans-result-text {
+  font-weight: 700;
+  color: #00695c;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.trans-result-actions {
+  display: flex;
+  gap: var(--space-12, 12px);
+  margin-top: var(--space-10, 10px);
+}
+
+.trans-action-btn {
+  border: none;
+  background: rgba(0, 172, 193, 0.1);
+  color: var(--primary);
+  padding: 6px 14px;
+  border-radius: var(--radius-full, 999px);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  gap: 4px;
+  transition: all var(--transition-fast, 0.15s ease);
+}
+
+.trans-action-btn:active {
+  transform: scale(0.95);
+}
+
+.trans-action-btn.visible {
+  display: inline-flex;
+}
+
+/* ── [v2.7] 常用詞卡片 ──────────────── */
+.phrase-card {
+  background: var(--bg-elevated, #fff);
+  padding: 15px;
+  border-radius: var(--radius-lg, 16px);
+  text-align: center;
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.phrase-card:active {
+  transform: scale(0.97);
+}
+
+.phrase-card-icon {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+.phrase-card-zh {
+  font-weight: 700;
+  color: var(--text-main, #37474f);
+}
+
+.phrase-card-target {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 2px 0;
+}
+
+.phrase-card-pron {
+  color: var(--text-tertiary, #999);
+  font-size: 0.82rem;
 }
