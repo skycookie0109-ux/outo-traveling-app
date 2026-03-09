@@ -4,7 +4,7 @@
  * NOTE: These templates reference App.Actions, App.Map, App.Utils, etc.
  *       which are set up in the global App object in main.js
  *
- * [v2.0] æ°å¢è¡ç¨å®ææ¨è¨ checkbox åè½
+ * [v2.0] 新增行程完成標記 checkbox 功能
  */
 
 const Templates = {
@@ -23,7 +23,7 @@ const Templates = {
                 <div class="swipe-wrap" data-day="${dayId}" data-idx="${i}">
                     <div class="swipe-action ${isCompleted ? 'is-undo' : ''}">
                         <i class="fa-solid ${isCompleted ? 'fa-rotate-left' : 'fa-circle-check'}"></i>
-                        <span>${isCompleted ? 'åæ´' : 'å®æ'}</span>
+                        <span>${isCompleted ? '取洈' : '完成'}</span>
                     </div>
                     <div class="mini-card ${isCompleted ? 'card-done' : ''}" onclick="App.Actions.openDetail(${dayId}, ${i})">
                         <div class="mc-header">
@@ -41,14 +41,14 @@ const Templates = {
             </div>
         </div>`,
 
-  // [v2.6] å¤©æ°£åè¡¨æ¿å¡ç â å©è¡æ¥µç°¡ä½å± + æº«åº¦æ¼¸å±¤æ¢ + éé¨é²åº¦æ¢
+  // [v2.6] 天氣儀表板卡片 — 兩行極簡佈局 + 溫度漸層條 + 降雨進度條
   weatherCard: (d, i) =>
     `<div class="w-card" onclick="App.Weather.show('${(d.name || '').replace(/'/g, "\\'")}')">
         <div class="wc-row-main">
             <div class="wc-icon-wrap ${d.iconCls || ''}"><i class="fa-solid ${d.icon}"></i></div>
             <div class="wc-loc">${d.name}</div>
             <span class="wc-desc-tag">${d.desc || ''}</span>
-            <div class="wc-temp-range"><span class="wc-t-lo">${d.min}Â°</span><div class="wc-temp-bar"></div><span class="wc-t-hi">${d.max}Â°</span></div>
+            <div class="wc-temp-range"><span class="wc-t-lo">${d.min}°</span><div class="wc-temp-bar"></div><span class="wc-t-hi">${d.max}°</span></div>
             <div class="wc-rain rain-${d.rainLevel || 'low'}"><i class="fa-solid fa-droplet"></i><div class="wc-rain-track"><div class="wc-rain-fill" style="width:${d.pop}%"></div></div><span>${d.pop}%</span></div>
         </div>
         <div class="wc-row-sub">
@@ -61,7 +61,7 @@ const Templates = {
     `<div class="w-dot ${isActive ? "active" : ""}"></div>`,
 
   recCard: (r, uniqueId, tagsHtml, ribbonHtml, bottomSection, navOnClick) => {
-    const displayIcon = r.icon && r.icon.trim().length > 0 ? r.icon : "ð";
+    const displayIcon = r.icon && r.icon.trim().length > 0 ? r.icon : "📍";
 
     return `<div class="rec-card">${ribbonHtml}
           <div class="rec-upper">
@@ -124,9 +124,9 @@ const Templates = {
             <div class="sh-note-box" onclick="App.Note.edit(${e.dayId}, ${
       e.idx
     })">
-                <div style="font-weight:bold;color:#f57c00;margin-bottom:5px;">ð æçç­è¨</div>
+                <div style="font-weight:bold;color:#f57c00;margin-bottom:5px;">📝 我的筆記</div>
                 <div style="font-size:0.9rem;color:#666;">${
-                  savedNote || "é»æ­¤æ°å¢..."
+                  savedNote || "點此新增..."
                 }</div>
             </div>
         </div>
