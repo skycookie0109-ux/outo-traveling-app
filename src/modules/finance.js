@@ -1,20 +1,56 @@
 /**
  * Finance Module
  * Handles expense tracking with voice input, currency conversion, and expense management
+ *
+ * [v2.7] 新增消費分類標籤 + 刪除確認機制
  */
 
 import Store from './store.js';
+
+// — [v2.7] 消費分類定義 ————————————————————
+const CATEGORIES = [
+  { key: 'food',    icon: 'fa-utensils',       label: '餐飲' },
+  { key: 'transport', icon: 'fa-car',          label: '交通' },
+  { key: 'hotel',   icon: 'fa-bed',            label: '住宿' },
+  { key: 'shop',    icon: 'fa-bag-shopping',   label: '購物' },
+  { key: 'ticket',  icon: 'fa-ticket',         label: '門票' },
+  { key: 'other',   icon: 'fa-ellipsis',       label: '其他' },
+];
 
 const Finance = {
   currentTotalType: "TWD",
   recognitionInstance: null,
   voiceSafetyTimer: null,
+  selectedCategory: "food",  // [v2.7] 預設分類
 
   open() {
     App.Utils.openModal("financeModal");
     this.populateTimeSelect();
+    this.renderCategoryPicker();
     this.renderList();
     this.updateInputHelper();
+  },
+
+  // — [v2.7] 渲染分類選擇器 ——————————————————
+  renderCategoryPicker() {
+    const container = document.getElementById("fin-category-picker");
+    if (!container) return;
+    container.innerHTML = CATEGORIES.map(c =>
+      `<button class="fin-cat-btn ${c.key === this.selectedCategory ? 'active' : ''}" data-cat="${c.key}" onclick="App.Finance.selectCategory('${c.key}')">
+        <i class="fa-solid ${c.icon}"></i><span>${c.label}</span>
+      </button>`
+    ).join('');
+  },
+
+  selectCategory(key) {
+    this.selectedCategory = key;
+    document.querySelectorAll('.fin-cat-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.cat === key);
+    });
+  },
+
+  getCategoryInfo(key) {
+    return CATEGORIES.find(c => c.key === key) || CATEGORIES[5];
   },
 
   stopVoiceInput() {
@@ -255,6 +291,20 @@ const Finance = {
       remainingText = remainingText.replace(amountMatch[0], " ");
     }
 
+    // [v2.7] 語音自動偵測分類
+    const catKeywords = {
+      food: /餐|飯|吃|早餐|午餐|晚餐|宵夜|咖啡|飲料|小吃|麵|粉|河粉/,
+      transport: /車|搭|計程|Grab|taxi|機場|巴士|公車|油|加油|停車/,
+      hotel: /飯店|旅館|民宿|住宿|房間|check.?in/i,
+      shop: /買|購|紀念品|伴手禮|超市|商店|市場/,
+      ticket: /門票|票|入場|參觀|景點/,
+    };
+    let detectedCat = 'other';
+    for (const [cat, regex] of Object.entries(catKeywords)) {
+      if (text.match(regex)) { detectedCat = cat; break; }
+    }
+    this.selectCategory(detectedCat);
+
     const noiseWords =
       /花費|花了|金額|是|用|去|買|吃|元|塊|錢|的|了|總共|共/g;
     remainingText = remainingText.replace(noiseWords, "");
@@ -320,21 +370,57 @@ const Finance = {
       baseAmount,
       rate,
       linkedDateLabel,
+      category: this.selectedCategory,  // [v2.7] 儲存分類
     });
     localStorage.setItem("fin_list", JSON.stringify(list));
     this.renderList();
 
     nameInput.value = "";
     costInput.value = "";
+    this.selectedCategory = "food";
+    this.renderCategoryPicker();
     this.updateInputHelper();
   },
 
+  // [v2.7] 刪除確認機制
   del(id) {
-    const list = JSON.parse(
-      localStorage.getItem("fin_list") || "[]"
-    ).filter((i) => i.id !== id);
-    localStorage.setItem("fin_list", JSON.stringify(list));
-    this.renderList();
+    // 顯示確認 toast，不用 window.confirm
+    const item = JSON.parse(localStorage.getItem("fin_list") || "[]").find(i => i.id === id);
+    if (!item) return;
+
+    const row = document.querySelector(`[data-fin-id="${id}"]`);
+    if (!row) return;
+
+    // 如果已經在確認狀態，執行刪除
+    if (row.classList.contains('fin-confirm-delete')) {
+      row.style.transition = 'opacity 0.3s, transform 0.3s';
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(30px)';
+      setTimeout(() => {
+        const list = JSON.parse(
+          localStorage.getItem("fin_list") || "[]"
+        ).filter((i) => i.id !== id);
+        localStorage.setItem("fin_list", JSON.stringify(list));
+        this.renderList();
+      }, 300);
+      return;
+    }
+
+    // 第一次點擊：進入確認狀態
+    row.classList.add('fin-confirm-delete');
+    const delBtn = row.querySelector('.fin-del-btn');
+    if (delBtn) {
+      delBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+      delBtn.title = '再按一次確認刪除';
+    }
+
+    // 3 秒後自動取消確認狀態
+    setTimeout(() => {
+      if (row && row.classList.contains('fin-confirm-delete')) {
+        row.classList.remove('fin-confirm-delete');
+        if (delBtn) delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+      }
+    }, 3000);
   },
 
   renderList() {
@@ -398,30 +484,23 @@ const Finance = {
           const curr = i.currency || "TWD";
           const amountStr = this.formatMoney(i.cost, curr);
           const base = i.baseAmount || i.cost;
+          // [v2.7] 取得分類資訊
+          const cat = this.getCategoryInfo(i.category);
 
           return `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 15px; border-bottom:1px solid #f9f9f9;">
-                  <div>
-                    <div style="font-weight:600; color:#37474f; font-size:1rem; margin-bottom:2px;">${
-                      i.name
-                    }</div>
-                    <div style="display:flex; align-items:baseline; gap:6px;">
-                        <span style="font-size:1.1rem; font-weight:700; color:#555;">${amountStr}</span>
-                        <span style="font-size:0.75rem; color:#999;">${curr}</span>
-                        ${
-                          curr !== "TWD"
-                            ? `<span style="font-size:0.75rem; color:#ccc;">(≈ NT$${Math.round(
-                                base
-                              )})</span>`
-                            : ""
-                        }
+                <div class="fin-item" data-fin-id="${i.id}">
+                  <div class="fin-item-cat"><i class="fa-solid ${cat.icon}"></i></div>
+                  <div class="fin-item-info">
+                    <div class="fin-item-name">${i.name}</div>
+                    <div class="fin-item-amount">
+                        <span class="fin-item-num">${amountStr}</span>
+                        <span class="fin-item-curr">${curr}</span>
+                        ${curr !== "TWD" ? `<span class="fin-item-approx">(≈ NT$${Math.round(base)})</span>` : ""}
                     </div>
                   </div>
-                  <span style="color:#ef5350; cursor:pointer; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#ffebee;" onclick="App.Finance.del(${
-                    i.id
-                  })">
-                    <i class="fa-solid fa-trash-can" style="font-size:0.9rem;"></i>
-                  </span>
+                  <button class="fin-del-btn" onclick="App.Finance.del(${i.id})">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
                 </div>`;
         })
         .join("");
