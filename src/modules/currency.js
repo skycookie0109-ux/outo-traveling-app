@@ -93,7 +93,10 @@ const Currency = {
             )
             .join('')}
         </div>
-        <div class="currency-update-time" id="currency-update-time">載入中...</div>
+        <div class="currency-base-footer">
+          <div class="currency-update-time" id="currency-update-time">載入中...</div>
+          <button class="currency-clear-btn" onclick="App.Currency.clear()">清除</button>
+        </div>
       </div>
 
       <!-- 結果標題 -->
@@ -230,11 +233,15 @@ const Currency = {
     }
   },
 
-  // ── 幣別選擇器 ────────────────────────
+  // ── 幣別選擇器（掛在 modal-card 內部）────
   openPicker() {
     // 如果已存在就移除
     let overlay = document.getElementById('currency-picker-overlay');
     if (overlay) overlay.remove();
+
+    // 找到 converterModal 的 modal-card 作為掛載點
+    const modalCard = document.querySelector('#converterModal .modal-card');
+    if (!modalCard) return;
 
     overlay = document.createElement('div');
     overlay.id = 'currency-picker-overlay';
@@ -266,7 +273,7 @@ const Currency = {
       if (e.target === overlay) this.closePicker();
     });
 
-    document.body.appendChild(overlay);
+    modalCard.appendChild(overlay);
 
     // 觸發動畫
     requestAnimationFrame(() => overlay.classList.add('show'));
