@@ -77,12 +77,12 @@ const Currency = {
           <button class="currency-switch-btn" onclick="App.Currency.openPicker()">切換 ▾</button>
         </div>
         <input
-          type="number"
+          type="text"
           class="currency-base-input"
           id="currency-base-input"
           placeholder="輸入金額"
           inputmode="decimal"
-          value="${this.inputValue}"
+          value="${this.inputValue ? this.formatDisplay(this.inputValue) : ''}"
           oninput="App.Currency.onInput(this.value)"
         />
         <div class="currency-quick-row">
@@ -130,12 +130,39 @@ const Currency = {
     this.calculate();
   },
 
+  // ── 數字格式化（千分位） ────────────────
+  formatDisplay(val) {
+    // 移除非數字和小數點的字元
+    const num = parseFloat(String(val).replace(/,/g, ''));
+    if (isNaN(num)) return '';
+    // 整數加千分位，小數保留原樣
+    const parts = String(val).replace(/,/g, '').split('.');
+    parts[0] = parseInt(parts[0] || '0').toLocaleString();
+    return parts.join('.');
+  },
+
   // ── 輸入處理 ──────────────────────────
   onInput(val) {
-    this.inputValue = val;
+    // 去掉逗號存純數字
+    const raw = val.replace(/,/g, '');
+    // 只允許數字和小數點
+    if (raw !== '' && !/^\d*\.?\d*$/.test(raw)) return;
+    this.inputValue = raw;
     this.activeQuick = null;
+
+    // 格式化顯示（加千分位逗號）
+    const input = document.getElementById('currency-base-input');
+    if (input && raw) {
+      const cursorPos = input.selectionStart;
+      const beforeLen = val.length;
+      const formatted = this.formatDisplay(raw);
+      input.value = formatted;
+      // 調整游標位置（避免逗號插入後跳位）
+      const diff = formatted.length - beforeLen;
+      input.setSelectionRange(cursorPos + diff, cursorPos + diff);
+    }
+
     this.calculate();
-    // 移除 quick 按鈕 active 狀態
     document.querySelectorAll('.currency-quick-btn').forEach((b) => b.classList.remove('active'));
   },
 
@@ -144,7 +171,7 @@ const Currency = {
     this.inputValue = String(amt);
     this.activeQuick = amt;
     const input = document.getElementById('currency-base-input');
-    if (input) input.value = amt;
+    if (input) input.value = amt.toLocaleString();
 
     // 更新 active 狀態
     document.querySelectorAll('.currency-quick-btn').forEach((b) => {
