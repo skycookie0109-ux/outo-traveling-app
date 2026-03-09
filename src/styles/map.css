@@ -1,6 +1,6 @@
 /* =========================================
    Map Styles - Google Maps & Map Controls
-   [v2.4] iOS 風格 Drawer + Token 統一
+   [v2.8] 毛玻璃 Popup + 路線膠囊升級
    ========================================= */
 
 /* ── 地圖全屏層 ──────────────────────── */
@@ -67,14 +67,19 @@
 /* ── Google InfoWindow 覆寫 ──────────── */
 .gm-style-iw {
   padding: 0 !important;
-  border-radius: var(--radius-xl) !important;
-  overflow: hidden !important;
-  box-shadow: var(--shadow-xl) !important;
+  border-radius: 16px !important;
+  overflow: visible !important;
+  box-shadow: none !important;
+  background: transparent !important;
 }
 
 .gm-style-iw-d {
-  overflow: hidden !important;
+  overflow: visible !important;
   padding: 0 !important;
+}
+
+.gm-style-iw-tc {
+  display: none !important;
 }
 
 button.gm-ui-hover-effect {
@@ -363,10 +368,12 @@ button.gm-ui-hover-effect {
   animation: fadeIn 0.3s;
   border-left: 2px dashed var(--border-light);
   position: relative;
+  align-items: center;
+  gap: 6px;
 }
 
 .drawer-leg-info.visible {
-  display: block;
+  display: flex;
 }
 
 .drawer-leg-info.mode-drive {
@@ -382,12 +389,31 @@ button.gm-ui-hover-effect {
 .drawer-leg-chip {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-4);
-  background: var(--bg-elevated);
-  padding: 2px var(--space-8);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-xs);
+  gap: 5px;
+  background: linear-gradient(135deg, #e0f7fa, #f0f8ff);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(0, 172, 193, 0.12);
+  font-size: 0.72rem;
+  font-weight: 700;
   margin-left: -2px;
+}
+
+.drawer-leg-chip i {
+  font-size: 0.68rem;
+}
+
+.drawer-leg-dist {
+  color: var(--text-tertiary);
+  font-weight: 500;
+  font-size: 0.68rem;
+  margin-left: 2px;
+}
+
+/* 步行模式膠囊 */
+.drawer-leg-info.mode-walk .drawer-leg-chip {
+  background: linear-gradient(135deg, #fff7ed, #fff3e0);
+  border-color: rgba(245, 158, 11, 0.15);
 }
 
 /* ── 交通模式按鈕 ────────────────────── */
@@ -461,90 +487,122 @@ button.gm-ui-hover-effect {
   display: none;
 }
 
-/* ── Popup 卡片 ──────────────────────── */
+/* ── [v2.8] 毛玻璃 Popup 卡片 ────────── */
 .map-popup-card {
-  display: flex;
-  flex-direction: column;
-  width: 260px;
+  width: 240px;
   font-family: -apple-system, BlinkMacSystemFont, "Quicksand", sans-serif;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px) saturate(1.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+              0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  overflow: hidden;
 }
 
-.mp-header-img {
-  height: 110px;
-  width: 100%;
-  background-size: cover;
-  background-position: center;
-  background-color: var(--bg-secondary);
+.mp-body {
+  padding: 14px;
 }
 
-.mp-content {
-  padding: var(--space-16);
-}
-
-.mp-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.72rem;
-  color: var(--text-tertiary);
-  margin-bottom: var(--space-6);
-}
-
-.mp-tag-pill {
-  background: rgba(8, 145, 178, 0.08);
-  color: var(--primary);
-  padding: 2px var(--space-8);
-  border-radius: var(--radius-sm);
-  font-weight: 700;
-}
-
-.mp-title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--text-main);
-  line-height: 1.3;
-  margin-bottom: var(--space-4);
-  letter-spacing: -0.2px;
-}
-
-.mp-time-info {
-  background: #fff7ed;
-  color: #ea580c;
-  padding: var(--space-6) var(--space-10);
-  border-radius: var(--radius-md);
-  font-size: 0.82rem;
-  font-weight: 700;
-  margin-top: var(--space-10);
+.mp-header {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-.mp-gmap-btn {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-full);
-  color: var(--text-main);
-  font-weight: 600;
-  padding: var(--space-10) 0;
+.mp-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary), #26c6da);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-8);
+  font-weight: 900;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(0, 172, 193, 0.3);
+}
+
+.mp-title-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.mp-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+}
+
+.mp-sub {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 1px;
+}
+
+.mp-sub .mp-tag-pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(0, 172, 193, 0.1);
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+}
+
+.mp-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.06), transparent);
+  margin-bottom: 10px;
+}
+
+.mp-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mp-time-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #ea580c;
+}
+
+.mp-time-info i { font-size: 0.68rem; }
+
+.mp-time-info.start-point {
+  color: #1976d2;
+}
+
+.mp-gmap-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #4285f4;
+  background: rgba(66, 133, 244, 0.08);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  border: none;
   cursor: pointer;
   transition: all var(--transition-fast);
-  font-size: 0.88rem;
-  width: 100%;
-  margin-top: var(--space-10);
 }
 
 .mp-gmap-btn:active {
-  background: var(--bg-tertiary);
-  transform: scale(0.98);
-}
-
-.mp-gmap-btn i {
-  color: #4285f4;
+  transform: scale(0.95);
+  background: rgba(66, 133, 244, 0.15);
 }
 
 /* ── Google Maps 浮水印位移 ──────────── */
