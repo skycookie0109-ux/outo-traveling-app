@@ -2,6 +2,8 @@
  * Map Module
  * Handles map initialization, markers, route planning, and location tracking
  * Exports: MapModule (default), Location
+ *
+ * [v2.8] 毛玻璃 Popup 卡片 + 路線膠囊升級
  */
 
 import EventBus from './eventbus.js';
@@ -378,8 +380,8 @@ const MapModule = {
                     <div class="drawer-leg-chip">
                         <i class="fa-solid ${iconClass}"></i>
                         <span>${leg.duration.text}</span>
-                        <span style="color:#aaa; font-weight:normal;">(${leg.distance.text})</span>
-                    </div>`;
+                    </div>
+                    <span class="drawer-leg-dist">${leg.distance.text}</span>`;
             infoEl.classList.add("visible", modeClass);
           }
           legDurations[i + 1] = leg.duration.text;
@@ -423,33 +425,40 @@ const MapModule = {
         pt.idx,
         this.instance,
         () => {
-          const imgUrl = App.Image.getImgUrl(pt.img);
-          let timeHtml = "";
+          // [v2.8] 毛玻璃 popup — 無圖片，編號徽章 + 精簡資訊
+          let footerHtml = "";
           if (arrayIdx > 0 && legDurations[arrayIdx]) {
             const icon =
               this.transportMode === "walking"
                 ? "fa-person-walking"
                 : "fa-car";
-            timeHtml = `<div class="mp-time-info"><i class="fa-solid ${icon}"></i> 距上一站：${legDurations[arrayIdx]}</div>`;
+            footerHtml = `<div class="mp-time-info"><i class="fa-solid ${icon}"></i> 距上站 ${legDurations[arrayIdx]}</div>`;
           } else if (arrayIdx === 0 && selectedPoints.length > 1) {
-            timeHtml = `<div class="mp-time-info" style="background:#e3f2fd; color:#1976d2;">🚩 行程起點</div>`;
+            footerHtml = `<div class="mp-time-info start-point"><i class="fa-solid fa-flag"></i> 行程起點</div>`;
           }
 
           const content = `
-                    <div class="map-popup-card">
-                        <div class="mp-header-img" style="background-image: url('${imgUrl}');"></div>
-                        <div class="mp-content">
-                             <div class="mp-meta">
-                                <span><i class="fa-regular fa-clock"></i> ${pt.time}</span>
-                                <span class="mp-tag-pill">${pt.tag}</span>
-                             </div>
-                             <div class="mp-title">${pt.title}</div>
-                             ${timeHtml}
-                             <button class="mp-gmap-btn" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${pt.lat},${pt.lon}', '_blank')">
-                                <i class="fa-brands fa-google"></i> Google 導航
-                             </button>
-                        </div>
-                    </div>`;
+            <div class="map-popup-card">
+              <div class="mp-body">
+                <div class="mp-header">
+                  <div class="mp-badge">${arrayIdx + 1}</div>
+                  <div class="mp-title-group">
+                    <div class="mp-title">${pt.title}</div>
+                    <div class="mp-sub">
+                      <i class="fa-regular fa-clock"></i> ${pt.time}
+                      <span class="mp-tag-pill">${pt.tag}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mp-divider"></div>
+                <div class="mp-footer">
+                  ${footerHtml}
+                  <button class="mp-gmap-btn" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${pt.lat},${pt.lon}', '_blank')">
+                    <i class="fa-brands fa-google"></i> 導航
+                  </button>
+                </div>
+              </div>
+            </div>`;
 
           if (this.infoWindow) {
             this.infoWindow.setContent(content);
