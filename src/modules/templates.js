@@ -60,10 +60,12 @@ const Templates = {
   weatherDot: (isActive) =>
     `<div class="w-dot ${isActive ? "active" : ""}"></div>`,
 
+  // [v2.10] 攻略卡片 — 左色條(cat-xxx) + 副標 + 漸層icon + 膠囊ribbon
   recCard: (r, uniqueId, tagsHtml, ribbonHtml, bottomSection, navOnClick) => {
     const displayIcon = r.icon && r.icon.trim().length > 0 ? r.icon : "📍";
+    const subtitleHtml = r.subtitle ? `<div class="rec-subtitle">${r.subtitle}</div>` : '';
 
-    return `<div class="rec-card">${ribbonHtml}
+    return `<div class="rec-card cat-${r.category}">${ribbonHtml}
           <div class="rec-upper">
             <div class="rec-icon-box ${r.category}">
               ${displayIcon}
@@ -71,6 +73,7 @@ const Templates = {
 
             <div class="rec-main-content">
               <div class="rec-name-text">${r.name}</div>
+              ${subtitleHtml}
               <div class="rec-tag-group">${tagsHtml}</div>
             </div>
             <button id="${uniqueId}-nav-btn" class="rec-nav-circle" onclick="${navOnClick}">

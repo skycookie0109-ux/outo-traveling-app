@@ -81,9 +81,22 @@ const Rec = {
       return;
     }
 
+    // [v2.10] 副標預設值（做法A）— 當 Google Sheets 未填 subtitle 時的 fallback
+    const defaultSubtitles = {
+      food: '在地推薦美食',
+      shopping: '伴手禮·購物',
+      massage: '按摩·SPA',
+      tourist_attraction: '必訪景點'
+    };
+
     container.innerHTML = filtered
       .map((r, i) => {
         const uniqueId = `rec-${i}`;
+
+        // 若無 subtitle，使用分類預設值
+        if (!r.subtitle) {
+          r.subtitle = defaultSubtitles[r.category] || '';
+        }
 
         const isAttraction = r.category === "tourist_attraction";
         if (isAttraction && (!r.icon || r.icon === "📍")) {
