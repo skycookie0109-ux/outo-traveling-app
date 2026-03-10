@@ -239,14 +239,11 @@ const Actions = {
     }
 
     container.innerHTML = `
-      <div class="carousel-wrapper">
+      <div class="carousel-wrapper" onclick="event.stopPropagation()">
         ${arrowsHtml}
         <div class="ticket-carousel" id="ticket-carousel">${slidesHtml}</div>
       </div>
       ${indicatorHtml}
-      <div class="pass-close-btn" onclick="App.Utils.closeTicket()">
-        <i class="fa-solid fa-xmark"></i>
-      </div>
     `;
 
     // 用雙層 rAF 確保 DOM 完成 layout 後再計算 padding（修復首張不置中問題）
