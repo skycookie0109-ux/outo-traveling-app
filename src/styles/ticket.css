@@ -565,3 +565,144 @@
 .pass-close-btn:active {
   transform: scale(0.9);
 }
+
+/* ── [v2.12] 掃描驗票按鈕（操作列內） ── */
+.pass-action-btn.scan {
+  background: linear-gradient(135deg, #f0a500, #e09200);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(240,165,0,0.3);
+}
+.pass-action-btn.scan:active { opacity: 0.8; }
+
+/* ── [v2.12] 掃描器全螢幕 Overlay ── */
+.scan-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 35000;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.scan-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.scan-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  position: relative;
+  z-index: 2;
+}
+.scan-close-btn {
+  position: absolute;
+  left: 16px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+.scan-title {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+#scan-reader {
+  width: 100%;
+  max-width: 400px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 16px;
+  margin: 0 20px;
+}
+#scan-reader video {
+  border-radius: 16px;
+}
+.scan-instruction {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 16px;
+  letter-spacing: 1px;
+}
+.scan-reset-btn {
+  margin-top: 24px;
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 10px 24px;
+  border-radius: 25px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+.scan-reset-btn:active { opacity: 0.7; }
+.scan-reset-note {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.3);
+  margin-top: 6px;
+  margin-bottom: 24px;
+}
+
+/* ── 掃描結果畫面 ── */
+.scan-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 12px;
+  padding: 40px 20px;
+}
+.scan-result-icon {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.scan-result-title {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.scan-result-detail {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+  text-align: center;
+}
+.scan-result-btn {
+  margin-top: 8px;
+  background: linear-gradient(135deg, var(--primary), #06b6d4);
+  color: #fff;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(8,145,178,0.3);
+}
+.scan-result-btn.secondary {
+  background: rgba(255,255,255,0.1);
+  box-shadow: none;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.scan-result-btn:active { opacity: 0.8; }
