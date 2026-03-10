@@ -249,15 +249,18 @@ const Actions = {
       </div>
     `;
 
-    // 用 rAF 等 DOM 完成渲染後再計算 padding（修復首張不置中問題）
-    requestAnimationFrame(() => {
+    // 用雙層 rAF 確保 DOM 完成 layout 後再計算 padding（修復首張不置中問題）
+    requestAnimationFrame(() => { requestAnimationFrame(() => {
       const carousel = document.getElementById('ticket-carousel');
       if (!carousel) return;
       const slides = carousel.querySelectorAll('.ticket-slide');
       if (slides.length === 0) return;
 
+      // 用 carousel 父容器（.carousel-wrapper）的實際寬度來算，而非 window.innerWidth
+      const wrapper = carousel.closest('.carousel-wrapper');
+      const containerW = (wrapper && wrapper.offsetWidth > 0) ? wrapper.offsetWidth : window.innerWidth;
       const slideW = slides[0].offsetWidth || 260;
-      const padSide = Math.max(0, (window.innerWidth - slideW) / 2);
+      const padSide = Math.max(0, (containerW - slideW) / 2);
       carousel.style.paddingLeft = padSide + 'px';
       carousel.style.paddingRight = padSide + 'px';
       // 確保起始位置在第一張
@@ -266,11 +269,12 @@ const Actions = {
       // 綁定滾動事件更新指示器 + 箭頭
       if (isMulti) {
         carousel.addEventListener('scroll', () => this._onCarouselScroll(carousel, slides));
+        this._updateArrows(0, slides.length);
       }
 
       // 桌面滑鼠拖曳支援
       this._initDrag(carousel, slides);
-    });
+    }); });
   },
 
   /* ── 跳轉到指定卡片 ── */
