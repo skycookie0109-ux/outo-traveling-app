@@ -9,11 +9,20 @@
 import Store from './store.js';
 import EventBus from './eventbus.js';
 import { GOOGLE_API_KEY } from './config.js';
+import qrcode from 'qrcode-generator';
 
 /* ── [v2.11] 多人票券分頁狀態 ── */
 let _ticketMembers = [];   // [{name, ticketId}]
 let _ticketIdx = 0;        // 當前顯示的成員 index
 let _ticketMeta = {};       // {spotName, address}
+
+/* ── [v2.12] 本地 QR Code 產生器（取代外部 API） ── */
+function generateQRDataURL(text, cellSize = 4) {
+  const qr = qrcode(0, 'M');   // type=0 (auto), error-correction=M
+  qr.addData(text);
+  qr.make();
+  return qr.createDataURL(cellSize, 0);   // cellSize px per module, margin=0
+}
 
 const Actions = {
   switchDay(id) {
@@ -155,9 +164,7 @@ const Actions = {
 
     // 產生每張卡片的 HTML
     const slidesHtml = _ticketMembers.map((member, idx) => {
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-        member.ticketId + " | " + _ticketMeta.spotName
-      )}`;
+      const qrUrl = generateQRDataURL(member.ticketId + ' | ' + _ticketMeta.spotName, 3);
       const serialBar = isMulti
         ? `<div class="pass-serial-bar">#${idx + 1} / ${total}</div>`
         : '';
@@ -208,7 +215,10 @@ const Actions = {
                 <button class="pass-action-btn share" onclick="event.stopPropagation(); App.Actions.shareTicket(${idx})">
                   <i class="fa-solid fa-arrow-up-from-bracket"></i> 分享
                 </button>
-                <button class="pass-action-btn mark-used" onclick="event.stopPropagation(); App.Actions.markTicketUsed(this)">
+                <button class="pass-action-btn scan" onclick="event.stopPropagation(); App.Actions.openScanner()">
+                  <i class="fa-solid fa-camera"></i> 掃描驗票
+                </button>
+                <button class="pass-action-btn mark-used" onclick="event.stopPropagation(); App.Actions.markTicketUsed(this, '${member.ticketId}')">
                   <i class="fa-solid fa-check-circle"></i> 標記已使用
                 </button>
               </div>
@@ -271,6 +281,9 @@ const Actions = {
 
       // 桌面滑鼠拖曳支援
       this._initDrag(carousel, slides);
+
+      // [v2.12] 從 localStorage 恢復「已使用」狀態
+      this._refreshTicketCards();
     }); });
   },
 
@@ -376,9 +389,7 @@ const Actions = {
 
     // 產生每張 QR 的 slide
     const slidesHtml = _ticketMembers.map((member, i) => {
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(
-        member.ticketId + " | " + _ticketMeta.spotName
-      )}`;
+      const qrUrl = generateQRDataURL(member.ticketId + ' | ' + _ticketMeta.spotName, 6);
       return `
         <div class="qr-zoom-slide">
           <img src="${qrUrl}" class="qr-zoom-img" alt="QR Code">
@@ -511,13 +522,22 @@ const Actions = {
     }
   },
 
-  /* ── 標記已使用（視覺回饋） ── */
-  markTicketUsed(btn) {
+  /* ── [v2.12] 標記已使用（含 localStorage 持久化） ── */
+  markTicketUsed(btn, ticketId) {
     if (!btn) return;
-    btn.innerHTML = '<i class="fa-solid fa-check"></i> 已使用';
-    btn.style.opacity = '0.6';
-    btn.style.pointerEvents = 'none';
-    const card = btn.closest('.wallet-pass');
+    // 寫入 localStorage
+    if (ticketId) localStorage.setItem(`ticket_used_${ticketId}`, '1');
+    // 視覺更新
+    this._applyUsedStyle(btn.closest('.wallet-pass'), btn);
+  },
+
+  /* ── 套用「已使用」視覺狀態 ── */
+  _applyUsedStyle(card, btn) {
+    if (btn) {
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> 已使用';
+      btn.style.opacity = '0.6';
+      btn.style.pointerEvents = 'none';
+    }
     if (!card) return;
     const strip = card.querySelector('.pass-status-strip');
     if (strip) {
@@ -527,6 +547,218 @@ const Actions = {
       if (dot) { dot.style.background = '#f59e0b'; dot.style.animation = 'none'; }
       const txt = strip.querySelector('.pass-status-text');
       if (txt) { txt.textContent = '已使用'; txt.style.color = '#d97706'; }
+    }
+  },
+
+  /* ── 檢查票券是否已使用 ── */
+  _isTicketUsed(ticketId) {
+    return !!localStorage.getItem(`ticket_used_${ticketId}`);
+  },
+
+  /* ── [v2.12] 掃描驗票：啟動相機掃描（測試版功能） ── */
+  openScanner() {
+    // 建立掃描 overlay
+    let overlay = document.getElementById('scan-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'scan-overlay';
+      overlay.className = 'scan-overlay';
+      document.body.appendChild(overlay);
+    }
+
+    overlay.innerHTML = `
+      <div class="scan-header">
+        <button class="scan-close-btn" onclick="App.Actions.closeScanner()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <span class="scan-title">掃描 QR Code</span>
+      </div>
+      <div id="scan-reader"></div>
+      <div class="scan-instruction">將 QR Code 對準畫面中央</div>
+      <button class="scan-reset-btn" onclick="App.Actions.resetAllTickets()">
+        <i class="fa-solid fa-rotate-left"></i> 重置所有驗票紀錄
+      </button>
+      <div class="scan-reset-note">（測試版功能）</div>
+    `;
+
+    overlay.classList.add('active');
+
+    // 延遲啟動掃描器，等 DOM 就緒
+    setTimeout(() => {
+      this._startScanner();
+    }, 300);
+  },
+
+  async _startScanner() {
+    try {
+      // 確認 Html5Qrcode 已載入
+      if (typeof Html5Qrcode === 'undefined') {
+        // 動態載入
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+
+      this._html5QrCode = new Html5Qrcode('scan-reader');
+
+      await this._html5QrCode.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: { width: 220, height: 220 } },
+        (decodedText) => {
+          // 成功掃描
+          this._onScanSuccess(decodedText);
+        },
+        () => {} // ignore errors during scanning
+      );
+    } catch (err) {
+      console.warn('[Scanner] 無法啟動相機:', err);
+      const reader = document.getElementById('scan-reader');
+      if (reader) {
+        reader.innerHTML = `
+          <div style="color:#fff;text-align:center;padding:40px 20px;">
+            <i class="fa-solid fa-camera-slash" style="font-size:2rem;margin-bottom:12px;display:block;"></i>
+            <div>無法存取相機</div>
+            <div style="font-size:0.75rem;margin-top:8px;opacity:0.6;">請確認已授權相機權限</div>
+          </div>`;
+      }
+    }
+  },
+
+  _onScanSuccess(decodedText) {
+    // 停止掃描
+    if (this._html5QrCode) {
+      this._html5QrCode.stop().catch(() => {});
+    }
+
+    // 解析票券 ID：格式為 "ticketId | spotName"
+    const parts = decodedText.split('|').map(s => s.trim());
+    const scannedId = parts[0] || decodedText;
+
+    // 尋找匹配的票券
+    let found = false;
+    let foundMember = null;
+    for (const recKey in Store.tickets) {
+      const list = Store.tickets[recKey];
+      for (const member of list) {
+        if (member.ticketId === scannedId) {
+          found = true;
+          foundMember = member;
+          break;
+        }
+      }
+      if (found) break;
+    }
+
+    if (found && !this._isTicketUsed(scannedId)) {
+      // 標記為已使用
+      localStorage.setItem(`ticket_used_${scannedId}`, '1');
+      this._showScanResult(true, scannedId, foundMember);
+    } else if (found && this._isTicketUsed(scannedId)) {
+      this._showScanResult('already', scannedId, foundMember);
+    } else {
+      this._showScanResult(false, scannedId);
+    }
+  },
+
+  _showScanResult(status, ticketId, member) {
+    const overlay = document.getElementById('scan-overlay');
+    if (!overlay) return;
+
+    let icon, title, detail, color;
+    if (status === true) {
+      icon = 'fa-check';
+      title = '驗票成功';
+      detail = `序號 ${ticketId} 已標記為已使用`;
+      color = '#22c55e';
+    } else if (status === 'already') {
+      icon = 'fa-exclamation-triangle';
+      title = '此票已使用過';
+      detail = `序號 ${ticketId} 先前已被標記`;
+      color = '#f59e0b';
+    } else {
+      icon = 'fa-xmark';
+      title = '無法辨識';
+      detail = `找不到匹配的票券`;
+      color = '#ef4444';
+    }
+
+    overlay.innerHTML = `
+      <div class="scan-result">
+        <div class="scan-result-icon" style="background:${color}20;">
+          <i class="fa-solid ${icon}" style="color:${color};font-size:2.5rem;"></i>
+        </div>
+        <div class="scan-result-title">${title}</div>
+        <div class="scan-result-detail">${detail}</div>
+        <button class="scan-result-btn" onclick="App.Actions.closeScanner()">
+          返回票券
+        </button>
+        <button class="scan-result-btn secondary" onclick="App.Actions.closeScanner(); setTimeout(()=>App.Actions.openScanner(), 300);">
+          繼續掃描
+        </button>
+      </div>
+    `;
+
+    // 同時更新已開啟的票券卡片 DOM（如果有的話）
+    if (status === true) {
+      this._refreshTicketCards();
+    }
+  },
+
+  /* ── 重新整理票券卡片的「已使用」狀態 ── */
+  _refreshTicketCards() {
+    const slides = document.querySelectorAll('.ticket-slide');
+    slides.forEach((slide, idx) => {
+      if (idx < _ticketMembers.length) {
+        const member = _ticketMembers[idx];
+        if (this._isTicketUsed(member.ticketId)) {
+          const card = slide.querySelector('.wallet-pass');
+          const btn = slide.querySelector('.pass-action-btn.mark-used');
+          this._applyUsedStyle(card, btn);
+        }
+      }
+    });
+  },
+
+  closeScanner() {
+    if (this._html5QrCode) {
+      this._html5QrCode.stop().catch(() => {});
+      this._html5QrCode = null;
+    }
+    const overlay = document.getElementById('scan-overlay');
+    if (overlay) {
+      overlay.classList.remove('active');
+      setTimeout(() => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 300);
+    }
+  },
+
+  /* ── [v2.12] 重置所有驗票紀錄（測試版功能） ── */
+  resetAllTickets() {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('ticket_used_')) keys.push(key);
+    }
+    keys.forEach(k => localStorage.removeItem(k));
+
+    // 關閉掃描器
+    this.closeScanner();
+
+    // 重新渲染票券（如果票券面板還開著）
+    const overlay = document.getElementById('ticketOverlay');
+    if (overlay && overlay.classList.contains('active')) {
+      this._renderCarousel();
+    }
+
+    // Toast 提示
+    const toast = document.getElementById('toast');
+    if (toast) {
+      toast.innerHTML = '<i class="fa-solid fa-rotate-left"></i> 所有驗票紀錄已重置';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
     }
   },
 };
