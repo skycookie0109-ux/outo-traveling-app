@@ -14,12 +14,13 @@
   z-index: 21000;
 }
 
-/* ── Modal 容器：全寬（供橫向滑動） ── */
+/* ── Modal 容器：填滿 overlay，點擊空白處皆可關閉 ── */
 #ticketModal {
   background: transparent !important;
   box-shadow: none !important;
   max-width: 100% !important;
   width: 100% !important;
+  height: 100%;
   margin: 0;
   overflow: visible !important;
   transform: translateY(80px) scale(0.95);
