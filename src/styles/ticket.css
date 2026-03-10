@@ -259,7 +259,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
+.pass-qr-zone:active { transform: scale(0.95); }
 
 .pass-qr-img {
   width: 96px !important;
@@ -359,6 +362,121 @@
 @keyframes hint-fade {
   0%, 100% { opacity: 0.25; }
   50% { opacity: 0.6; }
+}
+
+/* ── [v2.11] QR Code 可點擊提示 ── */
+.pass-qr-tap-hint {
+  font-size: 0.5rem;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
+/* ── [v2.11] QR 放大全螢幕 Overlay ── */
+.qr-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30000;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.qr-zoom-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.qr-zoom-img {
+  width: 280px;
+  height: 280px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.qr-zoom-code {
+  font-family: "Courier New", monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #1e293b;
+}
+.qr-zoom-spot {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+}
+.qr-zoom-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fef9c3;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #92400e;
+}
+.qr-zoom-close {
+  position: absolute;
+  top: max(env(safe-area-inset-top, 16px), 16px);
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.qr-zoom-close:active { transform: scale(0.9); }
+
+/* ── [v2.11] 桌面版左右箭頭 ── */
+.carousel-arrow {
+  display: none; /* 預設隱藏，桌面版才顯示 */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.85);
+  color: #334155;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 10;
+  opacity: 0;
+}
+.carousel-arrow:hover { opacity: 1 !important; transform: translateY(-50%) scale(1.05); }
+.carousel-arrow:active { transform: translateY(-50%) scale(0.95); }
+.carousel-arrow.left { left: 12px; }
+.carousel-arrow.right { right: 12px; }
+
+/* 桌面版容器需 relative 讓箭頭定位 */
+.carousel-wrapper {
+  position: relative;
+  width: 100%;
+}
+/* hover 容器時才顯示箭頭 */
+.carousel-wrapper:hover .carousel-arrow { opacity: 0.7; }
+
+/* 只在非觸控的桌面版顯示箭頭 */
+@media (hover: hover) and (pointer: fine) {
+  .carousel-arrow { display: flex; align-items: center; justify-content: center; }
 }
 
 /* ── 關閉按鈕 ── */
