@@ -629,9 +629,10 @@ const Actions = {
   },
 
   _onScanSuccess(decodedText) {
-    // 停止掃描
+    // 停止掃描並清除引用（避免 closeScanner 再次對已銷毀 DOM 呼叫 stop）
     if (this._html5QrCode) {
-      this._html5QrCode.stop().catch(() => {});
+      try { this._html5QrCode.stop().catch(() => {}); } catch (_) {}
+      this._html5QrCode = null;
     }
 
     // 解析票券 ID：格式為 "ticketId | spotName"
@@ -693,10 +694,10 @@ const Actions = {
         </div>
         <div class="scan-result-title">${title}</div>
         <div class="scan-result-detail">${detail}</div>
-        <button class="scan-result-btn" onclick="App.Actions.closeScanner()">
+        <button class="scan-result-btn" onclick="try{App.Actions.closeScanner()}catch(e){console.warn(e)}">
           返回票券
         </button>
-        <button class="scan-result-btn secondary" onclick="App.Actions.closeScanner(); setTimeout(()=>App.Actions.openScanner(), 300);">
+        <button class="scan-result-btn secondary" onclick="try{App.Actions.closeScanner()}catch(e){}; setTimeout(()=>App.Actions.openScanner(), 300);">
           繼續掃描
         </button>
       </div>
@@ -725,7 +726,7 @@ const Actions = {
 
   closeScanner() {
     if (this._html5QrCode) {
-      this._html5QrCode.stop().catch(() => {});
+      try { this._html5QrCode.stop().catch(() => {}); } catch (_) {}
       this._html5QrCode = null;
     }
     const overlay = document.getElementById('scan-overlay');
