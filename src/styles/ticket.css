@@ -466,10 +466,12 @@
 .carousel-arrow.left { left: 12px; }
 .carousel-arrow.right { right: 12px; }
 
-/* 桌面版容器需 relative 讓箭頭定位 */
+/* 桌面版容器：限制可視寬度，讓桌面也呈現「一張為主 + 旁邊露出」 */
 .carousel-wrapper {
   position: relative;
   width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
 }
 /* hover 容器時才顯示箭頭 */
 .carousel-wrapper:hover .carousel-arrow { opacity: 0.7; }
