@@ -27,6 +27,12 @@ const Utils = {
   closeTicket() {
     const overlay = document.getElementById("ticketOverlay");
     if (overlay) overlay.classList.remove("active");
+    // [v2.11] 關閉 QR 放大 + 清理鍵盤事件
+    if (App.Actions._closeQR) App.Actions._closeQR();
+    if (App.Actions._keyHandler) {
+      window.removeEventListener('keydown', App.Actions._keyHandler);
+      App.Actions._keyHandler = null;
+    }
   },
 
   toggleFab(e) {

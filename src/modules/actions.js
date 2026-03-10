@@ -133,6 +133,14 @@ const Actions = {
 
     _ticketIdx = 0;
     this._renderCarousel();
+
+    // 綁定鍵盤左右鍵（桌面版）
+    this._keyHandler = (e) => {
+      if (e.key === 'ArrowLeft') this._goToSlide(_ticketIdx - 1);
+      if (e.key === 'ArrowRight') this._goToSlide(_ticketIdx + 1);
+      if (e.key === 'Escape') this._closeQR();
+    };
+    window.addEventListener('keydown', this._keyHandler);
   },
 
   /* ── [v2.11] 建立整個輪播（所有卡片一次渲染） ── */
@@ -190,10 +198,11 @@ const Actions = {
                 <span class="pass-status-dot"></span>
                 <span class="pass-status-text">有效憑證 · 未使用</span>
               </div>
-              <div class="pass-qr-zone">
+              <div class="pass-qr-zone" onclick="event.stopPropagation(); App.Actions.zoomQR(${idx})">
                 <img src="${qrUrl}" class="pass-qr-img" alt="Ticket QR">
                 <div class="pass-code-text">${member.ticketId}</div>
                 <div class="pass-promo">請在入場時出示此電子憑證 · Outo Wallet</div>
+                <div class="pass-qr-tap-hint"><i class="fa-solid fa-expand"></i> 點擊放大 QR Code</div>
               </div>
               <div class="pass-action-row">
                 <button class="pass-action-btn share" onclick="event.stopPropagation(); App.Actions.shareTicket(${idx})">
@@ -208,6 +217,15 @@ const Actions = {
         </div>`;
     }).join('');
 
+    // 桌面版左右箭頭（CSS media query 控制顯示）
+    const arrowsHtml = isMulti ? `
+      <button class="carousel-arrow left" onclick="event.stopPropagation(); App.Actions._goToSlide(${0})">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button class="carousel-arrow right" onclick="event.stopPropagation(); App.Actions._goToSlide(1)">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>` : '';
+
     // 底部指示器（多張時顯示）
     let indicatorHtml = '';
     if (isMulti) {
@@ -221,35 +239,55 @@ const Actions = {
     }
 
     container.innerHTML = `
-      <div class="ticket-carousel" id="ticket-carousel">${slidesHtml}</div>
+      <div class="carousel-wrapper">
+        ${arrowsHtml}
+        <div class="ticket-carousel" id="ticket-carousel">${slidesHtml}</div>
+      </div>
       ${indicatorHtml}
       <div class="pass-close-btn" onclick="App.Utils.closeTicket()">
         <i class="fa-solid fa-xmark"></i>
       </div>
     `;
 
-    // 設定 carousel padding 使第一張居中
-    const carousel = document.getElementById('ticket-carousel');
-    const slides = carousel.querySelectorAll('.ticket-slide');
-    if (slides.length > 0) {
-      const slideW = slides[0].offsetWidth;
-      const padSide = (window.innerWidth - slideW) / 2;
+    // 用 rAF 等 DOM 完成渲染後再計算 padding（修復首張不置中問題）
+    requestAnimationFrame(() => {
+      const carousel = document.getElementById('ticket-carousel');
+      if (!carousel) return;
+      const slides = carousel.querySelectorAll('.ticket-slide');
+      if (slides.length === 0) return;
+
+      const slideW = slides[0].offsetWidth || 260;
+      const padSide = Math.max(0, (window.innerWidth - slideW) / 2);
       carousel.style.paddingLeft = padSide + 'px';
       carousel.style.paddingRight = padSide + 'px';
-    }
+      // 確保起始位置在第一張
+      carousel.scrollLeft = 0;
 
-    // 綁定滾動事件更新指示器
-    if (isMulti) {
-      carousel.addEventListener('scroll', () => this._onCarouselScroll(carousel, slides));
-    }
+      // 綁定滾動事件更新指示器 + 箭頭
+      if (isMulti) {
+        carousel.addEventListener('scroll', () => this._onCarouselScroll(carousel, slides));
+      }
 
-    // 桌面滑鼠拖曳支援
-    this._initDrag(carousel, slides);
+      // 桌面滑鼠拖曳支援
+      this._initDrag(carousel, slides);
+    });
   },
 
-  /* ── 滾動時更新指示器 ── */
+  /* ── 跳轉到指定卡片 ── */
+  _goToSlide(idx) {
+    const carousel = document.getElementById('ticket-carousel');
+    if (!carousel) return;
+    const slides = carousel.querySelectorAll('.ticket-slide');
+    const total = slides.length;
+    const clamped = Math.max(0, Math.min(idx, total - 1));
+    const slideW = (slides[0]?.offsetWidth || 260) + 16; // 含 margin
+    carousel.scrollTo({ left: clamped * slideW, behavior: 'smooth' });
+    this._updateArrows(clamped, total);
+  },
+
+  /* ── 滾動時更新指示器 + 箭頭 ── */
   _onCarouselScroll(carousel, slides) {
-    const slideW = slides[0].offsetWidth + 16;
+    const slideW = (slides[0]?.offsetWidth || 260) + 16;
     const idx = Math.round(carousel.scrollLeft / slideW);
     const clamped = Math.max(0, Math.min(idx, slides.length - 1));
     _ticketIdx = clamped;
@@ -258,37 +296,131 @@ const Actions = {
     dots.forEach((d, i) => d.classList.toggle('active', i === clamped));
     const label = document.getElementById('ticket-label');
     if (label) label.textContent = `${clamped + 1} / ${slides.length}`;
+
+    this._updateArrows(clamped, slides.length);
   },
 
-  /* ── 桌面滑鼠拖曳 ── */
+  /* ── 更新桌面版箭頭的 onclick 和 disabled 狀態 ── */
+  _updateArrows(idx, total) {
+    const leftBtn = document.querySelector('.carousel-arrow.left');
+    const rightBtn = document.querySelector('.carousel-arrow.right');
+    if (leftBtn) {
+      leftBtn.style.visibility = idx <= 0 ? 'hidden' : 'visible';
+      leftBtn.onclick = (e) => { e.stopPropagation(); this._goToSlide(idx - 1); };
+    }
+    if (rightBtn) {
+      rightBtn.style.visibility = idx >= total - 1 ? 'hidden' : 'visible';
+      rightBtn.onclick = (e) => { e.stopPropagation(); this._goToSlide(idx + 1); };
+    }
+  },
+
+  /* ── 桌面滑鼠拖曳（修復版） ── */
   _initDrag(carousel, slides) {
-    let dragging = false, startX = 0, scrollStart = 0;
+    let dragging = false, startX = 0, scrollStart = 0, hasMoved = false;
 
     carousel.addEventListener('mousedown', (e) => {
+      // 排除按鈕點擊
+      if (e.target.closest('button, .pass-action-btn')) return;
       dragging = true;
+      hasMoved = false;
       startX = e.pageX;
       scrollStart = carousel.scrollLeft;
       carousel.classList.add('dragging');
+      carousel.style.scrollBehavior = 'auto'; // 暫停 smooth 避免衝突
       e.preventDefault();
     });
 
     const onMove = (e) => {
       if (!dragging) return;
-      carousel.scrollLeft = scrollStart - (e.pageX - startX);
+      const dx = e.pageX - startX;
+      if (Math.abs(dx) > 3) hasMoved = true;
+      carousel.scrollLeft = scrollStart - dx;
     };
 
     const onUp = () => {
       if (!dragging) return;
       dragging = false;
       carousel.classList.remove('dragging');
+      carousel.style.scrollBehavior = ''; // 恢復 smooth
       // snap 到最近的卡片
-      const slideW = slides[0].offsetWidth + 16;
+      const slideW = (slides[0]?.offsetWidth || 260) + 16;
       const target = Math.round(carousel.scrollLeft / slideW) * slideW;
       carousel.scrollTo({ left: target, behavior: 'smooth' });
     };
 
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
+
+    // 防止拖曳後觸發 QR zoom
+    carousel.addEventListener('click', (e) => {
+      if (hasMoved) { e.stopPropagation(); e.preventDefault(); }
+    }, true);
+  },
+
+  /* ── [v2.11] QR Code 放大模式 ── */
+  _wakeLock: null,
+
+  zoomQR(idx) {
+    const member = _ticketMembers[idx];
+    if (!member) return;
+
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(
+      member.ticketId + " | " + _ticketMeta.spotName
+    )}`;
+
+    // 建立或更新 overlay
+    let overlay = document.getElementById('qr-zoom-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'qr-zoom-overlay';
+      overlay.className = 'qr-zoom-overlay';
+      document.body.appendChild(overlay);
+    }
+
+    overlay.innerHTML = `
+      <button class="qr-zoom-close" onclick="App.Actions._closeQR()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="qr-zoom-spot">${_ticketMeta.spotName}</div>
+      <img src="${qrUrl}" class="qr-zoom-img" alt="QR Code">
+      <div class="qr-zoom-code">${member.ticketId}</div>
+      <div class="qr-zoom-hint">
+        <i class="fa-solid fa-sun"></i> 建議手動調高螢幕亮度以利掃描
+      </div>
+    `;
+
+    // 顯示
+    requestAnimationFrame(() => overlay.classList.add('active'));
+
+    // 點擊空白處關閉
+    overlay.onclick = (e) => {
+      if (e.target === overlay) this._closeQR();
+    };
+
+    // 嘗試啟用 Wake Lock（防止螢幕休眠）
+    this._requestWakeLock();
+  },
+
+  async _requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        this._wakeLock = await navigator.wakeLock.request('screen');
+      }
+    } catch (e) {
+      // Wake Lock 不支援或被拒絕，靜默處理
+    }
+  },
+
+  _closeQR() {
+    const overlay = document.getElementById('qr-zoom-overlay');
+    if (overlay) {
+      overlay.classList.remove('active');
+    }
+    // 釋放 Wake Lock
+    if (this._wakeLock) {
+      this._wakeLock.release().catch(() => {});
+      this._wakeLock = null;
+    }
   },
 
   /* ── 分享票券 ── */
