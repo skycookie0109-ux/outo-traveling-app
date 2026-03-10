@@ -70,16 +70,18 @@ const Data = {
           Store.assets[row[0].trim()] = row[1] ? row[1].trim() : "";
       });
 
+      // [v2.10] Recs 欄位順序：Key(0) Category(1) Name(2) Subtitle(3) Icon(4) Items(5) Address(6) ImageKey(7) TicketInfo(8)
       recsData.slice(1).forEach((row) => {
         if (row[0]) {
           Store.recommendations[row[0].trim()] = {
             category: row[1] ? row[1].trim().toLowerCase() : "food",
             name: row[2] ? row[2].trim() : "未命名",
-            icon: row[3] ? row[3].trim() : "",
-            items: row[4] ? row[4].split(",") : [],
-            address: row[5] ? row[5].trim() : "",
+            subtitle: row[3] ? row[3].trim() : "",
+            icon: row[4] ? row[4].trim() : "",
+            items: row[5] ? row[5].split(",") : [],
+            address: row[6] ? row[6].trim() : "",
             imageKey: row[0].trim(),
-            ticketInfo: row[7] ? row[7].trim() : null,
+            ticketInfo: row[8] ? row[8].trim() : null,
           };
         }
       });
