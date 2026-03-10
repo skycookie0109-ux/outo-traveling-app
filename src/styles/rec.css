@@ -282,11 +282,11 @@
   transform: scale(0.92);
 }
 
-/* [v2.10] ④ 熱門角標 — 圓角膠囊樣式（右移避開導航按鈕） */
+/* [v2.10] ④ 熱門角標 — 圓角膠囊樣式 */
 .rec-ribbon {
   position: absolute;
   top: var(--space-10);
-  right: 52px;
+  right: var(--space-10);
   background: linear-gradient(135deg, #fef2f2, #fee2e2);
   color: #dc2626;
   font-size: 0.62rem;
