@@ -8,7 +8,7 @@
 
 你正在協助開發「Outo Traveling App」，一個專為半自助旅行者設計的越南旅遊行動網頁應用（Mobile-first Web App）。目標是整合行程、天氣、地圖、攻略、匯率、記帳等功能於一體，以簡潔明瞭的 UI/UX 讓使用者輕鬆上手。
 
-- **目前版本**：v2.10.1
+- **目前版本**：v2.12.0
 - **設計風格**：iOS 17/18 風格，輕量簡潔
 - **技術棧**：原生 HTML/CSS/JS + Vite 5.4.0（ES Module bundler）
 - **資料來源**：Google Sheets（透過 PapaParse CSV 解析）
@@ -44,7 +44,7 @@ v2.6.0-current/
     │   ├── data.js         # Google Sheets 資料載入
     │   ├── ui.js           # UI 渲染 + 左滑完成手勢
     │   ├── templates.js    # HTML 模板（timelineRow、weatherCard Grid 2×2 + [☁ 描述] pill 標籤 等）
-    │   ├── actions.js      # 使用者操作（開啟詳情、完成標記等）
+    │   ├── actions.js      # 使用者操作（開啟詳情、完成標記、票券輪播、QR 放大、掃描驗票、本地 QR 生成等）
     │   ├── settings.js     # 設定面板 + 長按保護
     │   ├── weather.js      # 天氣 API（Open-Meteo）+ 穿搭建議 + 降雨分級 + FA 圖示 + 逐時結果卡片 + 24H 溫度趨勢圖（首頁天氣卡已移除儀表板點擊）
     │   ├── map.js          # Google Maps 整合
@@ -65,7 +65,7 @@ v2.6.0-current/
         ├── map.css         # 地圖相關
         ├── currency.css    # [v2.9] 匯率轉換（漸層基準區 + 結果清單 + 幣別選擇器）
         ├── rec.css         # 攻略推薦（左色條 + 漸層icon + 副標 + inline ribbon 脈動光暈）
-        ├── ticket.css      # 票券樣式
+        ├── ticket.css      # 票券樣式（carousel 輪播 + QR 放大 overlay + 桌面版箭頭 + 指示器 + 掃描器 overlay）
         ├── finance.css     # 記帳
         ├── info.css        # 資訊
         ├── fab.css         # 浮動按鈕
@@ -88,6 +88,7 @@ v2.6.0-current/
 
 ### 3.3 localStorage 使用
 - `done_{dayId}_{idx}` — 行程完成標記
+- `ticket_used_{ticketId}` — 票券已使用狀態（v2.12 新增）
 
 ### 3.4 行程完成標記機制（v2.5 最新）
 - 兩種觸發方式：勾選按鈕（✓ checkbox）+ 左滑手勢（swipe-to-complete）
@@ -148,6 +149,63 @@ v2.6.0-current/
 | `src/modules/templates.js` | 若模板有變動，更新對應 `[v2.x]` |
 | 本文件（交接 Prompt） | 版本號、CACHE_NAME、資料夾名稱、版本歷程表 |
 
+### 5.7 票券模組架構與注意事項（v2.11）
+
+**資料流**：
+```
+Google Sheets「Tickets」分頁 → data.js fetchSheet("Tickets") → Store.tickets → rec.js 查詢顯示 → actions.js 輪播渲染
+```
+
+**Store.tickets 結構**：`{ recKey: [{ name, ticketId }] }` — 以 Recs Key 為鍵，陣列中每個物件代表一張票
+
+**Tickets Google Sheets 格式**（一行一人）：
+
+| A (RecKey) | B (MemberName) | C (TicketID) | D (Note) |
+|---|---|---|---|
+| ba_na_hill | 王小明 | TK-BANA-001 | 成人票 |
+| ba_na_hill | 李小花 | TK-BANA-002 | 成人票 |
+
+**票券輪播機制**：
+- `_renderCarousel()` 一次渲染所有卡片，使用 CSS `scroll-snap-type: x mandatory` 實現觸控滑動
+- `.carousel-wrapper` 限制 `max-width: 440px` 讓桌面版也呈現「一張為主 + 旁邊露出」的效果
+- 首張置中：雙層 `requestAnimationFrame` 確保 DOM layout 完成後，以 wrapper 實際寬度計算 `paddingLeft/Right`
+- `event.stopPropagation()` 僅加在 `.carousel-wrapper`，其餘區域（overlay / modal / content-area）點擊皆可關閉票券
+
+**QR 放大模式**：
+- `zoomQR(idx)` 建立全螢幕白底 overlay（z-index: 30000），包含所有票券 QR 的 scroll-snap 輪播
+- 使用 Wake Lock API 防止螢幕休眠（`navigator.wakeLock.request('screen')`），關閉時釋放
+- 桌面版同時支援滑鼠拖曳（`_initQRDrag()`）
+
+**桌面版專屬功能**（透過 CSS `@media (hover: hover) and (pointer: fine)` 偵測）：
+- 左右箭頭按鈕（hover 容器時 opacity 0.7 顯示）
+- 鍵盤方向鍵 ← → 切換票券、Esc 關閉 QR 放大
+- 滑鼠拖曳：mousedown → mousemove 改 scrollLeft → mouseup snap 回最近卡片
+
+**QR Code 本地生成（v2.12）**：
+- 使用 `qrcode-generator` npm 套件（~30KB），完全取代外部 `api.qrserver.com` API
+- `generateQRDataURL(text, cellSize)` 回傳 base64 data URL，直接設為 `<img src>`
+- 票券卡片用 cellSize=3（小圖），QR 放大模式用 cellSize=6（大圖）
+
+**掃描驗票功能（v2.12，測試版）**：
+- 使用 `html5-qrcode` CDN 庫（~80KB），首次使用時動態載入
+- `openScanner()` 建立全螢幕掃描 overlay（z-index: 35000），啟動後鏡頭自動偵測 QR Code
+- 掃描成功後，解析 QR 內容（格式 `ticketId | spotName`），自動將該票標記為已使用
+- 已使用狀態存入 `localStorage`（key: `ticket_used_{ticketId}`），關閉/重啟 App 後仍保留
+- 「重置所有驗票紀錄」按鈕可清除所有 `ticket_used_*` localStorage（僅測試版使用）
+- 正式版將移除此功能
+
+**品牌 Loading 畫面（v2.12）**：
+- 採用 A1 方案：深綠底色 `#1b3a2a` + cream 色 Playfair Display 字體 `outo` + 金色太陽 SVG 旋轉動畫
+- 太陽尺寸與 Logo 原始比例一致（約文字高度的 55%）
+- 三圓點脈動 loading 指示器（金色 `#f0a500`）
+
+**注意事項**：
+- 修改票券 HTML 結構時，確保 `event.stopPropagation()` 只在 `carousel-wrapper` 上，不要加在 `ticket-content-area` 或 `ticketModal`，否則會導致點擊背景無法關閉
+- `_initDrag()` 拖曳時會暫停 `scroll-behavior: smooth` 以避免與手動 `scrollLeft` 設定衝突，mouseup 後才恢復
+- QR 放大的 Wake Lock 在 `_closeQR()` 和 `closeTicket()` 兩處都會釋放，確保不會遺漏
+- `qrcode-generator` 是 npm 依賴（已加入 package.json），Vite 會自動打包；`html5-qrcode` 是 CDN 動態載入（不影響打包體積）
+- 掃描功能需要 HTTPS 環境才能存取相機（Vercel 部署即為 HTTPS）
+
 ---
 
 ## 六、版本歷程
@@ -168,7 +226,9 @@ v2.6.0-current/
 | v2.8.1 | Popup 桌面版對比修正（頂部漸層色條 + 雙層陰影 + 灰外框線）|
 | v2.9.0 | 匯率模組重構：方案D 漸層基準區 + 下拉切換 + 緊湊結果清單 + CSS 外部化 + 多幣別支援；天氣卡優化：移除天氣儀表板點擊 + Grid 2×2 佈局 + 圖示併入描述標籤 [☁ 多雲] + 溫度加大平衡視覺 |
 | v2.10.0 | 攻略推薦優化：左側 3.5px 分類漸層色條 + icon 漸層背景 + 分類副標（Sheets Subtitle 欄）+ ribbon 圓角膠囊化 |
-| v2.10.1 | 攻略 UI 修正：平板+ responsive 三欄→兩欄佈局 + ribbon 改 inline（跟在店名旁）+ 實色紅底白字 + 脈動光暈動畫（2.5s 呼吸循環） ← **目前** |
+| v2.10.1 | 攻略 UI 修正：平板+ responsive 三欄→兩欄佈局 + ribbon 改 inline（跟在店名旁）+ 實色紅底白字 + 脈動光暈動畫（2.5s 呼吸循環） |
+| v2.11.0 | 票券模組全面重構：橫向滑動卡片輪播（Apple Wallet 風格）+ QR Code 放大掃描模式（含 Wake Lock + 左右滑動切換）+ 桌面版箭頭導覽 + 鍵盤方向鍵 + 滑鼠拖曳 + Tickets 獨立 Google Sheets 分頁（一行一人管理）+ 流水序號取代具名 |
+| v2.12.0 | QR Code 本地生成（qrcode-generator，取代外部 API）+ 掃描驗票功能（html5-qrcode 相機掃描，測試版）+ 票券已使用 localStorage 持久化 + Outo 品牌 Loading 畫面（A1 方案：深綠底色 + cream outo 字 + 金色太陽旋轉） ← **目前** |
 
 ---
 
@@ -207,11 +267,33 @@ v2.6.0-current/
    - ~~平板以上 responsive 佈局從三欄改為兩欄（避免卡片過窄 UI 擠壓）~~ ✅
    - ~~ribbon 從絕對定位右上角改為 inline 跟在店名旁（解決與導航按鈕重疊）~~ ✅
    - ~~ribbon 樣式升級：淡粉底→實色紅底白字 + 脈動光暈動畫（2.5s 呼吸循環，4px↔20px）~~ ✅
-8. **v2.11.0 票券模組優化**（待執行）
-   - 頂部漸層色條
-   - 綠色脈動狀態指示器（有效憑證·未使用）
-   - 資訊區塊改為卡片式網格
-   - 底部操作按鈕列（分享/收藏/標記已使用）
+8. **v2.11.0 票券模組優化**（全部完成 ✅）
+   - ~~ticket.css 全面重寫：漸層 header + 頂部 3.5px 亮條 + 微光紋理 + 緊湊 padding~~ ✅
+   - ~~狀態獨立成薄橫幅（淡綠底 + 脈動圓點 + 「有效憑證 · 未使用」）~~ ✅
+   - ~~QR 掃碼區加淡灰底色圓角，與資訊區形成兩個視覺層次~~ ✅
+   - ~~底部操作按鈕列（分享 + 標記已使用），支援 Web Share API~~ ✅
+   - ~~多人票券資料格式：獨立 Tickets 分頁（RecKey / MemberName / TicketID / Note），取代舊 TicketInfo 欄位~~ ✅
+   - ~~data.js 新增 Tickets 分頁載入 + Store.tickets 結構（{ recKey: [{name, ticketId}] }）~~ ✅
+   - ~~rec.js 改為從 Store.tickets 查詢票券，不再依賴 Recs I 欄~~ ✅
+   - ~~橫向滑動卡片輪播（取代舊 pager）：CSS scroll-snap + touch 原生滑動 + carousel-wrapper max-width: 440px 限制可視區~~ ✅
+   - ~~流水序號取代具名：顯示 #1/4、#2/4 而非成員姓名，方便匿名管理~~ ✅
+   - ~~首張票券置中修復：雙層 requestAnimationFrame + 基於 wrapper 寬度計算 padding~~ ✅
+   - ~~QR Code 放大掃描模式：點擊 QR 區域 → 全螢幕白底 overlay + 260px 大 QR + Wake Lock 防螢幕休眠 + 亮度提示~~ ✅
+   - ~~QR 放大模式支援左右滑動切換：scroll-snap 輪播 + 圓點指示器 + 序號標示 + 桌面滑鼠拖曳~~ ✅
+   - ~~桌面版箭頭導覽：hover 時顯示左右箭頭（CSS `@media (hover: hover) and (pointer: fine)` 偵測），第一張隱藏左箭頭、最後一張隱藏右箭頭~~ ✅
+   - ~~鍵盤方向鍵支援：← → 切換票券、Esc 關閉 QR 放大~~ ✅
+   - ~~桌面滑鼠拖曳修復：拖曳時暫停 scroll-behavior: smooth 避免衝突 + 防止拖曳後誤觸 QR zoom~~ ✅
+   - ~~點擊背景關閉修復：stopPropagation 從 ticket-content-area 移至 carousel-wrapper，ticketModal 填滿 overlay（height: 100%），上下左右空白處皆可關閉~~ ✅
+   - ~~移除多餘關閉按鈕（pass-close-btn），點擊背景即可關閉，UI 更簡潔~~ ✅
+9. **v2.12.0 QR 本地生成 + 掃描驗票 + 品牌 Loading**（全部完成 ✅）
+   - ~~QR Code 本地生成：npm 安裝 `qrcode-generator`，`generateQRDataURL()` 完全取代 `api.qrserver.com` 外部 API 呼叫~~ ✅
+   - ~~掃描驗票功能（測試版）：CDN 動態載入 `html5-qrcode`，`openScanner()` 全螢幕相機掃描 → 自動辨識 ticketId → localStorage 標記已使用~~ ✅
+   - ~~票券操作列新增「掃描驗票」金色按鈕（方案 A：與分享/標記並排）~~ ✅
+   - ~~掃描結果畫面：成功（綠色 ✓）/ 已使用（黃色 ⚠）/ 無法辨識（紅色 ✗）三種狀態~~ ✅
+   - ~~「重置所有驗票紀錄」按鈕（清除所有 ticket_used_* localStorage，測試版專用）~~ ✅
+   - ~~票券已使用 localStorage 持久化：開啟票券時自動恢復「已使用」視覺狀態~~ ✅
+   - ~~Outo 品牌 Loading 畫面（A1 方案）：深綠 #1b3a2a 底 + Playfair Display cream #f5f0e0 「outo」+ 金色太陽 SVG 12s 旋轉 + 三圓點脈動指示器~~ ✅
+   - ~~package.json 新增 `qrcode-generator` 依賴~~ ✅
 
 ---
 
@@ -309,4 +391,4 @@ v2.6.0-current/
 
 ---
 
-*此文件更新於 v2.10.1（2026-03-10），請在新對話開頭貼上以保持開發連續性。*
+*此文件更新於 v2.12.0（2026-03-11，含 QR 本地生成 + 掃描驗票 + 品牌 Loading），請在新對話開頭貼上以保持開發連續性。*
