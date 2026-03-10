@@ -12,6 +12,7 @@ const Store = {
   },
   itinerary: [],
   recommendations: {},
+  tickets: {},          // [v2.11] { recKey: [{name, ticketId}] }
   phrases: [],
   assets: {},
   info: [],

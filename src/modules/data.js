@@ -46,6 +46,7 @@ const Data = {
         phrasesData,
         assetsData,
         infoData,
+        ticketsData,
       ] = await Promise.all([
         fetchSheet("Config"),
         fetchSheet("Itinerary"),
@@ -53,6 +54,7 @@ const Data = {
         fetchSheet("Phrases"),
         fetchSheet("Assets"),
         fetchSheet("Info"),
+        fetchSheet("Tickets"),
       ]);
 
       if (configData && configData.length > 1) {
@@ -70,19 +72,32 @@ const Data = {
           Store.assets[row[0].trim()] = row[1] ? row[1].trim() : "";
       });
 
-      // [v2.10] Recs 欄位順序：Key(0) Category(1) Name(2) Subtitle(3) Icon(4) Items(5) Address(6) ImageKey(7) TicketInfo(8)
+      // [v2.11] Recs 欄位：Key(0) Category(1) Name(2) Subtitle(3) Icon(4) Items(5) Address(6) ImageKey(7)
       recsData.slice(1).forEach((row) => {
         if (row[0]) {
-          Store.recommendations[row[0].trim()] = {
+          const key = row[0].trim();
+          Store.recommendations[key] = {
             category: row[1] ? row[1].trim().toLowerCase() : "food",
             name: row[2] ? row[2].trim() : "未命名",
             subtitle: row[3] ? row[3].trim() : "",
             icon: row[4] ? row[4].trim() : "",
-            items: row[5] ? row[5].split(",") : [],
+            items: row[5] ? row[5].split(",").map(t => t.trim()) : [],
             address: row[6] ? row[6].trim() : "",
-            imageKey: row[0].trim(),
-            ticketInfo: row[8] ? row[8].trim() : null,
+            imageKey: (row[7] && row[7].trim()) ? row[7].trim() : key,
           };
+        }
+      });
+
+      // [v2.11] Tickets 欄位：RecKey(0) MemberName(1) TicketID(2) Note(3)
+      Store.tickets = {};
+      ticketsData.slice(1).forEach((row) => {
+        if (row[0] && row[2]) {
+          const recKey = row[0].trim();
+          if (!Store.tickets[recKey]) Store.tickets[recKey] = [];
+          Store.tickets[recKey].push({
+            name: row[1] ? row[1].trim() : "",
+            ticketId: row[2].trim(),
+          });
         }
       });
 

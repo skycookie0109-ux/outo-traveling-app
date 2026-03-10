@@ -69,7 +69,8 @@ const Rec = {
     this.activeTab = cat;
     this.renderTabs();
 
-    const list = Object.values(Store.recommendations);
+    // [v2.11] 保留 recKey 供 Tickets 查詢
+    const list = Object.entries(Store.recommendations).map(([k, v]) => ({ ...v, _recKey: k }));
     const filtered =
       cat === "all" ? list : list.filter((i) => i.category === cat);
 
@@ -176,21 +177,21 @@ const Rec = {
           bottomSection = `<div class="rec-current-addr"><i class="fa-solid fa-location-dot"></i> ${r.address}</div>`;
         }
 
+        // [v2.11] 票券按鈕：從 Store.tickets 查詢該景點是否有票
         if (isAttraction) {
+          const recKey = r._recKey;
+          const hasTickets = Store.tickets[recKey] && Store.tickets[recKey].length > 0;
           const safeName = r.name.replace(/'/g, "\\'");
           const safeAddr = currentAddress.replace(/'/g, "\\'");
-          const safeTicket = r.ticketInfo
-            ? r.ticketInfo.replace(/'/g, "\\'")
-            : "";
 
           const ticketBtnHtml = `
-                  <div class="rec-ticket-cta" onclick="event.stopPropagation(); App.Actions.openTicket('${safeName}', '${safeAddr}', '${safeTicket}')">
+                  <div class="rec-ticket-cta" onclick="event.stopPropagation(); App.Actions.openTicket('${safeName}', '${safeAddr}', '${recKey}')">
                     <div class="rec-ticket-icon-col">
                       <i class="fa-solid fa-ticket"></i>
                     </div>
                     <div class="rec-ticket-info">
                       <div class="rec-ticket-title">${r.name} 門票</div>
-                      <div class="rec-ticket-sub">點此開啟 OUTO 電子憑證</div>
+                      <div class="rec-ticket-sub">${hasTickets ? '點此開啟 OUTO 電子憑證' : '尚未設定票券'}</div>
                     </div>
                     <div class="rec-ticket-arrow">
                       <i class="fa-solid fa-qrcode"></i>
