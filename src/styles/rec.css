@@ -282,20 +282,23 @@
   transform: scale(0.92);
 }
 
-/* [v2.10] ④ 熱門角標 — 圓角膠囊樣式 */
+/* [v2.10] ④ 熱門角標 — inline 膠囊，跟在店名旁 */
 .rec-ribbon {
-  position: absolute;
-  top: var(--space-10);
-  right: var(--space-10);
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+  margin-left: 6px;
   background: linear-gradient(135deg, #fef2f2, #fee2e2);
   color: #dc2626;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 800;
-  padding: 3px var(--space-8);
+  padding: 2px 7px;
   border-radius: var(--radius-full);
   border: 1px solid #fecaca;
-  z-index: 2;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
 /* ── 展開腳區 ────────────────────────── */
