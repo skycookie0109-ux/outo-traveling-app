@@ -117,175 +117,200 @@ const Actions = {
   },
   // ── End v2.0 ─────────────────────────────
 
-  /* ── [v2.11] 票券開啟（從 Store.tickets 讀取，recKey 對應 Tickets 分頁） ── */
+  /* ── [v2.11] 票券開啟 — 橫向滑動卡片輪播 ── */
   openTicket(name, address, recKey) {
     const overlay = document.getElementById("ticketOverlay");
     overlay.classList.add("active");
 
     _ticketMeta = { spotName: name, address };
 
-    // 從 Store.tickets 讀取該景點的所有票券
     const ticketList = Store.tickets[recKey];
     if (ticketList && ticketList.length > 0) {
       _ticketMembers = ticketList;
     } else {
-      // 無票券資料 → 自動生成預覽票
       _ticketMembers = [{ name: "", ticketId: "OUTO-" + Math.random().toString(36).substr(2, 9).toUpperCase() }];
     }
 
     _ticketIdx = 0;
-    this._renderTicket();
+    this._renderCarousel();
   },
 
-  /* ── [v2.11] 渲染當前成員票券 ── */
-  _renderTicket() {
+  /* ── [v2.11] 建立整個輪播（所有卡片一次渲染） ── */
+  _renderCarousel() {
     const container = document.getElementById("ticket-content-area");
-    const member = _ticketMembers[_ticketIdx];
     const total = _ticketMembers.length;
     const isMulti = total > 1;
-
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
-      member.ticketId + " | " + _ticketMeta.spotName
-    )}`;
-
     const now = new Date();
     const dateStr = `${now.getMonth() + 1}/${now.getDate()}`;
     const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+    const addrShort = _ticketMeta.address.split(/[|，,]/)[0];
 
-    // 成員名稱列（多人時顯示）
-    const memberBarHtml = isMulti
-      ? `<div class="pass-member-bar"><i class="fa-solid fa-user"></i> ${member.name}</div>`
-      : '';
+    // 產生每張卡片的 HTML
+    const slidesHtml = _ticketMembers.map((member, idx) => {
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+        member.ticketId + " | " + _ticketMeta.spotName
+      )}`;
+      const serialBar = isMulti
+        ? `<div class="pass-serial-bar">#${idx + 1} / ${total}</div>`
+        : '';
 
-    // 分頁指示器（多人時顯示）
-    let pagerHtml = '';
+      return `
+        <div class="ticket-slide">
+          <div class="wallet-pass">
+            <div class="pass-header">
+              <div class="pass-brand">
+                <span class="pass-logo">OUTO TRAVEL</span>
+                <i class="fa-solid fa-ticket" style="opacity:0.8;"></i>
+              </div>
+              <div class="pass-main-title">${_ticketMeta.spotName}</div>
+              <div class="pass-addr"><i class="fa-solid fa-location-dot"></i> ${addrShort}</div>
+            </div>
+            ${serialBar}
+            <div class="pass-divider"><div class="pass-dashed-line"></div></div>
+            <div class="pass-body">
+              <div class="pass-info-grid">
+                <div>
+                  <div class="pass-label">使用日期</div>
+                  <div class="pass-value large">${dateStr}</div>
+                </div>
+                <div style="text-align:right;">
+                  <div class="pass-label">入場時間</div>
+                  <div class="pass-value large">${timeStr}</div>
+                </div>
+                <div>
+                  <div class="pass-label">票種</div>
+                  <div class="pass-value">標準入場</div>
+                </div>
+                <div style="text-align:right;">
+                  <div class="pass-label">序號</div>
+                  <div class="pass-value">${isMulti ? '#' + (idx + 1) + ' of ' + total : '1 張'}</div>
+                </div>
+              </div>
+              <div class="pass-status-strip">
+                <span class="pass-status-dot"></span>
+                <span class="pass-status-text">有效憑證 · 未使用</span>
+              </div>
+              <div class="pass-qr-zone">
+                <img src="${qrUrl}" class="pass-qr-img" alt="Ticket QR">
+                <div class="pass-code-text">${member.ticketId}</div>
+                <div class="pass-promo">請在入場時出示此電子憑證 · Outo Wallet</div>
+              </div>
+              <div class="pass-action-row">
+                <button class="pass-action-btn share" onclick="event.stopPropagation(); App.Actions.shareTicket(${idx})">
+                  <i class="fa-solid fa-arrow-up-from-bracket"></i> 分享
+                </button>
+                <button class="pass-action-btn mark-used" onclick="event.stopPropagation(); App.Actions.markTicketUsed(this)">
+                  <i class="fa-solid fa-check-circle"></i> 標記已使用
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    // 底部指示器（多張時顯示）
+    let indicatorHtml = '';
     if (isMulti) {
-      const dots = _ticketMembers.map((_, i) =>
-        `<span class="pass-pager-dot${i === _ticketIdx ? ' active' : ''}"></span>`
+      const dotsHtml = _ticketMembers.map((_, i) =>
+        `<div class="carousel-dot${i === 0 ? ' active' : ''}"></div>`
       ).join('');
-      pagerHtml = `
-        <div class="pass-pager">
-          <button class="pass-pager-arrow" onclick="event.stopPropagation(); App.Actions.prevTicket()">
-            <i class="fa-solid fa-chevron-left"></i>
-          </button>
-          <div class="pass-pager-dots">${dots}</div>
-          <button class="pass-pager-arrow" onclick="event.stopPropagation(); App.Actions.nextTicket()">
-            <i class="fa-solid fa-chevron-right"></i>
-          </button>
-        </div>
-        <div class="pass-pager-label">${_ticketIdx + 1} / ${total}</div>`;
+      indicatorHtml = `
+        <div class="carousel-indicator" id="ticket-dots">${dotsHtml}</div>
+        <div class="carousel-label" id="ticket-label">1 / ${total}</div>
+        <div class="carousel-hint">← 左右滑動切換票券 →</div>`;
     }
 
-    // 票種顯示
-    const ticketType = isMulti ? '標準入場' : '標準入場';
-    // 數量顯示（多人時顯示當前張數）
-    const qtyLabel = isMulti ? '成員' : '數量';
-    const qtyValue = isMulti ? `${_ticketIdx + 1} / ${total}` : '1 張';
-
     container.innerHTML = `
-      <div class="wallet-pass">
-        <div class="pass-header">
-          <div class="pass-brand">
-            <span class="pass-logo">OUTO TRAVEL</span>
-            <i class="fa-solid fa-ticket" style="opacity:0.8;"></i>
-          </div>
-          <div class="pass-main-title">${_ticketMeta.spotName}</div>
-          <div class="pass-addr">
-            <i class="fa-solid fa-location-dot"></i> ${_ticketMeta.address.split(/[|，,]/)[0]}
-          </div>
-        </div>
-
-        ${memberBarHtml}
-
-        <div class="pass-divider">
-          <div class="pass-dashed-line"></div>
-        </div>
-
-        <div class="pass-body">
-          <div class="pass-info-grid">
-            <div>
-              <div class="pass-label">使用日期</div>
-              <div class="pass-value large">${dateStr}</div>
-            </div>
-            <div style="text-align:right;">
-              <div class="pass-label">入場時間</div>
-              <div class="pass-value large">${timeStr}</div>
-            </div>
-            <div>
-              <div class="pass-label">票種</div>
-              <div class="pass-value">${ticketType}</div>
-            </div>
-            <div style="text-align:right;">
-              <div class="pass-label">${qtyLabel}</div>
-              <div class="pass-value">${qtyValue}</div>
-            </div>
-          </div>
-
-          <div class="pass-status-strip">
-            <span class="pass-status-dot"></span>
-            <span class="pass-status-text">有效憑證 · 未使用</span>
-          </div>
-
-          <div class="pass-qr-zone">
-            <img src="${qrUrl}" class="pass-qr-img" alt="Ticket QR">
-            <div class="pass-code-text">${member.ticketId}</div>
-            <div class="pass-promo">請在入場時出示此電子憑證 · Outo Wallet Security Verified</div>
-          </div>
-
-          <div class="pass-action-row">
-            <button class="pass-action-btn share" onclick="event.stopPropagation(); App.Actions.shareTicket()">
-              <i class="fa-solid fa-arrow-up-from-bracket"></i> 分享
-            </button>
-            <button class="pass-action-btn mark-used" onclick="event.stopPropagation(); App.Actions.markTicketUsed()">
-              <i class="fa-solid fa-check-circle"></i> 標記已使用
-            </button>
-          </div>
-        </div>
-
-        ${pagerHtml}
-      </div>
-
+      <div class="ticket-carousel" id="ticket-carousel">${slidesHtml}</div>
+      ${indicatorHtml}
       <div class="pass-close-btn" onclick="App.Utils.closeTicket()">
         <i class="fa-solid fa-xmark"></i>
       </div>
     `;
+
+    // 設定 carousel padding 使第一張居中
+    const carousel = document.getElementById('ticket-carousel');
+    const slides = carousel.querySelectorAll('.ticket-slide');
+    if (slides.length > 0) {
+      const slideW = slides[0].offsetWidth;
+      const padSide = (window.innerWidth - slideW) / 2;
+      carousel.style.paddingLeft = padSide + 'px';
+      carousel.style.paddingRight = padSide + 'px';
+    }
+
+    // 綁定滾動事件更新指示器
+    if (isMulti) {
+      carousel.addEventListener('scroll', () => this._onCarouselScroll(carousel, slides));
+    }
+
+    // 桌面滑鼠拖曳支援
+    this._initDrag(carousel, slides);
   },
 
-  /* ── [v2.11] 分頁切換 ── */
-  prevTicket() {
-    if (_ticketMembers.length <= 1) return;
-    _ticketIdx = (_ticketIdx - 1 + _ticketMembers.length) % _ticketMembers.length;
-    this._renderTicket();
+  /* ── 滾動時更新指示器 ── */
+  _onCarouselScroll(carousel, slides) {
+    const slideW = slides[0].offsetWidth + 16;
+    const idx = Math.round(carousel.scrollLeft / slideW);
+    const clamped = Math.max(0, Math.min(idx, slides.length - 1));
+    _ticketIdx = clamped;
+
+    const dots = document.querySelectorAll('#ticket-dots .carousel-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === clamped));
+    const label = document.getElementById('ticket-label');
+    if (label) label.textContent = `${clamped + 1} / ${slides.length}`;
   },
 
-  nextTicket() {
-    if (_ticketMembers.length <= 1) return;
-    _ticketIdx = (_ticketIdx + 1) % _ticketMembers.length;
-    this._renderTicket();
+  /* ── 桌面滑鼠拖曳 ── */
+  _initDrag(carousel, slides) {
+    let dragging = false, startX = 0, scrollStart = 0;
+
+    carousel.addEventListener('mousedown', (e) => {
+      dragging = true;
+      startX = e.pageX;
+      scrollStart = carousel.scrollLeft;
+      carousel.classList.add('dragging');
+      e.preventDefault();
+    });
+
+    const onMove = (e) => {
+      if (!dragging) return;
+      carousel.scrollLeft = scrollStart - (e.pageX - startX);
+    };
+
+    const onUp = () => {
+      if (!dragging) return;
+      dragging = false;
+      carousel.classList.remove('dragging');
+      // snap 到最近的卡片
+      const slideW = slides[0].offsetWidth + 16;
+      const target = Math.round(carousel.scrollLeft / slideW) * slideW;
+      carousel.scrollTo({ left: target, behavior: 'smooth' });
+    };
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
   },
 
-  /* ── [v2.11] 分享票券（Web Share API fallback clipboard） ── */
-  shareTicket() {
-    const member = _ticketMembers[_ticketIdx];
-    const text = `${_ticketMeta.spotName} 電子票券\n票號：${member.ticketId}${member.name ? '\n持票人：' + member.name : ''}`;
+  /* ── 分享票券 ── */
+  shareTicket(idx) {
+    const member = _ticketMembers[idx !== undefined ? idx : _ticketIdx];
+    const text = `${_ticketMeta.spotName} 電子票券\n票號：${member.ticketId}`;
     if (navigator.share) {
       navigator.share({ title: `${_ticketMeta.spotName} 票券`, text }).catch(() => {});
     } else if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(() => {
-        alert('票券資訊已複製到剪貼板');
-      });
+      navigator.clipboard.writeText(text).then(() => alert('票券資訊已複製到剪貼板'));
     }
   },
 
-  /* ── [v2.11] 標記已使用（預留，目前僅視覺回饋） ── */
-  markTicketUsed() {
-    const btn = document.querySelector('.pass-action-btn.mark-used');
-    if (btn) {
-      btn.innerHTML = '<i class="fa-solid fa-check"></i> 已使用';
-      btn.style.opacity = '0.6';
-      btn.style.pointerEvents = 'none';
-    }
-    const strip = document.querySelector('.pass-status-strip');
+  /* ── 標記已使用（視覺回饋） ── */
+  markTicketUsed(btn) {
+    if (!btn) return;
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> 已使用';
+    btn.style.opacity = '0.6';
+    btn.style.pointerEvents = 'none';
+    const card = btn.closest('.wallet-pass');
+    if (!card) return;
+    const strip = card.querySelector('.pass-status-strip');
     if (strip) {
       strip.style.background = 'linear-gradient(135deg, #fefce8, #fef9c3)';
       strip.style.borderColor = '#fde68a';
