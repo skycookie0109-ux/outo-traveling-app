@@ -282,7 +282,7 @@
   transform: scale(0.92);
 }
 
-/* [v2.10] ④ 熱門角標 — inline 膠囊，跟在店名旁 */
+/* [v2.10] ④ 熱門角標 — inline 膠囊 + 實色紅底 + 脈動光暈 */
 .rec-ribbon {
   display: inline-flex;
   align-items: center;
@@ -290,15 +290,20 @@
   position: relative;
   top: -1px;
   margin-left: 6px;
-  background: linear-gradient(135deg, #fef2f2, #fee2e2);
-  color: #dc2626;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
   font-size: 0.58rem;
   font-weight: 800;
-  padding: 2px 7px;
+  padding: 2.5px 8px;
   border-radius: var(--radius-full);
-  border: 1px solid #fecaca;
   letter-spacing: 0.3px;
   white-space: nowrap;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.45);
+  animation: ribbon-pulse 2.5s ease-in-out infinite;
+}
+@keyframes ribbon-pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(239, 68, 68, 0.35); }
+  50% { box-shadow: 0 0 14px rgba(239, 68, 68, 0.6); }
 }
 
 /* ── 展開腳區 ────────────────────────── */
