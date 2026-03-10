@@ -192,7 +192,8 @@ Google Sheets「Tickets」分頁 → data.js fetchSheet("Tickets") → Store.tic
 - 掃描成功後，解析 QR 內容（格式 `ticketId | spotName`），自動將該票標記為已使用
 - 已使用狀態存入 `localStorage`（key: `ticket_used_{ticketId}`），關閉/重啟 App 後仍保留
 - 「重置所有驗票紀錄」按鈕可清除所有 `ticket_used_*` localStorage（僅測試版使用）
-- 正式版將移除此功能
+- 正式版將移除掃描驗票功能（整個 `openScanner` / `closeScanner` / `_startScanner` / `_onScanSuccess` / `_showScanResult` / `resetAllTickets` 及相關 CSS）
+- **已知限制（測試版）**：「已使用」狀態僅存於各裝置的 localStorage，無法跨裝置同步。正式版需導入後端資料庫（建議 Firebase Realtime Database）實現即時跨裝置同步
 
 **品牌 Loading 畫面（v2.12）**：
 - 採用 A1 方案：深綠底色 `#1b3a2a` + cream 色 Playfair Display 字體 `outo` + 金色太陽 SVG 旋轉動畫
@@ -205,6 +206,8 @@ Google Sheets「Tickets」分頁 → data.js fetchSheet("Tickets") → Store.tic
 - QR 放大的 Wake Lock 在 `_closeQR()` 和 `closeTicket()` 兩處都會釋放，確保不會遺漏
 - `qrcode-generator` 是 npm 依賴（已加入 package.json），Vite 會自動打包；`html5-qrcode` 是 CDN 動態載入（不影響打包體積）
 - 掃描功能需要 HTTPS 環境才能存取相機（Vercel 部署即為 HTTPS）
+- `_onScanSuccess` 停止掃描器後必須立即 `this._html5QrCode = null`，否則 `_showScanResult` 的 `innerHTML` 會銷毀 `#scan-reader` DOM，後續 `closeScanner()` 再對已銷毀 DOM 呼叫 `.stop()` 會拋出同步例外，導致按鈕失效
+- 所有對 `_html5QrCode.stop()` 的呼叫都要包在 `try-catch` 裡（同步例外 + async reject 雙重保護）
 
 ---
 
@@ -228,7 +231,7 @@ Google Sheets「Tickets」分頁 → data.js fetchSheet("Tickets") → Store.tic
 | v2.10.0 | 攻略推薦優化：左側 3.5px 分類漸層色條 + icon 漸層背景 + 分類副標（Sheets Subtitle 欄）+ ribbon 圓角膠囊化 |
 | v2.10.1 | 攻略 UI 修正：平板+ responsive 三欄→兩欄佈局 + ribbon 改 inline（跟在店名旁）+ 實色紅底白字 + 脈動光暈動畫（2.5s 呼吸循環） |
 | v2.11.0 | 票券模組全面重構：橫向滑動卡片輪播（Apple Wallet 風格）+ QR Code 放大掃描模式（含 Wake Lock + 左右滑動切換）+ 桌面版箭頭導覽 + 鍵盤方向鍵 + 滑鼠拖曳 + Tickets 獨立 Google Sheets 分頁（一行一人管理）+ 流水序號取代具名 |
-| v2.12.0 | QR Code 本地生成（qrcode-generator，取代外部 API）+ 掃描驗票功能（html5-qrcode 相機掃描，測試版）+ 票券已使用 localStorage 持久化 + Outo 品牌 Loading 畫面（A1 方案：深綠底色 + cream outo 字 + 金色太陽旋轉） ← **目前** |
+| v2.12.0 | QR Code 本地生成（qrcode-generator，取代外部 API）+ 掃描驗票功能（html5-qrcode 相機掃描，測試版，僅 localStorage 單裝置）+ 票券已使用持久化 + Outo 品牌 Loading 畫面（A1 方案）+ 掃描結果按鈕 bug 修復 ← **目前** |
 
 ---
 
@@ -294,6 +297,10 @@ Google Sheets「Tickets」分頁 → data.js fetchSheet("Tickets") → Store.tic
    - ~~票券已使用 localStorage 持久化：開啟票券時自動恢復「已使用」視覺狀態~~ ✅
    - ~~Outo 品牌 Loading 畫面（A1 方案）：深綠 #1b3a2a 底 + Playfair Display cream #f5f0e0 「outo」+ 金色太陽 SVG 12s 旋轉 + 三圓點脈動指示器~~ ✅
    - ~~package.json 新增 `qrcode-generator` 依賴~~ ✅
+   - ~~Bug 修復：掃描結果「返回票券」/「繼續掃描」按鈕無反應 — `_onScanSuccess` 停止掃描器後需清除 `_html5QrCode = null` + 所有 `.stop()` 加 try-catch 雙重保護~~ ✅
+
+   **正式版待辦（已討論，尚未實作）**：
+   - 跨裝置同步「已使用」狀態：目前 localStorage 僅限單一裝置，正式版建議導入 Firebase Realtime Database 實現即時推送，讓園方掃描後所有客人裝置同步顯示
 
 ---
 
