@@ -382,7 +382,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -391,9 +391,42 @@
   opacity: 1;
   pointer-events: auto;
 }
+.qr-zoom-spot {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* ── QR 放大輪播軌道 ── */
+.qr-zoom-carousel {
+  width: 100%;
+  max-width: 400px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  gap: 0;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.qr-zoom-carousel::-webkit-scrollbar { display: none; }
+
+/* ── 每個 QR slide ── */
+.qr-zoom-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
 .qr-zoom-img {
-  width: 280px;
-  height: 280px;
+  width: 260px;
+  height: 260px;
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
 }
@@ -404,11 +437,38 @@
   letter-spacing: 2px;
   color: #1e293b;
 }
-.qr-zoom-spot {
-  font-size: 0.85rem;
-  color: #64748b;
-  font-weight: 600;
+.qr-zoom-serial {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.5px;
 }
+
+/* ── QR 放大底部指示器 ── */
+.qr-zoom-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+.qr-zoom-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #d1d5db;
+  transition: all 0.3s ease;
+}
+.qr-zoom-dot.active {
+  background: var(--primary);
+  width: 18px;
+  border-radius: 4px;
+}
+
+.qr-zoom-swipe-hint {
+  font-size: 0.6rem;
+  color: #94a3b8;
+  font-weight: 500;
+  animation: hint-fade 3s ease-in-out infinite;
+}
+
 .qr-zoom-hint {
   display: flex;
   align-items: center;
