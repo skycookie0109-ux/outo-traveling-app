@@ -361,16 +361,12 @@ const Actions = {
     }, true);
   },
 
-  /* ── [v2.11] QR Code 放大模式 ── */
+  /* ── [v2.11] QR Code 放大模式（含左右滑動切換） ── */
   _wakeLock: null,
 
   zoomQR(idx) {
-    const member = _ticketMembers[idx];
-    if (!member) return;
-
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(
-      member.ticketId + " | " + _ticketMeta.spotName
-    )}`;
+    const total = _ticketMembers.length;
+    const isMulti = total > 1;
 
     // 建立或更新 overlay
     let overlay = document.getElementById('qr-zoom-overlay');
@@ -381,28 +377,108 @@ const Actions = {
       document.body.appendChild(overlay);
     }
 
+    // 產生每張 QR 的 slide
+    const slidesHtml = _ticketMembers.map((member, i) => {
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(
+        member.ticketId + " | " + _ticketMeta.spotName
+      )}`;
+      return `
+        <div class="qr-zoom-slide">
+          <img src="${qrUrl}" class="qr-zoom-img" alt="QR Code">
+          <div class="qr-zoom-code">${member.ticketId}</div>
+          ${isMulti ? `<div class="qr-zoom-serial">#${i + 1} / ${total}</div>` : ''}
+        </div>`;
+    }).join('');
+
+    // 底部指示器
+    let dotsHtml = '';
+    if (isMulti) {
+      dotsHtml = `<div class="qr-zoom-dots" id="qr-zoom-dots">
+        ${_ticketMembers.map((_, i) =>
+          `<div class="qr-zoom-dot${i === idx ? ' active' : ''}"></div>`
+        ).join('')}
+      </div>`;
+    }
+
     overlay.innerHTML = `
       <button class="qr-zoom-close" onclick="App.Actions._closeQR()">
         <i class="fa-solid fa-xmark"></i>
       </button>
       <div class="qr-zoom-spot">${_ticketMeta.spotName}</div>
-      <img src="${qrUrl}" class="qr-zoom-img" alt="QR Code">
-      <div class="qr-zoom-code">${member.ticketId}</div>
+      <div class="qr-zoom-carousel" id="qr-zoom-carousel">${slidesHtml}</div>
+      ${dotsHtml}
       <div class="qr-zoom-hint">
         <i class="fa-solid fa-sun"></i> 建議手動調高螢幕亮度以利掃描
       </div>
+      ${isMulti ? '<div class="qr-zoom-swipe-hint">← 左右滑動切換 →</div>' : ''}
     `;
 
-    // 顯示
-    requestAnimationFrame(() => overlay.classList.add('active'));
+    // 顯示 + 滑到指定 QR
+    requestAnimationFrame(() => {
+      overlay.classList.add('active');
+      const qrCarousel = document.getElementById('qr-zoom-carousel');
+      if (qrCarousel && idx > 0) {
+        const slideW = qrCarousel.querySelector('.qr-zoom-slide')?.offsetWidth || 300;
+        qrCarousel.scrollLeft = idx * slideW;
+      }
 
-    // 點擊空白處關閉
+      // 綁定滾動事件更新指示器
+      if (isMulti && qrCarousel) {
+        qrCarousel.addEventListener('scroll', () => {
+          const slides = qrCarousel.querySelectorAll('.qr-zoom-slide');
+          const slideW = slides[0]?.offsetWidth || 300;
+          const cur = Math.round(qrCarousel.scrollLeft / slideW);
+          const clamped = Math.max(0, Math.min(cur, slides.length - 1));
+          const dots = document.querySelectorAll('#qr-zoom-dots .qr-zoom-dot');
+          dots.forEach((d, i) => d.classList.toggle('active', i === clamped));
+        });
+
+        // 桌面版滑鼠拖曳
+        this._initQRDrag(qrCarousel);
+      }
+    });
+
+    // 點擊空白處關閉（排除 carousel 和按鈕）
     overlay.onclick = (e) => {
       if (e.target === overlay) this._closeQR();
     };
 
     // 嘗試啟用 Wake Lock（防止螢幕休眠）
     this._requestWakeLock();
+  },
+
+  /* ── QR 放大模式：桌面滑鼠拖曳 ── */
+  _initQRDrag(carousel) {
+    let dragging = false, startX = 0, scrollStart = 0;
+
+    carousel.addEventListener('mousedown', (e) => {
+      if (e.target.closest('button')) return;
+      dragging = true;
+      startX = e.pageX;
+      scrollStart = carousel.scrollLeft;
+      carousel.style.scrollSnapType = 'none';
+      carousel.style.scrollBehavior = 'auto';
+      e.preventDefault();
+    });
+
+    const onMove = (e) => {
+      if (!dragging) return;
+      carousel.scrollLeft = scrollStart - (e.pageX - startX);
+    };
+
+    const onUp = () => {
+      if (!dragging) return;
+      dragging = false;
+      carousel.style.scrollSnapType = '';
+      carousel.style.scrollBehavior = '';
+      const slides = carousel.querySelectorAll('.qr-zoom-slide');
+      const slideW = slides[0]?.offsetWidth || 300;
+      const target = Math.round(carousel.scrollLeft / slideW) * slideW;
+      carousel.scrollTo({ left: target, behavior: 'smooth' });
+    };
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
   },
 
   async _requestWakeLock() {
