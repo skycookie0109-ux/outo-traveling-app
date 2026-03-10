@@ -65,14 +65,14 @@ const Templates = {
     const displayIcon = r.icon && r.icon.trim().length > 0 ? r.icon : "📍";
     const subtitleHtml = r.subtitle ? `<div class="rec-subtitle">${r.subtitle}</div>` : '';
 
-    return `<div class="rec-card cat-${r.category}">${ribbonHtml}
+    return `<div class="rec-card cat-${r.category}">
           <div class="rec-upper">
             <div class="rec-icon-box ${r.category}">
               ${displayIcon}
             </div>
 
             <div class="rec-main-content">
-              <div class="rec-name-text">${r.name}</div>
+              <div class="rec-name-text">${r.name}${ribbonHtml}</div>
               ${subtitleHtml}
               <div class="rec-tag-group">${tagsHtml}</div>
             </div>
