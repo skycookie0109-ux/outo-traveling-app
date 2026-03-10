@@ -767,8 +767,8 @@
 
     <!-- Ticket Overlay -->
     <div class="sheet-overlay" id="ticketOverlay" onclick="App.Utils.closeTicket()">
-      <div id="ticketModal" onclick="event.stopPropagation()">
-        <div id="ticket-content-area"></div>
+      <div id="ticketModal" onclick="App.Utils.closeTicket()">
+        <div id="ticket-content-area" onclick="event.stopPropagation()"></div>
       </div>
     </div>
   </body>
