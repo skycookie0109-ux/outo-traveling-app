@@ -286,7 +286,7 @@
 .rec-ribbon {
   position: absolute;
   top: var(--space-10);
-  right: 54px;
+  right: 52px;
   background: linear-gradient(135deg, #fef2f2, #fee2e2);
   color: #dc2626;
   font-size: 0.62rem;

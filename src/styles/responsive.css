@@ -93,9 +93,9 @@
     max-width: 800px;
   }
 
-  /* 推薦列表三欄 */
+  /* [v2.10] 推薦列表維持兩欄（避免卡片過窄導致 UI 擠壓） */
   #rec-list {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   /* 卡片陰影加深 */
